@@ -1,0 +1,94 @@
+// General menu codes and dialog codes for EcoDynamo
+// @ J. Gomes Ferreira 95.06.25
+
+// AP, 2007.06.19: NumberOfModelFiles was 4
+
+// EcoDynamo constant definitions
+
+#ifndef _ECODYN_RH
+#define _ECODYN_RH
+
+#define NumberOfModelFiles             2
+#define MaximumBoundaryConnections     6
+#define MaximumNumberOfObjects        40
+#define LimitedVersion                 0
+#define FullVersion                    1
+
+// File reading constants
+#define NUMBEROFVARSCOLUMN             1
+#define VARIABLENAMECOLUMN             2
+#define UNITSCOLUMN                    3
+#define RIVERDATACOLUMN                4
+#define OCEANDATACOLUMN                5
+#define FIRSTBOXDATACOLUMN             6
+
+// Objects containing state variables
+#define HYDROBJECTCODE                01 // Hydrodynamics
+#define NUTROBJECTCODE                02 // Nutrients
+#define PRODOBJECTCODE                03 // Producer base class
+#define PHYTOBJECTCODE                04 // Phytoplankton
+#define ZOOPOBJECTCODE                05 // Zooplankton
+#define SPMOBJECTCODE                 06 // Suspended particulate matter
+#define MACROBJECTCODE                07 // Macrophyte algae
+#define SALMOBJECTCODE                10 // Salt marsh
+#define ZOOBOBJECTCODE                11 // Zoobenthos
+#define MANOBJECTCODE                 12 // Man
+#define NEKTOBJECTCODE					  13 // Nekton
+#define XENOBJECTCODE                 14 // Xenobiotics
+#define BACTOBJECTCODE                15 // Bacteria
+#define MICROBJECTCODE                16 // Microphytobenthic algae
+#define FISHOBJECTCODE                17 // Fish
+// Objects containing forcing functions
+#define FLOWOBJECTCODE               101 // Flows
+#define LITEOBJECTCODE               102 // Light
+#define TWATOBJECTCODE               103 // Water temperature
+#define TAIROBJECTCODE               104 // Air temperature
+#define TIDEOBJECTCODE               105 // Tides
+#define WINDOBJECTCODE               106 // Wind
+#define SEDIMENTOBJECTCODE           107 // Sediments
+#define ICEOBJECTCODE                 108 // Ice
+#define ICEALGAEOBJECTCODE           109 // IceAlgae
+
+// Other calls
+#define GRAPHCODE                   1001 // Graph calls
+#define TABLECODE                   1002 // Table calls
+#define SAVEDISKCODE                1003 // Disk calls
+
+// Time conversions
+#define HOURSTOSECONDS              3600.0
+#define HOURSTOMINUTES                60.0
+#define DAYSTOSECONDS              86400.0
+#define HOURSTODAYS                    (1/24)
+#define MINUTESTOHOURS                 (1/60)
+#define DAYSTOHOURS                   24.0
+
+
+#define ALWAYSOUTPUT                   0.0
+#define SECONDOUTPUT                   1.0
+#define MINUTEOUTPUT                   60.0
+#define HOUROUTPUT                     3600.0
+#define DAYOUTPUT                      86400.0
+#define WEEKOUTPUT                     (7.0 * DAYOUTPUT)
+#define MONTHOUTPUT                    (30.0 * DAYOUTPUT)
+#define YEAROUTPUT                     (365.0 * DAYOUTPUT)
+
+
+// Math constants
+#define ABSOLUTEZERO                 273.15
+
+// General conversions
+#define CUBIC                       1000.000
+#define WATTSTOMICROEINSTEINS          4.6
+#define CARBONATOMICWEIGHT            12.01
+#define NITROGENATOMICWEIGHT          14.01
+#define SILICAATOMICWEIGHT            28.085
+#define PHOSPHORUSATOMICWEIGHT        30.97
+#define OXYGENmlTOmg                   1.4286
+#define OGYGENATOMICWEIGHT          15.9994
+
+#ifdef __BORLANDC__
+#define INFINITY                 1000000.0
+#endif
+
+#endif //_ECODYN_RH
+

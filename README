@@ -1,1 +1,70 @@
-first attempt to build NPI/ecodynamo git directory
+Project: EcoDynamo-UX
+
+This project translate to Linux the Windows application EcoDynamo.
+It is a C++ application, developed with Borland C++ 6 compiler in Windows
+and with Gnu C++ 4.8.1 in Linux.
+
+The structure of the source code in Linux is:
+
+base_dir
+ |
+ |- EcoDynamo-UX    (main program to start simulation)
+ |  |- main.cpp
+ |
+ |- DLLs
+ |  |- BacterObjt   (src code for Bacteria shared library)
+ |  |- DissObjt     (src code for Dissolved shared library)
+ |  |- ECDProtocol  (src code for ECDP shared library)
+ |  |- EcoClass     (src code for EcoClass shared library)
+ |  |- EcoDynamo    (src code for EcoDynamo shared library)
+ |  |- FishObjt     (src code for Fish shared library)
+ |  |- FlowObjt     (src code for Flow shared library)
+ |  |- HydrObjt     (src code for Hydro shared library)
+ |  |- IceAlgaeObjt (src code for IceAlgae shared library)
+ |  |- IceObjt      (src code for Ice shared library)
+ |  |- include      (generic header files)
+ |  |- Iodll        (src code for IO shared library)
+ |  |- LiteObjt     (src code for Light shared library)
+ |  |- MacrObjt     (src code for Macrophytes shared library)
+ |  |- ManObjt      (src code for Man shared library)
+ |  |- OutputResults  (src code for OutRes shared library)
+ |  |- params       (src code for Parms shared library)
+ |  |- PhytObjt     (src code for Phyto shared library)
+ |  |- PredatorObjt (src code for Predator shared library)
+ |  |- PreyObjt     (src code for Prey shared library)
+ |  |- Sediments    (src code for Sediments shared library)
+ |  |- SpmObjt      (src code for SuspMatter shared library)
+ |  |- TAirObjt     (src code for TAir shared library)
+ |  |- Tidedll      (src code for Tides shared library)
+ |  |- TideObjt     (src code for EcoDynTide shared library)
+ |  |- TWatObjt     (src code for TWater shared library)
+ |  |- Utilities    (src code for Utilities shared library)
+ |  |- WindObjt     (src code for Wind shared library)
+ |  |- ZoobObjt     (src code for SuspFeeders shared library)
+ |  |- ZoopObjt     (src code for Zooplankton shared library)
+ |
+ |- Models
+ |  |- MIZ0         (example of a 0D model)
+ |
+
+Each source directory has its own project file (CMakeLists.txt), 
+one project is defined for shared libraries (DLLs), 
+and one another for complete EcoDynamo-UX executable.
+
+The generated binary code for executable and shared libraries is located in
+folders with the structure:
+
+home_dir
+ |
+ |- bin     (executable)
+ |  |- lib  (shared libraries)
+ |
+
+The results could be saved in HDF format files, so HDF5 and zlib libraries 
+must be installed in the system. 
+It is assumed that the binary code for libraries is installed in /usr/local/bin
+and include files are located in /usr/include.
+
+
+
+

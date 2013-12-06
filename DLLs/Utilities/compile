@@ -1,0 +1,1 @@
+g++ -fpermissive -I ../include -I ../IODLL -I ../EcoClass -I ../params -I ../ECDProtocol -I ../Utilities -c $1.cpp -o Obj/$1.o

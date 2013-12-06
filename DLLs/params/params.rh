@@ -1,0 +1,60 @@
+// Astronomical constants
+
+#define epoch	    2444238.5	   // 1980 January 0.0
+
+// Constants defining the Sun's apparent orbit
+
+#define elonge	    278.833540	   // ecliptic longitude of the Sun at epoch 1980.0
+#define elongp	    282.596403	   // ecliptic longitude of the Sun at perigee
+#define eccent      0.016718     // eccentricity of Earth's orbit
+#define sunsmax     1.495985e8   // semi-major axis of Earth's orbit, km
+#define sunangsiz   0.533128     // sun's angular size, degrees, at semi-major axis distance
+
+// Elements of the Moon's orbit, epoch 1980.0
+
+#define mmlong      64.975464      // moon's mean longitude at the epoch
+#define mmlongp     349.383063	  // mean longitude of the perigee at the epoch
+#define mlnode	    151.950429	     // mean longitude of the node at the epoch
+#define minc        5.145396       // inclination of the Moon's orbit
+#define mecc        0.054900       // eccentricity of the Moon's orbit
+#define mangsiz     0.5181         // moon's angular size at distance a from Earth
+#define msmax       384401.0       // semi-major axis of Moon's orbit in km
+#define mparallax   0.9507	        // parallax at distance a from Earth
+#define synmonth    29.53058868    // synodic month (new Moon to new Moon)
+#define lunatbase   2423436.0      // base date for E. W. Brown's numbered series of lunations (1923 January 16)
+
+// osborne
+#define firstlunation -23772       // start lunation of full cycle
+#define lastlunation   4008        // end lunation of full cycle
+#define LUNATION_OFFSET 953
+#define BASEYEAR        1900
+// Properties of the Earth
+
+#define earthrad    6378.16	     // radius of Earth in kilometres
+
+
+#define PI 3.14159265358979323846  // assume not near black hole nor in Tennessee
+											  // What's with Tennessee, anyway - Use m_pi JGF 97.12.06
+#define EPSILON 1E-6
+
+// Handy mathematical functions
+
+#define sgn(x) (((x) < 0) ? -1 : ((x) > 0 ? 1 : 0))	    // extract sign
+#define abs(x) ((x) < 0 ? (-(x)) : (x)) 		             // absolute val
+#define fixangle(a) ((a) - 360.0 * (floor((a) / 360.0)))  // fix angle
+#define torad(d) ((d) * (PI / 180.0))			             // deg->rad
+#define todeg(d) ((d) * (180.0 / PI))			             // rad->deg
+#define dsin(x) (sin(torad((x))))			                // sin from deg
+#define dcos(x) (cos(torad((x))))			                // cos from deg
+
+// Moon phases
+#define NEWMOON          0
+#define CRESCENTMOON     1
+#define FULLMOON         2
+#define GIBBOUSMOON      3
+#define NEXTNEWMOON      4
+#define NEXTCRESCENTMOON 5
+#define NEXTFULLMOON     6
+#define NEXTGIBBOUSMOON  7
+
+

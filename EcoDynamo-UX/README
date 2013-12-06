@@ -1,0 +1,41 @@
+
+ EcoDynamo-UX should be invoked with mandatory and optional parameters: 
+
+    EcoDynamo-UX -path <model_path> [optional parameters]
+
+ Available parameters are:
+
+   -path <model_path> 
+        .indicates the model path with configuration files
+
+ Optional: (can be read from 'configuration.cfg' file in <model_path>)
+
+   -name <model_name>
+        .indicates the name of the model
+   -outfile <output_filename>
+        .indicates name of the file to save results
+   -subdomain <domain_filename>
+        .indicates name of the file with sub-domain definition
+   -outboxes <output_boxes_filename>
+        .indicates name of the file with boxes to register
+   -logsteps <log_filename>
+        .indicates name of the file with steps to log messages between DLLs
+   -logthreads
+        .display log messages from threads
+   -debug 
+        .display debug messages from DLLs
+   -meanvalues <samples>
+        .register only mean values in files with <samples> registers (special simulation) 
+   -hdfsamples <samples>   
+        .results saved in HDF format in files with <samples> registers 
+   -agent <agent_name>
+        .indicates the name of EcoDynamo-UX in EcoSimNet platform
+   -port <port_number> 
+        .indicates the port number used in EcoSimNet platform [default 45000]
+
+NOTES: 
+ 1. Some of the optional features are not implemented in this first release
+    namely 'logsteps', 'agent' and 'port'
+ 2. The output file(s) are in HDF format if the file extension is 'hdf' or 'HDF'.
+
+
