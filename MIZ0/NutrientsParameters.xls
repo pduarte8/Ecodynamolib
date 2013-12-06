@@ -1,0 +1,3 @@
+Nutrients	10	CriticalDepthForLandBoundary	NumberOfDaysForBoundaryTimeSeries	NumberOfLoads	NumberOfDaysForLoads	knit	kdenit	knitO2	kdenitO2	Kt	NumberOfRiverLoads
+		0.05	365	0	0	0	0	1	1	0	0
+						d-1	d-1	mgL-1	mgL-1		

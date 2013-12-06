@@ -1,0 +1,10 @@
+Sea ice	10	KforVisibleLightInIce	0.93	See Table 4 of Light et al - JOURNAL OF GEOPHYSICAL RESEARCH, VOL. 113, C03023, doi:10.1029/2006JC003977, 2008	
+		KforNearInfraRedLightInIce	4.76	See Table 4 of Light et al - JOURNAL OF GEOPHYSICAL RESEARCH, VOL. 113, C03023, doi:10.1029/2006JC003977, 2009	
+		I0forVisibleLightInIce	0.97	See Table 4 of Light et al - JOURNAL OF GEOPHYSICAL RESEARCH, VOL. 113, C03023, doi:10.1029/2006JC003977, 2010	
+		I0forNearInfraRedLightInIce	0.29	See Table 4 of Light et al - JOURNAL OF GEOPHYSICAL RESEARCH, VOL. 113, C03023, doi:10.1029/2006JC003977, 2011	
+		AlbedoForVisibleLightInIce	0.744	See Table 4 of Light et al - JOURNAL OF GEOPHYSICAL RESEARCH, VOL. 113, C03023, doi:10.1029/2006JC003977, 2012	
+		AlbedoForNearInfraredLightInIce	0.56	See Table 4 of Light et al - JOURNAL OF GEOPHYSICAL RESEARCH, VOL. 113, C03023, doi:10.1029/2006JC003977, 2013	
+		KForVisibleLightInSnow	10	See Table 1 of Smith et al - MEPS, VOL. 48,251-263, 1988	
+		AlbedoForVisibleLightInSnow	0.9	See Table 1 of Smith et al - MEPS, VOL. 48,251-263, 1988	
+		BottomLayerDepth	0.02	m	
+		DiffusionCoeff	0.00001	m2/s	See Table 1 ofJin et al (2006) Annals of Glaciology 44
