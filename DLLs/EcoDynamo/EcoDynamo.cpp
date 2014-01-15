@@ -1,4 +1,4 @@
-/*
+/**
  * EcoDynamo.cpp
  * 
  * - implement EcoDynamo functions:
