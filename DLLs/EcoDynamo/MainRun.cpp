@@ -1,4 +1,4 @@
-/**
+/*
  * MainRun.cpp
  * 
  * - implement EcoDynamo functions:
