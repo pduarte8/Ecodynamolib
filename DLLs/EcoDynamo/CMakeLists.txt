@@ -23,6 +23,7 @@ set(PROJ_HDR
 	)
 set(PROJ_SRC
 	EcoDynamo.cpp 
+	EcoDynamoSymbioses.cpp
 	MainProperties.cpp 
 	MainClasses.cpp 
 	MainRun.cpp 

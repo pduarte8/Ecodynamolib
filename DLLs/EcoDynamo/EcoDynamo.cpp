@@ -16,6 +16,7 @@
  *   Private:
  *     freeMemoryEDC(Queue* pQueue)
  *     deleteQueue(Queue* &pQueue)
+ * 	   initResources()
  * 
  * Copyright 2013 - A.Pereira
  */
@@ -30,23 +31,7 @@ using namespace std;
 #include "EcoDynamo.h"
 #include "modelState.h"
 
-//---------------------------------------------------------------------------
-//  interface with Symbioses
-//---------------------------------------------------------------------------
 
-void EcoDynamo::init()
-{
-}
-//---------------------------------------------------------------------------
-
-void EcoDynamo::next()
-{
-}
-//---------------------------------------------------------------------------
-
-void EcoDynamo::finalize()
-{
-}
 //---------------------------------------------------------------------------
 //
 // EcoDynamo constructor
@@ -58,6 +43,19 @@ EcoDynamo::EcoDynamo(char* pathName)
     else 
         defaultModelPath[0] = '\0';
 
+	initResources();
+}
+//---------------------------------------------------------------------------
+
+EcoDynamo::~EcoDynamo() {
+    if (pProperties != NULL)
+		delete pProperties;
+	if (pEDCQueue != NULL)
+		delete pEDCQueue;
+}
+//---------------------------------------------------------------------------
+
+void EcoDynamo::initResources() {
     defaultModelName[0] = '\0';
     domainFileName[0] = '\0';
     portNumber = 45000;
@@ -113,14 +111,6 @@ EcoDynamo::EcoDynamo(char* pathName)
 		setRegisterMeanValues(atoi(value));
     if (pProperties->getProperty("hdfsamples", value) != -1)
 		setHDFSamplesValue(atoi(value));
-}
-//---------------------------------------------------------------------------
-
-EcoDynamo::~EcoDynamo() {
-    if (pProperties != NULL)
-		delete pProperties;
-	if (pEDCQueue != NULL)
-		delete pEDCQueue;
 }
 //---------------------------------------------------------------------------
 

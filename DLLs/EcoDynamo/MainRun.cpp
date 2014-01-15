@@ -78,7 +78,7 @@ void EcoDynamo::startRunning(bool stepMode, int nSteps, bool agentCmd) {
         
         runStruct.stepMode = stepMode;
         runStruct.nSteps = nSteps;
-        runStruct.agentCmd = false;
+        runStruct.agentCmd = agentCmd;
         runStruct.logThreads = logThreads();
         
 		int rcode = pthread_create(&runThreadX, NULL, &execute, (void*)this);

@@ -40,6 +40,10 @@ class EcoDynamo {
 public:
     //   === EcoDynamo.cpp ===
 	/**
+	 * EcoDynamo default constructor
+	 */
+	EcoDynamo();
+	/**
 	 * EcoDynamo constructor
 	 */
 	EcoDynamo(char* pathName);
@@ -117,6 +121,7 @@ public:
 
 private:
     //   === EcoDynamo.cpp ===
+    void initResources();
 	void freeMemoryEDC(Queue* pQueue);
 	void deleteQueue(Queue* &pQueue);
 
@@ -205,6 +210,11 @@ private:
     double simulationTime;
     double lastSimulationTime;
     int lastStep;
+    
+    //   === EcoDynamoSymbioses.cpp
+    double MyTime;
+    double TimeSpent;
+	bool firstRegister;
 
 };
 
