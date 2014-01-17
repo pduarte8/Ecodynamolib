@@ -297,3 +297,5 @@ target_link_libraries(EcoDynamo-UX
     ecodynamo
     ${HDF5_LIBRARIES}
     )
+
+add_subdirectory(symbioses)

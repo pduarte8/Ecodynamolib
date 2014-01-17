@@ -14,7 +14,7 @@ option(ENABLE_TESTS "Enable test suite" OFF)
 option(ENABLE_MPI "Enable MPI parallelization" OFF)
 option(ENABLE_OPENMP "Enable OpenMP parallelization" OFF)
 option(ENABLE_CODE_COVERAGE "Compile with code coverage turned on" OFF)
-option(ENABLE_SYMBIOSES "Enable SYMBIOSES interface" OFF)
+option(ENABLE_SYMBIOSES "Enable SYMBIOSES interface" ON)
 
 include(ConfigCompilerFlags)
 include(UseGlobalBuildTree)
