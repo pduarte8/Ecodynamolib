@@ -2,7 +2,6 @@
 #   Dissolved
 #
 
-cmake_minimum_required(VERSION 2.8)
 
 # project details
 # -----------------
@@ -28,7 +27,6 @@ set(PROJ_SRC
 	VerticalModelDissobjt.cpp
 	)
 
-message ("*** Shared Library ${PROJECT_NAME} [[${PROJECT_SOURCE_DIR}]] - Building Binary tree path: ${PROJECT_BINARY_DIR}")
 
 # add includes and libraries
 # --------------------------

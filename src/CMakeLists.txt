@@ -1,31 +1,299 @@
-add_subdirectory(Iodll)
-add_subdirectory(Utilities)
-add_subdirectory(params)
-add_subdirectory(ECDProtocol)
-add_subdirectory(EcoClass)
-add_subdirectory(OutputResults)
-add_subdirectory(Tidedll)
-add_subdirectory(TWatObjt)
-add_subdirectory(TideObjt)
-add_subdirectory(WindObjt)
-add_subdirectory(HydrObjt)
-add_subdirectory(FlowObjt)
-add_subdirectory(LiteObjt)
-add_subdirectory(TAirObjt)
-add_subdirectory(SpmObjt)
-add_subdirectory(DissObjt)
-add_subdirectory(PhytObjt)
-add_subdirectory(ZoopObjt)
-add_subdirectory(ZoobObjt)
-add_subdirectory(MacrObjt)
-add_subdirectory(Sediments)
-add_subdirectory(IceObjt)
-add_subdirectory(IceAlgaeObjt)
-add_subdirectory(BacterObjt)
-add_subdirectory(FishObjt)
-add_subdirectory(PredatorObjt)
-add_subdirectory(PreyObjt)
-add_subdirectory(ManObjt)
-add_subdirectory(EcoDynamo)
-add_subdirectory(EcoDynamo-UX)
+include_directories(
+    BacterObjt
+    DissObjt
+    ECDProtocol
+    EcoClass
+    EcoDynamo
+    FishObjt
+    FlowObjt
+    HydrObjt
+    IceAlgaeObjt
+    IceObjt
+    include
+    Iodll
+    libecodynamo
+    LiteObjt
+    MacrObjt
+    ManObjt
+    OutputResults
+    params
+    PhytObjt
+    PredatorObjt
+    PreyObjt
+    Sediments
+    SpmObjt
+    TAirObjt
+    Tidedll
+    TideObjt
+    TWatObjt
+    Utilities
+    WindObjt
+    ZoobObjt
+    ZoopObjt
+    )
 
+add_library(ecodynamo
+    BacterObjt/Bacteria.cpp
+    BacterObjt/bacteriaobjt.h
+    BacterObjt/EscherichiaColi.cpp
+    DissObjt/CarlDissobjt.cpp
+    DissObjt/CrestumaLever2Ddissobjt.cpp
+    DissObjt/CrestumaLeverDissobjt.cpp
+    DissObjt/DissobjtBasic.cpp
+    DissObjt/Dissobjt.cpp
+    DissObjt/dissobjt.h
+    DissObjt/DissobjtTimeSeries.cpp
+    DissObjt/DissobjtWithOxygen.cpp
+    DissObjt/RiaF2Dissobjt.cpp
+    DissObjt/SangoDissobjt.cpp
+    DissObjt/TNutrients3D.cpp
+    DissObjt/VerticalModelDissobjt.cpp
+    ECDProtocol/AgentsTable.h
+    ECDProtocol/ECDPAgents.h
+    ECDProtocol/ECDPMessages.h
+    ECDProtocol/ECDProtocol.cpp
+    ECDProtocol/ECDProtocol_Custom_fmt.cpp
+    ECDProtocol/ECDProtocol_Custom_free.cpp
+    ECDProtocol/ECDProtocol_Custom_get.cpp
+    ECDProtocol/ECDProtocol_Custom_Public_1.cpp
+    ECDProtocol/ECDProtocol_Custom_Public_2.cpp
+    ECDProtocol/ECDProtocol_Custom_Public_3.cpp
+    ECDProtocol/ECDProtocol_Custom_Public_4.cpp
+    ECDProtocol/ECDProtocol_Custom_Public_5.cpp
+    ECDProtocol/ECDProtocol_fmt_1.cpp
+    ECDProtocol/ECDProtocol_fmt_2.cpp
+    ECDProtocol/ECDProtocol_fmt_3.cpp
+    ECDProtocol/ECDProtocol_fmt_4.cpp
+    ECDProtocol/ECDProtocol_fmt_5.cpp
+    ECDProtocol/ECDProtocol_get_1.cpp
+    ECDProtocol/ECDProtocol_get_2.cpp
+    ECDProtocol/ECDProtocol_get_3.cpp
+    ECDProtocol/ECDProtocol_get_4.cpp
+    ECDProtocol/ECDProtocol_get_5.cpp
+    ECDProtocol/ECDProtocol_util.cpp
+    ECDProtocol/EcoDynProtocol.h
+    ECDProtocol/Region.cpp
+    ECDProtocol/Region.h
+    EcoClass/EcoDynClass.cpp
+    EcoClass/EcoDynClass.h
+    EcoClass/EcoDynMisc.cpp
+    EcoDynamo/EcoDynamo.cpp
+    EcoDynamo/EcoDynamo.h
+    EcoDynamo/EcoDynamoSymbioses.cpp
+    EcoDynamo/MainClasses.cpp
+    EcoDynamo/MainProperties.cpp
+    EcoDynamo/MainRun.cpp
+    EcoDynamo/RunThreadX.cpp
+    EcoDynamo/RunThreadX.h
+    FishObjt/DiplodusSagusDEB.cpp
+    FishObjt/DiplodusSagusDEBWithWeakHomeostasis.cpp
+    FishObjt/FishDEB1.cpp
+    FishObjt/FishDEB2.cpp
+    FishObjt/fishobjt.h
+    FishObjt/SparusAurataDEB.cpp
+    FishObjt/SparusAurataDEBWithWeakHomeostasis.cpp
+    FlowObjt/CarlFlow.cpp
+    FlowObjt/CrestumaLeverFlow.cpp
+    FlowObjt/Flowobjt.cpp
+    FlowObjt/flowobjt.h
+    FlowObjt/OneDimensionalFlow.cpp
+    FlowObjt/RiaFormosaFlow.cpp
+    HydrObjt/Bidiobjt2.cpp
+    HydrObjt/BidiobjtCarl.cpp
+    HydrObjt/Bidiobjt.cpp
+    HydrObjt/BidiobjtDouro.cpp
+    HydrObjt/BidiobjtIntertidal.cpp
+    HydrObjt/BidiobjtIntertidalTransportImplicit.cpp
+    HydrObjt/BidiobjtNormalTimeStep.cpp
+    HydrObjt/BidiobjtRiaF.cpp
+    HydrObjt/BidiobjtSango2.cpp
+    HydrObjt/BidiobjtSango3.cpp
+    HydrObjt/BidiobjtSango.cpp
+    HydrObjt/BidiobjtTimeSeries.cpp
+    HydrObjt/BidiobjtTimeSeriesTransportImplicit.cpp
+    HydrObjt/BidiobjtTimeSeriesVariableDT.cpp
+    HydrObjt/BidiobjtVertical.cpp
+    HydrObjt/hydrobjt.h
+    HydrObjt/MixedLayerTransport.cpp
+    HydrObjt/MixedLayerTransportStoa.cpp
+    HydrObjt/MixedReactor.cpp
+    HydrObjt/Transport.cpp
+    HydrObjt/TriDimensional.cpp
+    HydrObjt/TriDimensionalDynamicSurfLayer.cpp
+    HydrObjt/TriDimensionalWithBodyDrag2.cpp
+    HydrObjt/TriDimensionalWithBodyDrag.cpp
+    HydrObjt/Uniobjt.cpp
+    HydrObjt/UniobjtExplicit.cpp
+    IceAlgaeObjt/IceAlgaeObjt.cpp
+    IceAlgaeObjt/IceAlgaeObjt.h
+    IceObjt/Iceobjt.cpp
+    IceObjt/iceobjt.h
+    IceObjt/IceTimeSeries.cpp
+    include/ecodyn.rh
+    include/globals.h
+    include/modelState.h
+    Iodll/Iodll.cpp
+    Iodll/iodll.h
+    Iodll/Log.cpp
+    Iodll/Log.h
+    Iodll/Properties.cpp
+    Iodll/Properties.h
+    LiteObjt/LightWithIceObjt.cpp
+    LiteObjt/Liteobjt.cpp
+    LiteObjt/liteobjt.h
+    MacrObjt/EnteromorphaSp.cpp
+    MacrObjt/GelidiumSesquipedale.cpp
+    MacrObjt/LaminariaJaponica.cpp
+    MacrObjt/LaminariaJaponicaExponencialGrowth.cpp
+    MacrObjt/Macrobjt.cpp
+    MacrObjt/macrobjt.h
+    MacrObjt/RuppiaCirrhosa.cpp
+    MacrObjt/RuppiaCirrhosaMesocosmos.cpp
+    MacrObjt/SaltMarshForcing.cpp
+    MacrObjt/UlvaSp.cpp
+    MacrObjt/ZosteraMarina.cpp
+    MacrObjt/ZosteraNolti.cpp
+    ManObjt/FisherMan_Clam.cpp
+    ManObjt/FisherMan.cpp
+    ManObjt/FisherMan_Inspect.cpp
+    ManObjt/FisherMan_Kelp.cpp
+    ManObjt/FisherMan_Mussel.cpp
+    ManObjt/FisherMan_Oyster.cpp
+    ManObjt/FisherMan_Scallop.cpp
+    ManObjt/GelidiumHarvest.cpp
+    ManObjt/IrishMan.cpp
+    ManObjt/manobjt.cpp
+    ManObjt/manobjt.h
+    ManObjt/SangoMan.cpp
+    OutputResults/FinalizeOutput.cpp
+    OutputResults/HDFOutput.cpp
+    OutputResults/IceOutput.cpp
+    OutputResults/OutputResults.cpp
+    OutputResults/outputResults.h
+    OutputResults/SetupOutput.cpp
+    OutputResults/UpdateOutput.cpp
+    OutputResults/Win_MLHDF.cpp
+    params/Params.cpp
+    params/params.h
+    params/params.rh
+    PhytObjt/AdaptativePhyto.cpp
+    PhytObjt/AdaptativeSlopePhyto.cpp
+    PhytObjt/CalaPhyto.cpp
+    PhytObjt/CarlPhyto.cpp
+    PhytObjt/CrestumaLeverPhyto2DV.cpp
+    PhytObjt/CrestumaLeverPhyto2DVIntLim.cpp
+    PhytObjt/CrestumaLeverPhyto.cpp
+    PhytObjt/DynamicAdaptativePhyto.cpp
+    PhytObjt/DynamicPhyto.cpp
+    PhytObjt/EilerPhyto.cpp
+    PhytObjt/GenericPhytoplankton.cpp
+    PhytObjt/Phytobjt2.cpp
+    PhytObjt/PhytobjtBasic.cpp
+    PhytObjt/Phytobjt.cpp
+    PhytObjt/phytobjt.h
+    PhytObjt/PhytobjtTimeSeries.cpp
+    PhytObjt/prodobjt.h
+    PhytObjt/RiaF2DPhytoPlankton.cpp
+    PhytObjt/RiaFPhyto.cpp
+    PhytObjt/Sangoobjt.cpp
+    PhytObjt/SangoPhytoplanktonIntLim.cpp
+    PhytObjt/Stoaobjt.cpp
+    PhytObjt/TejoNPsiPhyto.cpp
+    PhytObjt/TejoPhyto.cpp
+    PhytObjt/TPhytoplankton3D.cpp
+    PredatorObjt/Predatorobjt.cpp
+    PredatorObjt/predatorobjt.h
+    PreyObjt/Preyobjt.cpp
+    PreyObjt/preyobjt.h
+    Sediments/Sedimentobjt.cpp
+    Sediments/sedimentobjt.h
+    Sediments/SedimentobjtPlus.cpp
+    Sediments/SedimentTimeSeriesobjt.cpp
+    SpmObjt/PisciculturaResuspendDeposit.cpp
+    SpmObjt/RiaF2Dspmobjt.cpp
+    SpmObjt/Sangosspmobjt.cpp
+    SpmObjt/Seeds.cpp
+    SpmObjt/SPM3D.cpp
+    SpmObjt/SPMBasic.cpp
+    SpmObjt/SPMCarlingford.cpp
+    SpmObjt/SPMCrestuma.cpp
+    SpmObjt/SPMCrestumaVariableKValue.cpp
+    SpmObjt/Spmobjt.cpp
+    SpmObjt/spmobjt.h
+    SpmObjt/SPMOceanic.cpp
+    SpmObjt/SPMTimeSeries.cpp
+    SpmObjt/SPMVerticalModel.cpp
+    TAirObjt/AirTemperatureTimeSeries2.cpp
+    TAirObjt/AirTemperatureTimeSeries.cpp
+    TAirObjt/TAirAdriatic.cpp
+    TAirObjt/TAirAtlantico.cpp
+    TAirObjt/TAirMira.cpp
+    TAirObjt/TAirobjt.cpp
+    TAirObjt/tairobjt.h
+    TAirObjt/TAirRiaF.cpp
+    Tidedll/Tide.cpp
+    Tidedll/tide.h
+    TideObjt/TideObjectForSangoWanHarmonics.cpp
+    TideObjt/Tideobjt.cpp
+    TideObjt/tideobjt.h
+    TWatObjt/Sango.cpp
+    TWatObjt/TWatobjt2Dim.cpp
+    TWatObjt/TWatobjt3Dim.cpp
+    TWatObjt/TWatobjtCala.cpp
+    TWatObjt/TWatobjtCarl.cpp
+    TWatObjt/TWatobjt.cpp
+    TWatObjt/TWatobjtCrestuma2Dim.cpp
+    TWatObjt/TWatobjtCrestuma.cpp
+    TWatObjt/twatobjt.h
+    TWatObjt/TWatobjtRiaF2D.cpp
+    TWatObjt/TWatobjtRiaF.cpp
+    TWatObjt/TWatobjtSto0Model.cpp
+    TWatObjt/TWatobjtStoaVerticalModel.cpp
+    TWatObjt/TWatobjttimeseries2.cpp
+    TWatObjt/TWatobjttimeseries.cpp
+    TWatObjt/TWatobjttimeseries.h
+    TWatObjt/TWatobjtVerticalModel.cpp
+    Utilities/Parser.cpp
+    Utilities/Parser.h
+    Utilities/Queue.cpp
+    Utilities/Queue.h
+    WindObjt/WindDailyTimeSeries.cpp
+    WindObjt/Windobjt.cpp
+    WindObjt/windobjt.h
+    WindObjt/WindTimeSeries.cpp
+    WindObjt/WindTimeSeriesV1.cpp
+    ZoobObjt/BivalvesForSango.cpp
+    ZoobObjt/ChlamysFarreri.cpp
+    ZoobObjt/ChlamysFarreriIndividual.cpp
+    ZoobObjt/ChlamysFarreriV8.cpp
+    ZoobObjt/CrassostreaGigas2.cpp
+    ZoobObjt/CrassostreaGigas3.cpp
+    ZoobObjt/CrassostreaGigas4.cpp
+    ZoobObjt/CrassostreaGigas.cpp
+    ZoobObjt/CrassostreaGigasEmpirical.cpp
+    ZoobObjt/CrassostreaGigasForSangoBarille.cpp
+    ZoobObjt/CrassostreaGigasForSango.cpp
+    ZoobObjt/CrassostreaGigasForSangoRaillard.cpp
+    ZoobObjt/MytilusGalloprovincialisIndividual.cpp
+    ZoobObjt/MytilusGalloprovincialisIndividualDEB.cpp
+    ZoobObjt/RDecussatus.cpp
+    ZoobObjt/SuspensionFeed.cpp
+    ZoobObjt/Zoobobjt.cpp
+    ZoobObjt/zoobobjt.h
+    ZoopObjt/CalaZoopobjt.cpp
+    ZoopObjt/CarlZoopobjt.cpp
+    ZoopObjt/SangoZoopobjt.cpp
+    ZoopObjt/VerticalModelZoopobjt.cpp
+    ZoopObjt/ZoopobjtBasic.cpp
+    ZoopObjt/Zoopobjt.cpp
+    ZoopObjt/zoopobjt.h
+    )
+
+add_executable(EcoDynamo-UX
+    EcoDynamo-UX/main.cpp
+    )
+
+target_link_libraries(EcoDynamo-UX
+    ecodynamo
+    ${HDF5_LIBRARIES}
+    )
