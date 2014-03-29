@@ -51,7 +51,9 @@ find_path(SYMBIOSES_LIBRARY_DIR
 find_path(SYMBIOSES_PYTHON_PACKAGES 
     NAMES SymbiosesFramework.so
     PATHS ${SYMBIOSES_ROOT} $ENV{SYMBIOSES_ROOT}
-    PATH_SUFFIXES lib/python${PYTHON_VERSION}/site-packages
+    PATH_SUFFIXES 
+        lib/python${PYTHON_VERSION}/site-packages/Symbioses
+        lib/python${PYTHON_VERSION}/site-packages
     NO_DEFAULT_PATH
     )
 
