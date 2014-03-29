@@ -1,7 +1,7 @@
 #
 # written by jonas juselius <jonas.juselius@uit.no> 2012
 #
-from EcoDynamo cimport EcoDynamoAquaticModel
+from EcoDynamo cimport AquaticModel
 from AquaticModel cimport BaseAquaticModel
 
 
@@ -37,4 +37,4 @@ def bootstrap(init):
     templ = init.get_template('ecodynamo', params['setup'])
     config = templ.format(**params)
     init.write_config('ecodynamo.conf', config)
-
+    return params
