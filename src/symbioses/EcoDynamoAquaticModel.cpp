@@ -3,7 +3,6 @@
 #include "TelePrompter.h"
 #include "EcoDynamoAquaticModel.h"
 #include "ecodynamo_aquatic_model.h"
-#include "ecodynamo_hydrodynamic_model.h"
 #include <cassert>
 
 using namespace std;

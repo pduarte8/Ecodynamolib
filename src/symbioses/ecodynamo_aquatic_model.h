@@ -8,6 +8,8 @@ extern "C" {
     int ecodynamo_initialize();
     int ecodynamo_finalize();
     int ecodynamo_next();
+    int ecodynamo_get_time();
+    int ecodynamo_get_time_step();
     int ecodynamo_get_norganisms();
     void ecodynamo_control_volume(float *vol);
     void ecodynamo_get_organism(Organism *object, int n,
