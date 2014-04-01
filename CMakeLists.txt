@@ -33,6 +33,10 @@ if (ENABLE_SYMBIOSES)
     add_definitions(-DHAVE_SYMBIOSES)
 endif()
 
+find_package(Eigen3)
+include_directories(
+    ${EIGEN3_INCLUDE_DIR}
+    )
 find_package(HDF5)
 #find_package(NetCDF)
 

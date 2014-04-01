@@ -2,17 +2,26 @@
 #   Hydro
 #
 
+# add includes and libraries
+# --------------------------
+#set(LIBRARY_OUTPUT_PATH "~/bin/lib")
+#set(LIB_DIR "~/bin/lib")
+include_directories(
+	${PROJECT_SOURCE_DIR} 
+	../include 
+	../Iodll 
+	../ECDProtocol 
+	../Utilities 
+	../EcoClass
+	)
 
-# project details
-# -----------------
-project(Hydro)
-set(PROJ_HDR 
+# create the library
+# ---------------
+add_library(Hydro SHARED
 	hydrobjt.h 
 	../include/globals.h 
 	../Iodll/iodll.h 
 	../EcoClass/EcoDynClass.h
-	)
-set(PROJ_SRC 
 	Bidiobjt.cpp 
 	Bidiobjt2.cpp 
 	BidiobjtCarl.cpp 
@@ -38,30 +47,13 @@ set(PROJ_SRC
 	TriDimensionalWithBodyDrag2.cpp 
 	Uniobjt.cpp 
 	UniobjtExplicit.cpp
-	)
-
-
-# add includes and libraries
-# --------------------------
-set(LIBRARY_OUTPUT_PATH "~/bin/lib")
-set(LIB_DIR "~/bin/lib")
-include_directories(
-	${PROJECT_SOURCE_DIR} 
-	../include 
-	../Iodll 
-	../ECDProtocol 
-	../Utilities 
-	../EcoClass
-	)
-
-# create the library
-# ---------------
-add_library(${PROJECT_NAME} SHARED ${PROJ_HDR} ${PROJ_SRC})
+    SymbiosesExample.cpp 
+)
 
 # linker
 # ---------------
 find_library(IODLL IO ${LIB_DIR})
 find_library(ECLASS EcoClass ${LIB_DIR})
 
-target_link_libraries(${PROJECT_NAME} ${ECLASS} ${IODLL})
+target_link_libraries(Hydro ECLASS IODLL)
 

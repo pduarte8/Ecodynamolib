@@ -13,7 +13,7 @@
 // DLL header file
 
 #ifndef __BORLANDC__
-#define _export 
+#define _export
 #endif  // __BORLANDC__
 
 class _export TTransport : public TEcoDynClass
@@ -759,7 +759,7 @@ class _export TBiDimensionalIntertidalTransportImplicit : public TBiDimensionalR
                                                 double MyNorthDiffusion, double MySouthDiffusion, double* PastGeneric);
         virtual double r2Calculation(int index, double MyWestUFlow, double MyEastUFlow, double MyNorthVFlow, double MySouthVFlow,
                                                 double MyWestDiffusion, double MyEastDiffusion, double* PastGeneric);
-        virtual void CorrectRForRiverAndOceanBoundaries(int index1, double Correction);                                        
+        virtual void CorrectRForRiverAndOceanBoundaries(int index1, double Correction);
 };
 
 class _export TBiDimensionalTidalTestIntertidal : public TBiDimensionalIntertidal
@@ -995,7 +995,7 @@ class _export TBiDimensionalTimeSeriesVariableDT : public TBiDimensionalTimeSeri
            virtual double SaltEasternHorizontalDiffusion(int i, int j, double* PastGeneric);
            virtual double SaltNorthernVerticalDiffusion(int i, int j, double* PastGeneric);
            virtual double SaltSouthernVerticalDiffusion(int i, int j, double* PastGeneric);
-  
+
            CellRecord* ACellRecord;
            int *Cells;
            int NumberOfCriticalCells, CriticalNumberOfSteps;
@@ -1330,6 +1330,20 @@ class _export TTriDimensionalWithBodyDrag2 : public TTriDimensionalWithBodyDrag
         double *FUPw,*FLWw,*TDVw;
         double ReturnR(int s, double FLMMinusOneHalf, double FLMPlusOneHalf, double FLMPlusThreeHalves);
         double Superbee(double r);
+};
+
+class _export SymbiosesExample
+{
+	public :
+		SymbiosesExample();
+        ~SymbiosesExample();
+        void printGrid() const;
+        void printVelocity(int i, int j, int k) const;
+        void printTS(int i, int j, int k) const;
+    private:
+        int *griddims;
+        float *gridlats;
+        float *gridlons;
 };
 
 static TEcoDynClass *PTransport;

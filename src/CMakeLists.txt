@@ -32,7 +32,7 @@ include_directories(
     ZoopObjt
     )
 
-add_library(ecodynamo
+add_library(ecodynamo SHARED
     BacterObjt/Bacteria.cpp
     BacterObjt/bacteriaobjt.h
     BacterObjt/EscherichiaColi.cpp
@@ -124,6 +124,7 @@ add_library(ecodynamo
     HydrObjt/TriDimensionalWithBodyDrag.cpp
     HydrObjt/Uniobjt.cpp
     HydrObjt/UniobjtExplicit.cpp
+    HydrObjt/SymbiosesExample.cpp
     IceAlgaeObjt/IceAlgaeObjt.cpp
     IceAlgaeObjt/IceAlgaeObjt.h
     IceObjt/Iceobjt.cpp
@@ -296,6 +297,15 @@ add_executable(EcoDynamo-UX
 target_link_libraries(EcoDynamo-UX
     ecodynamo
     ${HDF5_LIBRARIES}
+    ${SYMBIOSES_LIBRARIES}
     )
 
 add_subdirectory(symbioses)
+
+install(TARGETS 
+    ecodynamo 
+    EcoDynamo-UX
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    )
