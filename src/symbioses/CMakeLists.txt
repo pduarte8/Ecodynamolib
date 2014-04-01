@@ -1,11 +1,10 @@
 include_directories(
+    ../HydrObjt
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${NETCDF_INCLUDES}
     )
 
 add_library(symbioses-ecodynamo SHARED
-    ecodynamo_aquatic_model.f90
-    ecodynamo_aquatic_model.h
     EcoDynamoAquaticModel.cpp
     EcoDynamoAquaticModel.h
     )
@@ -13,7 +12,6 @@ add_library(symbioses-ecodynamo SHARED
 target_link_libraries(symbioses-ecodynamo
     ecodynamo
     ${SYMBIOSES_LIBRARIES}
-    ${NETCDF_LIBRARIES_F90}
     )
 
 set_source_files_properties(

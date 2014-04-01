@@ -4,6 +4,7 @@
 #include <vector>
 #include "AquaticModel.h"
 #include "Organism.h"
+#include "hydrobjt.h"
 
 class EcoDynamoAquaticModel: public AquaticModel {
     public:
@@ -18,6 +19,10 @@ class EcoDynamoAquaticModel: public AquaticModel {
         void getOrganism(Organism *o, int n, float lat, float lon, float depth);
     private:
         int nOrganisms;
+        int t;
+        int dt;
+        SymbiosesExample *s;
+
 };
 
 #endif
