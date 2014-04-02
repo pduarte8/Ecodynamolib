@@ -290,6 +290,38 @@ add_library(ecodynamo SHARED
     ZoopObjt/zoopobjt.h
     )
 
+add_subdirectory(BacterObjt)
+add_subdirectory(DissObjt)
+add_subdirectory(ECDProtocol)
+add_subdirectory(EcoClass)
+add_subdirectory(EcoDynamo)
+add_subdirectory(EcoDynamo-UX)
+add_subdirectory(FishObjt)
+add_subdirectory(FlowObjt)
+add_subdirectory(HydrObjt)
+add_subdirectory(IceAlgaeObjt)
+add_subdirectory(IceObjt)
+add_subdirectory(Iodll)
+add_subdirectory(LiteObjt)
+add_subdirectory(MacrObjt)
+add_subdirectory(ManObjt)
+add_subdirectory(OutputResults)
+add_subdirectory(params)
+add_subdirectory(PhytObjt)
+add_subdirectory(PredatorObjt)
+add_subdirectory(PreyObjt)
+add_subdirectory(Sediments)
+add_subdirectory(SpmObjt)
+add_subdirectory(symbioses)
+add_subdirectory(TAirObjt)
+add_subdirectory(Tidedll)
+add_subdirectory(TideObjt)
+add_subdirectory(TWatObjt)
+add_subdirectory(Utilities)
+add_subdirectory(WindObjt)
+add_subdirectory(ZoobObjt)
+add_subdirectory(ZoopObjt)
+
 add_executable(EcoDynamo-UX
     EcoDynamo-UX/main.cpp
     )
@@ -300,7 +332,34 @@ target_link_libraries(EcoDynamo-UX
     ${SYMBIOSES_LIBRARIES}
     )
 
-add_subdirectory(symbioses)
+    #BacterObjt
+    #DissObjt
+    #ECDProtocol
+    #EcoClass
+    #FishObjt
+    #FlowObjt
+    #HydrObjt
+    #IceAlgaeObjt
+    #IceObjt
+    #Iodll
+    #LiteObjt
+    #MacrObjt
+    #ManObjt
+    #OutputResults
+    #params
+    #PhytObjt
+    #PredatorObjt
+    #PreyObjt
+    #Sediments
+    #SpmObjt
+    #TAirObjt
+    #Tidedll
+    #TideObjt
+    #TWatObjt
+    #Utilities
+    #WindObjt
+    #ZoobObjt
+    #ZoopObjt
 
 install(TARGETS 
     ecodynamo 

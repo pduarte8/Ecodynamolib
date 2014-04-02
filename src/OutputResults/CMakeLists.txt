@@ -1,19 +1,11 @@
-#
-#   OutRes
-#
-
-
-# project details
-# -----------------
-project(OutRes)
-set(PROJ_HDR 
+set(HDR 
 	outputResults.h 
 	../Iodll/iodll.h 
 	../Iodll/Log.h 
 	../EcoClass/EcoDynClass.h 
 	../Utilities/Queue.h 
 	)
-set(PROJ_SRC 
+set(SRC 
 	OutputResults.cpp 
 	SetupOutput.cpp 
 	UpdateOutput.cpp 
@@ -22,14 +14,8 @@ set(PROJ_SRC
 	IceOutput.cpp
 	FinalizeOutput.cpp
 	)
-
-
-# add includes and libraries
-# --------------------------
-set(LIBRARY_OUTPUT_PATH "~/bin/lib")
-set(LIB_DIR "~/bin/lib" "~/local/lib")
 include_directories(
-	${PROJECT_SOURCE_DIR} 
+	${CURRENT_SOURCE_DIR} 
 	../include 
 	~/local/include 
 	../Iodll 
@@ -37,21 +23,8 @@ include_directories(
 	../EcoClass 
 	../Utilities
 	)
-
-# create the library
-# ---------------
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
-
-add_library(${PROJECT_NAME} SHARED ${PROJ_HDR} ${PROJ_SRC})
-
-# linker
-# ---------------
-find_library(IODLL IO ${LIB_DIR})
-find_library(ECLASS EcoClass ${LIB_DIR})
-find_library(UTIL Utilities ${LIB_DIR})
-find_library(HDF hdf5 ${LIB_DIR})
-
-target_link_libraries(${PROJECT_NAME} ${HDF} ${UTIL} ${IODLL} ${ECLASS})
-
+add_library(OutputResults SHARED ${HDR} ${SRC})
+# vim:et:sw=4:ts=4:

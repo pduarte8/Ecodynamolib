@@ -1,12 +1,4 @@
-#
-#   ECDP
-#
-
-
-# project details
-# -----------------
-project(ECDP)
-set(PROJ_HDR 
+set(HDR 
 	AgentsTable.h 
 	ECDPAgents.h 
 	ECDPMessages.h 
@@ -15,7 +7,7 @@ set(PROJ_HDR
 	../Utilities/Queue.h 
 	../Utilities/Parser.h
 	)
-set(PROJ_SRC 
+set(SRC 
 	ECDProtocol.cpp 
 	ECDProtocol_Custom_fmt.cpp 
 	ECDProtocol_Custom_free.cpp 
@@ -38,25 +30,10 @@ set(PROJ_SRC
 	ECDProtocol_util.cpp 
 	Region.cpp
 	)
-
-
-# add includes and libraries
-# --------------------------
-set(LIBRARY_OUTPUT_PATH "~/bin/lib")
-set(LIB_DIR "~/bin/lib")
 include_directories(
-	${PROJECT_SOURCE_DIR} 
+	${CURRENT_SOURCE_DIR} 
 	../include 
 	../Utilities
 	)
-
-# create the library
-# ---------------
-add_library(${PROJECT_NAME} SHARED ${PROJ_HDR} ${PROJ_SRC})
-
-# linker
-# ---------------
-find_library(UTIL Utilities ${LIB_DIR})
-
-target_link_libraries(${PROJECT_NAME} ${UTIL})
-
+add_library(ECDProtocol SHARED ${HDR} ${SRC})
+# vim:et:sw=4:ts=4:

@@ -1,40 +1,16 @@
-#
-#   Tides
-#
-
-
-# project details
-# -----------------
-project(Tides)
-set(PROJ_HDR
+set(HDR
     tide.h
     ../Iodll/iodll.h
     ../params/params.h
     )
-set(PROJ_SRC
+set(SRC
     Tide.cpp
     )
-
-
-# add includes and libraries
-# --------------------------
-set(LIBRARY_OUTPUT_PATH "~/bin/lib")
-set(LIB_DIR "~/bin/lib")
 include_directories(
-	${PROJECT_SOURCE_DIR}
+	${CURRENT_SOURCE_DIR}
 	../include
 	../Iodll
 	../params
 	)
-
-# create the library
-# ---------------
-add_library(${PROJECT_NAME} SHARED ${PROJ_HDR} ${PROJ_SRC})
-
-# linker
-# ---------------
-find_library(IODLL IO ${LIB_DIR})
-find_library(PARM Parms ${LIB_DIR})
-
-target_link_libraries(${PROJECT_NAME} ${IODLL} ${PARM})
-
+add_library(Tidedll SHARED ${HDR} ${SRC})
+# vim:et:sw=4:ts=4:

@@ -1,19 +1,11 @@
-#
-#   Dissolved
-#
-
-
-# project details
-# -----------------
-project(Dissolved)
-set(PROJ_HDR 
+set(HDR 
 	dissobjt.h 
 	../include/globals.h 
 	../Iodll/iodll.h 
 	../EcoClass/EcoDynClass.h 
 	../params/params.h
 	)
-set(PROJ_SRC 
+set(SRC 
 	Dissobjt.cpp 
 	CarlDissobjt.cpp 
 	CrestumaLever2Ddissobjt.cpp 
@@ -26,14 +18,8 @@ set(PROJ_SRC
 	TNutrients3D.cpp 
 	VerticalModelDissobjt.cpp
 	)
-
-
-# add includes and libraries
-# --------------------------
-set(LIBRARY_OUTPUT_PATH "~/bin/lib")
-set(LIB_DIR "~/bin/lib")
 include_directories(
-	${PROJECT_SOURCE_DIR} 
+	${CURRENT_SOURCE_DIR} 
 	../include 
 	../Iodll 
 	../params 
@@ -41,16 +27,5 @@ include_directories(
 	../Utilities 
 	../EcoClass
 	)
-
-# create the library
-# ---------------
-add_library(${PROJECT_NAME} SHARED ${PROJ_HDR} ${PROJ_SRC})
-
-# linker
-# ---------------
-find_library(IODLL IO ${LIB_DIR})
-find_library(PARM Parms ${LIB_DIR})
-find_library(ECLASS EcoClass ${LIB_DIR})
-
-target_link_libraries(${PROJECT_NAME} ${ECLASS} ${PARM} ${IODLL})
-
+add_library(DissObjt SHARED ${HDR} ${SRC})
+# vim:et:sw=4:ts=4:

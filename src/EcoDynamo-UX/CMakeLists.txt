@@ -7,22 +7,14 @@ include_directories(
     ${CMAKE_SOURC_DIR}/src/ECDProtocol
     ${CMAKE_SOURC_DIR}/src/OutputResults
 	)
-
-#if(COMMAND cmake_policy)
-#  cmake_policy(SET CMP0003 NEW)
-#endif(COMMAND cmake_policy)
-
-add_executable(EcoDynamo-UX
+add_executable(EcoDynamo-UXX
     ${CMAKE_SOURCE_DIR}/src/EcoDynamo/EcoDynamo.h
 	main.cpp
 	)
 
-# librt.so is the realtime library - 'rt'
 find_package(Threads REQUIRED)
-target_link_libraries(EcoDynamo-UX
-    EcoDynamo
-    ${CMAKE_THREAD_LIBS_INIT}
-    rt
-	)
-
-
+#target_link_libraries(EcoDynamo
+    #${CMAKE_THREAD_LIBS_INIT}
+    #rt
+	#)
+# vim:et:sw=4:ts=4:

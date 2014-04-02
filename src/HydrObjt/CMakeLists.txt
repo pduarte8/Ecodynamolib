@@ -1,23 +1,12 @@
-#
-#   Hydro
-#
-
-# add includes and libraries
-# --------------------------
-#set(LIBRARY_OUTPUT_PATH "~/bin/lib")
-#set(LIB_DIR "~/bin/lib")
 include_directories(
-	${PROJECT_SOURCE_DIR} 
+	${CURRENT_SOURCE_DIR} 
 	../include 
 	../Iodll 
 	../ECDProtocol 
 	../Utilities 
 	../EcoClass
 	)
-
-# create the library
-# ---------------
-add_library(Hydro SHARED
+add_library(HydrObjt
 	hydrobjt.h 
 	../include/globals.h 
 	../Iodll/iodll.h 
@@ -49,11 +38,4 @@ add_library(Hydro SHARED
 	UniobjtExplicit.cpp
     SymbiosesExample.cpp 
 )
-
-# linker
-# ---------------
-find_library(IODLL IO ${LIB_DIR})
-find_library(ECLASS EcoClass ${LIB_DIR})
-
-target_link_libraries(Hydro ECLASS IODLL)
-
+# vim:et:sw=4:ts=4:

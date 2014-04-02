@@ -1,19 +1,11 @@
-
-#
-#   Phyto
-#
-
-# project name and files 
-# -----------------
-project(Phyto)
-set(PROJ_HDR 
+set(HDR 
 	prodobjt.h 
 	phytobjt.h 
 	../include/globals.h 
 	../Iodll/iodll.h 
 	../EcoClass/EcoDynClass.h
 	)
-set(PROJ_SRC 
+set(SRC 
 	Phytobjt.cpp 
 	Phytobjt2.cpp 
 	AdaptativePhyto.cpp 
@@ -38,30 +30,13 @@ set(PROJ_SRC
 	TejoPhyto.cpp 
 	TPhytoplankton3D.cpp
 	)
-
-
-# add includes and libraries
-# --------------------------
-set(LIBRARY_OUTPUT_PATH "~/bin/lib")
-set(LIB_DIR "~/bin/lib")
 include_directories(
-	${PROJECT_SOURCE_DIR} 
+	${CURRENT_SOURCE_DIR} 
 	../include 
 	../Iodll 
 	../ECDProtocol 
 	../Utilities 
 	../EcoClass
 	)
-
-
-# create the library
-# ---------------
-add_library(${PROJECT_NAME} SHARED ${PROJ_HDR} ${PROJ_SRC})
-
-# linker
-# ---------------
-find_library(IODLL IO ${LIB_DIR})
-find_library(ECLASS EcoClass ${LIB_DIR})
-
-target_link_libraries(${PROJECT_NAME} ${ECLASS} ${IODLL})
-
+add_library(PhytObjt SHARED ${HDR} ${SRC})
+# vim:et:sw=4:ts=4:
