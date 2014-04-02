@@ -10,7 +10,35 @@ add_library(symbioses-ecodynamo SHARED
     )
 
 target_link_libraries(symbioses-ecodynamo
-    ecodynamo
+    EcoDynamoMain
+    BacterObjt
+    DissObjt
+    ECDProtocol
+    EcoClass
+    FishObjt
+    FlowObjt
+    HydrObjt
+    IceAlgaeObjt
+    IceObjt
+    Iodll
+    LiteObjt
+    MacrObjt
+    ManObjt
+    OutputResults
+    params
+    PhytObjt
+    PredatorObjt
+    PreyObjt
+    Sediments
+    SpmObjt
+    TAirObjt
+    Tidedll
+    TideObjt
+    TWatObjt
+    Utilities
+    WindObjt
+    ZoobObjt
+    ZoopObjt
     ${SYMBIOSES_LIBRARIES}
     )
 
@@ -29,7 +57,7 @@ target_link_libraries(EcoDynamo
     symbioses-ecodynamo
     )
 
-add_dependencies(EcoDynamo ecodynamo)
+add_dependencies(EcoDynamo EcoDynamoMain)
 add_dependencies(EcoDynamo track)
 
 install(TARGETS symbioses-ecodynamo

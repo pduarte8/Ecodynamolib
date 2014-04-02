@@ -6,11 +6,12 @@ include_directories(
 	../Utilities 
 	../EcoClass
 	)
-add_library(HydrObjt
-	hydrobjt.h 
+set(HDR hydrobjt.h 
 	../include/globals.h 
 	../Iodll/iodll.h 
 	../EcoClass/EcoDynClass.h
+    )
+set(SRC 
 	Bidiobjt.cpp 
 	Bidiobjt2.cpp 
 	BidiobjtCarl.cpp 
@@ -37,5 +38,6 @@ add_library(HydrObjt
 	Uniobjt.cpp 
 	UniobjtExplicit.cpp
     SymbiosesExample.cpp 
-)
+    )
+add_library(HydrObjt SHARED ${HDR} ${SRC})
 # vim:et:sw=4:ts=4:

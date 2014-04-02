@@ -1,20 +1,46 @@
-include_directories(
-    ${CMAKE_SOURCE_DIR}/src/EcoDynamo
-    ${CMAKE_SOURCE_DIR}/src/include
-    ${CMAKE_SOURCE_DIR}/src/Utilities
-    ${CMAKE_SOURCE_DIR}/src/Iodll
-    ${CMAKE_SOURC_DIR}/src/EcoClass
-    ${CMAKE_SOURC_DIR}/src/ECDProtocol
-    ${CMAKE_SOURC_DIR}/src/OutputResults
-	)
-add_executable(EcoDynamo-UXX
+add_executable(EcoDynamo-UX
     ${CMAKE_SOURCE_DIR}/src/EcoDynamo/EcoDynamo.h
 	main.cpp
 	)
 
-find_package(Threads REQUIRED)
-#target_link_libraries(EcoDynamo
-    #${CMAKE_THREAD_LIBS_INIT}
-    #rt
-	#)
+target_link_libraries(EcoDynamo-UX
+    EcoDynamoMain
+    ManObjt
+    BacterObjt
+    DissObjt
+    ECDProtocol
+    EcoClass
+    FishObjt
+    FlowObjt
+    HydrObjt
+    IceAlgaeObjt
+    IceObjt
+    Iodll
+    LiteObjt
+    MacrObjt
+    OutputResults
+    params
+    PhytObjt
+    PredatorObjt
+    PreyObjt
+    Sediments
+    SpmObjt
+    TAirObjt
+    TideObjt
+    Tidedll
+    TWatObjt
+    Utilities
+    WindObjt
+    ZoobObjt
+    ZoopObjt
+    ${SYMBIOSES_LIBRARIES}
+    ${HDF5_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
+    rt
+    )
+
+install(TARGETS 
+    EcoDynamo-UX
+    RUNTIME DESTINATION bin
+    )
 # vim:et:sw=4:ts=4:
