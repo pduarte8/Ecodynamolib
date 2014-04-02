@@ -36,8 +36,9 @@ include_directories(
 	../Utilities
 	)
 add_library(ECDProtocol SHARED ${HDR} ${SRC})
-# vim:et:sw=4:ts=4:
 
 install(TARGETS ECDProtocol
     DESTINATION lib
 )
+
+# vim:et:sw=4:ts=4:

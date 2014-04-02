@@ -21,8 +21,9 @@ include_directories(
 	../EcoClass
 	)
 add_library(ZoopObjt SHARED ${HDR} ${SRC})
-# vim:et:sw=4:ts=4:
 
 install(TARGETS ZoopObjt
     DESTINATION lib
 )
+
+# vim:et:sw=4:ts=4:

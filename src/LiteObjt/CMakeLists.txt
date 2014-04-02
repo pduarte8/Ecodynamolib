@@ -17,8 +17,9 @@ include_directories(
 	../EcoClass
 	)
 add_library(LiteObjt SHARED ${HDR} ${SRC})
-# vim:et:sw=4:ts=4:
 
 install(TARGETS LiteObjt
     DESTINATION lib
 )
+
+# vim:et:sw=4:ts=4:

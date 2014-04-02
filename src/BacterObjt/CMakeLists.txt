@@ -17,8 +17,9 @@ include_directories(
 	../EcoClass
 	)
 add_library(BacterObjt SHARED ${HDR} ${SRC})
-# vim:et:sw=4:ts=4:
 
 install(TARGETS BacterObjt
     DESTINATION lib
 )
+
+# vim:et:sw=4:ts=4:

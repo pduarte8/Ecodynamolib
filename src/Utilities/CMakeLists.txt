@@ -12,8 +12,9 @@ include_directories(
 	../include
 	)
 add_library(Utilities SHARED ${HDR} ${SRC})
-# vim:et:sw=4:ts=4:
 
 install(TARGETS Utilities
     DESTINATION lib
 )
+
+# vim:et:sw=4:ts=4:

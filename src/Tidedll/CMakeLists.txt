@@ -13,8 +13,9 @@ include_directories(
 	../params
 	)
 add_library(Tidedll SHARED ${HDR} ${SRC})
-# vim:et:sw=4:ts=4:
 
 install(TARGETS Tidedll
     DESTINATION lib
 )
+
+# vim:et:sw=4:ts=4:

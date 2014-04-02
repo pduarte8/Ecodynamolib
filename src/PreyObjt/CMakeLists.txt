@@ -16,8 +16,9 @@ include_directories(
 	../EcoClass
 	)
 add_library(PreyObjt SHARED ${HDR} ${SRC})
-# vim:et:sw=4:ts=4:
 
 install(TARGETS PreyObjt
     DESTINATION lib
 )
+
+# vim:et:sw=4:ts=4:

@@ -39,9 +39,13 @@ set(SRC
 	UniobjtExplicit.cpp
     SymbiosesExample.cpp 
     )
+
 add_library(HydrObjt SHARED ${HDR} ${SRC})
-# vim:et:sw=4:ts=4:
+target_link_libraries(HydrObjt EcoClass)
 
 install(TARGETS HydrObjt
     DESTINATION lib
 )
+
+
+# vim:et:sw=4:ts=4:

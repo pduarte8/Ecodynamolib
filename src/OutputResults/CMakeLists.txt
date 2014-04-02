@@ -27,8 +27,9 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 add_library(OutputResults SHARED ${HDR} ${SRC})
-# vim:et:sw=4:ts=4:
 
 install(TARGETS OutputResults
     DESTINATION lib
 )
+
+# vim:et:sw=4:ts=4:

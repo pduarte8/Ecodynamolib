@@ -14,8 +14,9 @@ include_directories(
 	../Iodll
 	)
 add_library(Iodll SHARED ${HDR} ${SRC})
-# vim:et:sw=4:ts=4:
 
 install(TARGETS Iodll
     DESTINATION lib
 )
+
+# vim:et:sw=4:ts=4:

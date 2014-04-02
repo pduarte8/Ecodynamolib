@@ -26,4 +26,5 @@ endif(COMMAND cmake_policy)
 
 add_library(EcoDynamoMain SHARED ${HDR} ${SRC})
 
+
 # vim:et:sw=4:ts=4:

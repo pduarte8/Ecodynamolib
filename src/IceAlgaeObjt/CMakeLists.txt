@@ -20,8 +20,9 @@ include_directories(
 	../PhytObjt
 	)
 add_library(IceAlgaeObjt SHARED ${HDR} ${SRC})
-# vim:et:sw=4:ts=4:
 
 install(TARGETS IceAlgaeObjt
     DESTINATION lib
 )
+
+# vim:et:sw=4:ts=4:

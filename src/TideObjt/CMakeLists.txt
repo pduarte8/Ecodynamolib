@@ -19,8 +19,9 @@ include_directories(
 	../Tidedll
 	)
 add_library(TideObjt SHARED ${HDR} ${SRC})
-# vim:et:sw=4:ts=4:
 
 install(TARGETS TideObjt
     DESTINATION lib
 )
+
+# vim:et:sw=4:ts=4:

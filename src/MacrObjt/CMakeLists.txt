@@ -28,8 +28,9 @@ include_directories(
 	../PhytObjt
 	)
 add_library(MacrObjt SHARED ${HDR} ${SRC})
-# vim:et:sw=4:ts=4:
 
 install(TARGETS MacrObjt
     DESTINATION lib
 )
+
+# vim:et:sw=4:ts=4:

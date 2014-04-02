@@ -30,8 +30,9 @@ include_directories(
 	../EcoClass
 	)
 add_library(TWatObjt SHARED ${HDR} ${SRC})
-# vim:et:sw=4:ts=4:
 
 install(TARGETS TWatObjt
     DESTINATION lib
 )
+
+# vim:et:sw=4:ts=4:

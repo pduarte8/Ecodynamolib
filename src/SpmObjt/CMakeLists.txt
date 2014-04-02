@@ -28,8 +28,9 @@ include_directories(
 	../EcoClass
 	)
 add_library(SpmObjt SHARED ${HDR} ${SRC})
-# vim:et:sw=4:ts=4:
 
 install(TARGETS SpmObjt
     DESTINATION lib
 )
+
+# vim:et:sw=4:ts=4:

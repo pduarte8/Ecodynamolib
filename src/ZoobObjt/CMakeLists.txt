@@ -33,8 +33,9 @@ include_directories(
 	../Utilities
 	)
 add_library(ZoobObjt SHARED ${HDR} ${SRC})
-# vim:et:sw=4:ts=4:
 
 install(TARGETS ZoobObjt
     DESTINATION lib
 )
+
+# vim:et:sw=4:ts=4:

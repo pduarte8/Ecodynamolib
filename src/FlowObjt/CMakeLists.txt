@@ -21,8 +21,9 @@ include_directories(
 	../EcoClass
 	)
 add_library(FlowObjt SHARED ${HDR} ${SRC})
-# vim:et:sw=4:ts=4:
 
 install(TARGETS FlowObjt
     DESTINATION lib
 )
+
+# vim:et:sw=4:ts=4:

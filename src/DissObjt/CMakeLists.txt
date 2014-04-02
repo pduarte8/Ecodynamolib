@@ -28,8 +28,9 @@ include_directories(
 	../EcoClass
 	)
 add_library(DissObjt SHARED ${HDR} ${SRC})
-# vim:et:sw=4:ts=4:
 
 install(TARGETS DissObjt
     DESTINATION lib
 )
+
+# vim:et:sw=4:ts=4:

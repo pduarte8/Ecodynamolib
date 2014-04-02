@@ -20,8 +20,9 @@ include_directories(
 	../EcoClass
 	)
 add_library(Sediments SHARED ${HDR} ${SRC})
-# vim:et:sw=4:ts=4:
 
 install(TARGETS Sediments
     DESTINATION lib
 )
+
+# vim:et:sw=4:ts=4:
