@@ -21,3 +21,7 @@ include_directories(
 	)
 add_library(Sediments SHARED ${HDR} ${SRC})
 # vim:et:sw=4:ts=4:
+
+install(TARGETS Sediments
+    DESTINATION lib
+)

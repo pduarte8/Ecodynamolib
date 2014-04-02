@@ -18,3 +18,7 @@ include_directories(
 	)
 add_library(BacterObjt SHARED ${HDR} ${SRC})
 # vim:et:sw=4:ts=4:
+
+install(TARGETS BacterObjt
+    DESTINATION lib
+)

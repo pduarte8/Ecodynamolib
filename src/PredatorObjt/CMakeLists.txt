@@ -17,3 +17,7 @@ include_directories(
 	)
 add_library(PredatorObjt SHARED ${HDR} ${SRC})
 # vim:et:sw=4:ts=4:
+
+install(TARGETS PredatorObjt
+    DESTINATION lib
+)

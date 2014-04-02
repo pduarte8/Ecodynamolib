@@ -41,3 +41,7 @@ set(SRC
     )
 add_library(HydrObjt SHARED ${HDR} ${SRC})
 # vim:et:sw=4:ts=4:
+
+install(TARGETS HydrObjt
+    DESTINATION lib
+)

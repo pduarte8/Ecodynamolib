@@ -23,3 +23,7 @@ include_directories(
 	)
 add_library(TAirObjt SHARED ${HDR} ${SRC})
 # vim:et:sw=4:ts=4:
+
+install(TARGETS TAirObjt
+    DESTINATION lib
+)

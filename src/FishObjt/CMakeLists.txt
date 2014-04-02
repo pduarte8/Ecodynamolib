@@ -22,3 +22,7 @@ include_directories(
 	)
 add_library(FishObjt SHARED ${HDR} ${SRC})
 # vim:et:sw=4:ts=4:
+
+install(TARGETS FishObjt
+    DESTINATION lib
+)
