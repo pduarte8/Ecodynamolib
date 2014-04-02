@@ -46,7 +46,6 @@ void EcoDynamoAquaticModel::getOrganism(Organism *o, int n,
         s->printVelocity(10, 10, 10);
         s->printVelocity(20, 20, 20);
         s->printVelocity(30, 30, 30);
-
     } else {
         s->printTS(10, 10, 10);
         s->printTS(20, 20, 20);
