@@ -55,6 +55,7 @@ target_link_libraries(EcoDynamo
     WindObjt
     ZoobObjt
     ZoopObjt
+    ${HDF5_LIBRARIES}
     )
 
 add_dependencies(EcoDynamo EcoDynamoMain)
