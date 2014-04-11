@@ -10,11 +10,10 @@ EcoDynamoAquaticModel::EcoDynamoAquaticModel() {
     setPluginName("EcoDynamo 1.0");
     nOrganisms = 1;
     t = 0;
-    dt = 3600;
+    dt = 720;
     dynamo = new EcoDynamo();
     TEcoDynClass *dynclass = dynamo->init();
     s = new TTriDimensionalSymbioses(dynclass, "foobar");
-    //ecodynamo_initialize();
 }
 
 EcoDynamoAquaticModel::~EcoDynamoAquaticModel() {
@@ -23,8 +22,8 @@ EcoDynamoAquaticModel::~EcoDynamoAquaticModel() {
     delete dynamo;
 }
 int EcoDynamoAquaticModel::next() {
-	dynamo->next();
-    return 0;
+    dynamo->next();
+    return 1;
 }
 
 int EcoDynamoAquaticModel::getModelTime() {
@@ -38,7 +37,7 @@ int EcoDynamoAquaticModel::getModelTimeStep() {
 
 void EcoDynamoAquaticModel::getOrganism(Organism *o, int n,
         float lat, float lon, float depth) {
-    assert(n >= 0 and n < nOrganisms);
+    assert(n >= 0 and n <= nOrganisms);
 
     o->setId(n);
     o->setWeight(0.0);
