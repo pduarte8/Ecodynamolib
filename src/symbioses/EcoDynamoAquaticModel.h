@@ -5,23 +5,25 @@
 #include "AquaticModel.h"
 #include "Organism.h"
 #include "hydrobjt.h"
+#include "EcoDynamo.h"
 
 class EcoDynamoAquaticModel: public AquaticModel {
     public:
         EcoDynamoAquaticModel();
         ~EcoDynamoAquaticModel();
 
+        int next();
         int getModelTime();
         int getModelTimeStep();
 
         int getNumOrganismTypes() const { return nOrganisms; }
-        void getControlVolume(int i, int j, int d, float *vol);
         void getOrganism(Organism *o, int n, float lat, float lon, float depth);
     private:
         int nOrganisms;
         int t;
         int dt;
-        SymbiosesExample *s;
+        EcoDynamo *dynamo;
+        TTriDimensionalSymbioses *s;
 
 };
 

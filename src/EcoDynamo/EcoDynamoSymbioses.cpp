@@ -1,14 +1,14 @@
 /*
  * EcoDynamoSymbioses.cpp
- * 
+ *
  * - implement EcoDynamo functions that interface with Symbioses:
- * 
+ *
  *   Public:
  *     	EcoDynamo()
  * 		void init()
  * 		void next()
  * 		void finalize()
- * 
+ *
  * Copyright 2014 - A.Pereira / P.Duarte, Norsk Polarinstitutt
  */
 
@@ -28,21 +28,21 @@ using namespace std;
 //
 // EcoDynamo default constructor
 //
-EcoDynamo::EcoDynamo() 
+EcoDynamo::EcoDynamo()
 {
 	strcpy(defaultModelPath, "Model");
 	initResources();
 }
 //---------------------------------------------------------------------------
 
-void EcoDynamo::init()
+TEcoDynClass *EcoDynamo::init()
 {
   TEcoDynClass* pEDC;
   int i;
 
 	if (!readParameters()) {
         cerr << "\n\t[2] Error reading model properties." << endl;
-        cerr << "\t     Please correct EcoDynamo.properties file in " << defaultModelPath 
+        cerr << "\t     Please correct EcoDynamo.properties file in " << defaultModelPath
                 << " directory \n\n " << endl;
 	}
 
@@ -52,7 +52,7 @@ void EcoDynamo::init()
 
     //~ cout << "EcoDynamo::init 2 - fill subdomain" << endl;
     fillSubDomain();
-	
+
     for (i = 0; i < pEDCQueue->size(); i++) {
         pEDC =(TEcoDynClass*)pEDCQueue->RetrieveObject(i);
         pEDC->enableDebug(debugMessages());
@@ -81,7 +81,8 @@ void EcoDynamo::init()
 	firstRegister = true;
 
 	//~ cout << "EcoDynamo::init done" << endl;
-	
+    return pEDC;
+
 }
 //---------------------------------------------------------------------------
 
@@ -89,7 +90,7 @@ void EcoDynamo::next()
 {
   //---- Place execute code here ----
   TEcoDynClass* pEDC = NULL;
-  
+
     if ((MyTime >= defaultsRecord.OutputStartTime)
             && (MyTime <= defaultsRecord.OutputFinishTime)) {
 

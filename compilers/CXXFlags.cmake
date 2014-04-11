@@ -1,6 +1,6 @@
 if (NOT DEFINED DEFAULT_CXX_FLAGS_SET)
 if (CMAKE_COMPILER_IS_GNUCXX)
-    set (CMAKE_CXX_FLAGS "-std=c++11 -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wno-write-strings -Wno-unused")
+    set (CMAKE_CXX_FLAGS "-std=c++11 -Wno-unknown-pragmas -Wno-sign-compare -Wno-write-strings -Wno-unused")
     set (CMAKE_CXX_FLAGS_DEBUG "-O0 -g3 -DDEBUG")
     set (CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
     if (ENABLE_CODE_COVERAGE)

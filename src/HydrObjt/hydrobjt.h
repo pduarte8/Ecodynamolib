@@ -9,6 +9,8 @@
 #define HYDROBJT_H
 
 #include "EcoDynClass.h"
+#include "HydrodynamicModel.h"
+#include "AtmosphericModel.h"
 
 // DLL header file
 
@@ -1332,19 +1334,24 @@ class _export TTriDimensionalWithBodyDrag2 : public TTriDimensionalWithBodyDrag
         double Superbee(double r);
 };
 
-class _export SymbiosesExample
+class _export TTriDimensionalSymbioses : public TTriDimensionalWithBodyDrag2
 {
-	public :
-		SymbiosesExample();
-        ~SymbiosesExample();
-        void printGrid() const;
-        void printVelocity(int i, int j, int k) const;
-        void printTS(int i, int j, int k) const;
+    public :
+        TTriDimensionalSymbioses(TEcoDynClass* PEcoDynClass, char* className);
+        ~TTriDimensionalSymbioses();
+        virtual void Go();
     private:
         int *griddims;
         float *gridlats;
         float *gridlons;
+        HydrodynamicModel *ocean;
+        AtmosphericModel *atmo;
+
+
+        void ReadVariablesFromSymbioses();
 };
+
+
 
 static TEcoDynClass *PTransport;
 

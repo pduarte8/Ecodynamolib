@@ -35,9 +35,10 @@ set(SRC
 	TriDimensionalDynamicSurfLayer.cpp 
 	TriDimensionalWithBodyDrag.cpp 
 	TriDimensionalWithBodyDrag2.cpp 
+    TridiobjtSymbioses.cpp
 	Uniobjt.cpp 
 	UniobjtExplicit.cpp
-    SymbiosesExample.cpp 
+    #SymbiosesExample.cpp 
     )
 
 add_library(HydrObjt SHARED ${HDR} ${SRC})

@@ -8,50 +8,49 @@ using namespace std;
 
 EcoDynamoAquaticModel::EcoDynamoAquaticModel() {
     setPluginName("EcoDynamo 1.0");
-    nOrganisms = 0;
+    nOrganisms = 1;
     t = 0;
     dt = 3600;
-    s = new SymbiosesExample();
+    dynamo = new EcoDynamo();
+    TEcoDynClass *dynclass = dynamo->init();
+    s = new TTriDimensionalSymbioses(dynclass, "foobar");
     //ecodynamo_initialize();
 }
 
 EcoDynamoAquaticModel::~EcoDynamoAquaticModel() {
+    dynamo->finalize();
     delete s;
-    //ecodynamo_finalize();
+    delete dynamo;
+}
+int EcoDynamoAquaticModel::next() {
+	dynamo->next();
+    return 0;
 }
 
 int EcoDynamoAquaticModel::getModelTime() {
-	//return ecodynamo_get_time();
     t += dt;
     return t;
 }
 
 int EcoDynamoAquaticModel::getModelTimeStep() {
     return dt;
-	//return ecodynamo_get_time_step();
-}
-
-void EcoDynamoAquaticModel::getControlVolume(int i, int j, int d, float *vol) {
-    vol[0] = 1.0;
-    vol[1] = 1.0;
-    vol[2] = 1.0;
-    //ecodynamo_control_volume(vol);
 }
 
 void EcoDynamoAquaticModel::getOrganism(Organism *o, int n,
         float lat, float lon, float depth) {
-    if (n == 0) {
-        s->printGrid();
-    } else if (n == 1) {
-        s->printVelocity(10, 10, 10);
-        s->printVelocity(20, 20, 20);
-        s->printVelocity(30, 30, 30);
-    } else {
-        s->printTS(10, 10, 10);
-        s->printTS(20, 20, 20);
-        s->printTS(30, 30, 30);
+    assert(n >= 0 and n < nOrganisms);
+
+    o->setId(n);
+    o->setWeight(0.0);
+    o->setAbundance(0.0);
+    o->setSize(0.0);
+    o->setAge(t);
+    o->setGrowthRate(0.0);
+    o->setReproductionRate(0.0);
+    o->setMortalityRate(0.0);
+    o->setFeedingRate(0.0);
+    for (int i=0; i < o->getNumBodyBurdens(); i++) {
+        o->setBodyBurden(i, 0.0);
     }
-    //assert(n < nOrganisms);
-    //ecodynamo_get_organism(o, n+1, lat, lon, depth);
 }
 

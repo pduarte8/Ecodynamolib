@@ -1,7 +1,7 @@
 /***
  *  header file for EcoDynamo class
  */
- 
+
 #ifndef _ECODYNAMO_H_
 #define _ECODYNAMO_H_
 
@@ -55,7 +55,7 @@ public:
      * Run model - start simulation
      */
     void runModel();
-	
+
 	/**
 	 * Set configuration parameters
 	 */
@@ -72,23 +72,23 @@ public:
 	void setHDFSamplesValue(int value);
 
 	/**
-	 * Test function 
+	 * Test function
 	 */
 	void printDefaults();
-	
+
 	/**
      * Get model state
      * @return model state in simulation
      */
     int getModelState();
-    
+
 	void Debugger(int debug);
 	void Debugger(unsigned debug);
 	void Debugger(long debug);
 	void Debugger(float debug);
 	void Debugger(char* debug);
 	void Debugger(string debug);
-	
+
     //   === MainProperties.cpp ===
 	/**
      * Read properties of the model
@@ -114,7 +114,7 @@ public:
 //  interface with Symbioses
 //
 //==========================================
-	void init();
+	TEcoDynClass *init();
 	void next();
 	void finalize();
 //==========================================
@@ -150,7 +150,7 @@ private:
      * Initialize classes to run the model
      */
 	void getVariables(Queue* pEDCQueue, char* className, TEcoDynClass::VarsRecord* pVars);
-    
+
     //   === MainRun.cpp ===
 	void startRunning(bool stepMode, int nSteps, bool agentCmd);
 	void initializeClasses(bool agentCmd);
@@ -160,27 +160,27 @@ private:
 	bool debugMessages();
 	void fillSubDomain();
 	bool readPointsFile(char* fileName, int& size, PointBox* &filePoints);
-	
+
 /** ====================================
  *                fields...
  *  ====================================
  */
 public:
 #ifdef __BORLANDC__
-	
+
 	RunThread runThread;
 #else  // BORLANDC__
-	
+
 	pthread_t runThreadX;
 #endif  // __BORLANDC__
 
 	RUN_STRUCT runStruct;
-	
+
     DefaultsRecord defaultsRecord;
     TEcoDynClass* MyPEcoDynClass;
     Queue *pEDCQueue;
 	OutputResults* pResults;
-	
+
 private:
 	OUTPUT_REGISTER outRegister;	// values are initialized here
     char defaultModelPath[256];    	// value passed by arg (-path)
@@ -197,7 +197,7 @@ private:
     long modelTime;     // AP, 2005.08.02
 
     Properties* pProperties;
-    
+
     SubDomain subDomain;
     TEcoDynClass::VarsRecord* varsRecord;
 
@@ -210,7 +210,7 @@ private:
     double simulationTime;
     double lastSimulationTime;
     int lastStep;
-    
+
     //   === EcoDynamoSymbioses.cpp
     double MyTime;
     double TimeSpent;
