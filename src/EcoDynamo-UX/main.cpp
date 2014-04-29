@@ -27,8 +27,10 @@ timespec t, start, end;
 
 	clock_gettime(CLOCK_REALTIME, &start);  //register start time
 	if (argc < 2) {
-		printOptions(argv[0]);
-		return -1;
+		/*printOptions(argv[0]);
+		return -1; */
+                strcpy(pathName,"../../modules/ecodynamo/Models/SymbiosesTest");
+                cout << pathName << endl;
 	}
 	
 	int i = 1;

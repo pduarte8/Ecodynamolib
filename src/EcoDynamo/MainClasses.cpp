@@ -157,6 +157,12 @@ void EcoDynamo::getVariables(Queue* pEDCQueue, char* className,
         pEDCQueue->InsertObject((TObject*)PTransport);
         addAvailableVariables(PTransport, pVars);
     }
+    else if (strcmp(className, "TTriDimensionalSymbioses") == 0) {
+        PTransport = new TTriDimensionalSymbioses(MyPEcoDynClass, className);
+       	MyPEcoDynClass->SetTransportPointer(PTransport);    // hydrodynamics
+        pEDCQueue->InsertObject((TObject*)PTransport);
+        addAvailableVariables(PTransport, pVars);
+    }
     else if (strcmp(className, "TMixedReactor") == 0) {
         PTransport = new TMixedReactor(MyPEcoDynClass, className);
        	MyPEcoDynClass->SetTransportPointer(PTransport);    // hydrodynamics
