@@ -1404,7 +1404,9 @@ char* TEcoDynClass::GetAvailableParameters(int i)
 #ifndef _PORT_FORTRAN_
 bool TEcoDynClass::OpenMorphology()
 {
-    return OpenMorphology(GetMorphologyFile());
+  //cout << "Open morphology 1" << endl;
+   return OpenMorphology(GetMorphologyFile());
+   // cout << "Open morphology 10" << endl;
 }
 
 bool TEcoDynClass::OpenMorphology(char* FileName)
@@ -1415,32 +1417,37 @@ bool TEcoDynClass::OpenMorphology(char* FileName)
 		XNbo, XEbo, XSbo, XWbo, XLay, XLatitude, XLongitude;
     strcpy(MorphologyFileName, FileName);
     LatitudeBoolean = true; LongitudeBoolean = true;
-
+    
     TReadWrite* PReadWrite = new TReadWrite(MorphologyFileName);
+    
     if (!PReadWrite->SetupFile(READFILE))
     {
         PReadWrite->CloseFile();
         return false;
     }
-
+    
     // AP, 030723..
     NumberOfLines = NumberOfColumns = NumberOfLayers = NumberOfBoxes = 1;
     if (PReadWrite->FindString("NumberOfLines", X, Y))
         PReadWrite->ReadNumber(X + 1, Y, NumberOfLines);
+   
     if (PReadWrite->FindString("NumberOfColumns", X, Y))
-        PReadWrite->ReadNumber(X + 1, Y, NumberOfColumns); 
+        PReadWrite->ReadNumber(X + 1, Y, NumberOfColumns);
+  
     if (PReadWrite->FindString("NumberOfLayers", X, Y))
     {
         PReadWrite->ReadNumber(X + 1, Y, NumberOfLayers);
     }
-
+     
     /* AP, 070614...
     PReadWrite->FindString("NumberOfBoxes", X, Y);
     PReadWrite->ReadNumber(X + 1, Y, NumberOfBoxes);
     */
+    
     NumberOfBoxes = NumberOfLines * NumberOfColumns * NumberOfLayers;
+   
     // ... AP, 070614
-
+   
     BoxArray = new TBoxes::BoxRecord[NumberOfBoxes];
     BoxArrayAllocated = true;
     
@@ -1451,25 +1458,29 @@ bool TEcoDynClass::OpenMorphology(char* FileName)
     // AP, 070511
     if (PReadWrite->FindString("ModelType", X, Y))
         PReadWrite->ReadString(X + 1, Y, modelType);
-
+   
     if (!PReadWrite->FindString("Latitude", XLatitude, Y)) {
         //PReadWrite->CloseFile();
         LatitudeBoolean = false;
     }
+    
     if (!PReadWrite->FindString("Longitude", XLongitude, Y)) {
         //PReadWrite->CloseFile();
         LongitudeBoolean = false;
     }
+    
     // Verify if all mandatory columns exist...
     //
     if (!PReadWrite->FindString("Columns", XCol, Y)) {
         PReadWrite->CloseFile();
         return false;
     }
+   
     if (!PReadWrite->FindString("Lines", XLin, Y)) {
         PReadWrite->CloseFile();
         return false;
     }
+   
     if (NumberOfLayers > 1)
     {
         if (!PReadWrite->FindString("Layers", XLay, Y)) {
@@ -1477,6 +1488,7 @@ bool TEcoDynClass::OpenMorphology(char* FileName)
             return false;
         }
     }
+   
     if (!PReadWrite->FindString("BoxDepth", XDep, Y)) {
         PReadWrite->CloseFile();
         return false;
@@ -1516,22 +1528,33 @@ bool TEcoDynClass::OpenMorphology(char* FileName)
 
 
     Y++;
-
+    // cout << "Open morphology 6" << endl;
+    // cout << NumberOfBoxes << endl;
     int line, column, index, layer;
     NumberOfSeaBoundaries = 0;
     for (int i = 0; i < NumberOfBoxes; i++)
     {
+        if (i >= 916023) cout << i << endl;
         PReadWrite->ReadNumber(XCol, Y + i, column);
+        if (i >= 916023) cout << XCol << endl;
+        if (i >= 916023) cout << Y << endl;
+        if (i >= 916023) cout << column << endl;
+        if (i >= 916023) cout << XLin << endl;
+        if (i >= 916023) cout << "Fim" << endl;
         PReadWrite->ReadNumber(XLin, Y + i, line);
+        
+        if (i >= 916023) cout << "Fimline2" << endl;
 
         if (NumberOfLayers == 1)
             index = GetBoxNumber(column, line);
         else {
             PReadWrite->ReadNumber(XLay, Y + i, layer);
+            //if (i >= 916023) cout << layer << endl;
             index = GetBoxNumber(column, line, layer/*NumberOfLayers-layer+1*/);
+            
         }
-
-        PReadWrite->ReadNumber(XDep, Y + i, BoxArray[index].Depth);
+        //if (i >= 916023) cout << index << endl;
+        PReadWrite->ReadNumber(XDep, Y + i, BoxArray[index].Depth);//cout << XDep, Y + 1,BoxArray[index].Depth << endl;
         PReadWrite->ReadNumber(XLen, Y + i, BoxArray[index].Length);
         PReadWrite->ReadNumber(XWid, Y + i, BoxArray[index].Width);
         PReadWrite->ReadNumber(XEle, Y + i, BoxArray[index].Elevation);
@@ -1547,7 +1570,20 @@ bool TEcoDynClass::OpenMorphology(char* FileName)
 			PReadWrite->ReadNumber(XLongitude, Y + i, BoxArray[index].XPosition);
 
         BoxArray[index].Dummybool1 = true;
-
+        /*if (i >= 916023)
+	{
+	   cout << BoxArray[index].Depth << endl;
+           cout << BoxArray[index].Length << endl;
+           cout << BoxArray[index].Width << endl;
+           cout << BoxArray[index].Elevation  << endl;
+           cout << BoxArray[index].Type << endl;
+           cout << BoxArray[index].BoxToBoundary[1].TypeOfBoundary << endl;
+           cout << BoxArray[index].BoxToBoundary[2].TypeOfBoundary << endl;
+           cout << BoxArray[index].BoxToBoundary[3].TypeOfBoundary << endl;
+           cout << BoxArray[index].BoxToBoundary[4].TypeOfBoundary << endl;
+           cout << BoxArray[index].YPosition << endl;
+           cout << BoxArray[index].XPosition << endl;
+	   }*/
         if ((BoxArray[index].BoxToBoundary[1].TypeOfBoundary == 2) ||
             (BoxArray[index].BoxToBoundary[2].TypeOfBoundary == 2) ||
             (BoxArray[index].BoxToBoundary[3].TypeOfBoundary == 2) ||
@@ -1555,6 +1591,7 @@ bool TEcoDynClass::OpenMorphology(char* FileName)
              NumberOfSeaBoundaries++;
     }
     PReadWrite->CloseFile();
+    // cout << "Open morphology 7" << endl;
     if (NumberOfLayers == 1){
       for (int i = 0; i < NumberOfLines; i++)
       {
