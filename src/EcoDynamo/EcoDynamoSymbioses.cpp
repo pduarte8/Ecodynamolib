@@ -80,7 +80,7 @@ TEcoDynClass *EcoDynamo::init()
 	TimeSpent = 0.0;
 	firstRegister = true;
 
-	//~ cout << "EcoDynamo::init done" << endl;
+	cout << "EcoDynamo::init done" << endl;
     return pEDC;
 
 }
