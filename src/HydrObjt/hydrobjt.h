@@ -1340,6 +1340,8 @@ class _export TTriDimensionalSymbioses : public TTriDimensionalWithBodyDrag2
         TTriDimensionalSymbioses(TEcoDynClass* PEcoDynClass, char* className);
         ~TTriDimensionalSymbioses();
         virtual void Go();
+    protected:
+        virtual void Continuity();
     private:
         int *griddims;
         float *gridlats;

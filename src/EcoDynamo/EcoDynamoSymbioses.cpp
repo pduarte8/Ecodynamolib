@@ -42,8 +42,7 @@ TEcoDynClass *EcoDynamo::init()
 {
   TEcoDynClass* pEDC;
   int i;
-
-	if (!readParameters()) {
+ 	if (!readParameters()) {
         cerr << "\n\t[2] Error reading model properties." << endl;
         cerr << "\t     Please correct EcoDynamo.properties file in " << defaultModelPath
                 << " directory \n\n " << endl;
@@ -83,16 +82,17 @@ TEcoDynClass *EcoDynamo::init()
 	TimeSpent = 0.0;
 	firstRegister = true;
 
-	//~ cout << "EcoDynamo::init done" << endl;
-    return pEDC;
+	cout << "EcoDynamo::init done" << endl;
+	return pEDC;
 
 }
 //---------------------------------------------------------------------------
 
 void EcoDynamo::next()
 {
-  //---- Place execute code here ----
-  TEcoDynClass* pEDC = NULL;
+   cout << "EcoDynamo::next beginning" << endl;
+   //---- Place execute code here ----
+   TEcoDynClass* pEDC = NULL;
 
     if ((MyTime >= defaultsRecord.OutputStartTime)
             && (MyTime <= defaultsRecord.OutputFinishTime)) {

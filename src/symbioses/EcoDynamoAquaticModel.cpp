@@ -13,7 +13,7 @@ EcoDynamoAquaticModel::EcoDynamoAquaticModel() {
     dt = 720;
     dynamo = new EcoDynamo();
     TEcoDynClass *dynclass = dynamo->init();
-    s = new TTriDimensionalSymbioses(dynclass, "foobar");
+    //s = new TTriDimensionalSymbioses(dynclass, "foobar");
 }
 
 EcoDynamoAquaticModel::~EcoDynamoAquaticModel() {
