@@ -1339,20 +1339,18 @@ class _export TTriDimensionalSymbioses : public TTriDimensionalWithBodyDrag2
     public :
         TTriDimensionalSymbioses(TEcoDynClass* PEcoDynClass, char* className);
         ~TTriDimensionalSymbioses();
-        virtual void freeMemory();
         virtual void Go();
     protected:
         virtual void Continuity();
-        virtual void AdvectDiffuse(double* Generic);
     private:
         int *griddims;
         float *gridlats;
         float *gridlons;
         HydrodynamicModel *ocean;
         AtmosphericModel *atmo;
+
+
         void ReadVariablesFromSymbioses();
-        void CorrectVelocities();
-        double *Tilt;
 };
 
 
