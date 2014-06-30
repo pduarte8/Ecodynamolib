@@ -7,10 +7,11 @@
 using namespace std;
 
 EcoDynamoAquaticModel::EcoDynamoAquaticModel() {
+    SymbiosesFramework &symb = SymbiosesFramework::getInstance();
     setPluginName("EcoDynamo 1.0");
     nOrganisms = 1;
     t = 0;
-    dt = 720;
+    dt = symb.getReferenceTimeStep();
     dynamo = new EcoDynamo();
     TEcoDynClass *dynclass = dynamo->init();
     //s = new TTriDimensionalSymbioses(dynclass, "foobar");
