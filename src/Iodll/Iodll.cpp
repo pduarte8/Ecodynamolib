@@ -497,8 +497,14 @@ bool TReadWrite::ReadCell (int AXPlace,
 
     memset(CellValue, 0, sizeof(CellValue));
     memset(TrimmedCellValue, 0, sizeof(TrimmedCellValue));
-
+    int ii;
+    /* if ((AXPlace == 1) && (AYPlace == 916030)){
+      cout << "ReadCell" << endl; 
+      cout << pChar << endl; 
+      cout << "FinishedReadCell" << endl;
+      }*/
     OneChar = *pChar++;
+    if ((AXPlace == 1) && (AYPlace == 916030))cout << "A" << endl;
     while (OneChar != EOF)
     {
         if (IsSeparator(OneChar) || IsEndOfLine(OneChar))
@@ -509,6 +515,7 @@ bool TReadWrite::ReadCell (int AXPlace,
         }
         OneChar = *pChar++;
     }
+    //if ((AXPlace == 1) && (AYPlace == 916030))cout << "B" << endl;
     if (strlen(CellValue) != 0)
     {
     	trim(TrimmedCellValue, CellValue);

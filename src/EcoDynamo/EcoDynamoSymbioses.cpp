@@ -30,7 +30,10 @@ using namespace std;
 //
 EcoDynamo::EcoDynamo()
 {
-	strcpy(defaultModelPath, "Model");
+       strcpy(defaultModelPath, "Model");
+       // strcpy(defaultModelPath,"/home/pduarte/symbioses-npi/modules/ecodynamo/models/SymbiosesTest");
+       // strcpy(defaultModelPath,"../../modules/ecodynamo/models/SymbiosesTest");
+        cout << defaultModelPath << endl; 
 	initResources();
 }
 //---------------------------------------------------------------------------
