@@ -1534,16 +1534,9 @@ bool TEcoDynClass::OpenMorphology(char* FileName)
     NumberOfSeaBoundaries = 0;
     for (int i = 0; i < NumberOfBoxes; i++)
     {
-        if (i >= 916023) cout << i << endl;
         PReadWrite->ReadNumber(XCol, Y + i, column);
-        if (i >= 916023) cout << XCol << endl;
-        if (i >= 916023) cout << Y << endl;
-        if (i >= 916023) cout << column << endl;
-        if (i >= 916023) cout << XLin << endl;
-        if (i >= 916023) cout << "Fim" << endl;
         PReadWrite->ReadNumber(XLin, Y + i, line);
         
-        if (i >= 916023) cout << "Fimline2" << endl;
 
         if (NumberOfLayers == 1)
             index = GetBoxNumber(column, line);

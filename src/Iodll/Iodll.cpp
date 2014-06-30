@@ -504,7 +504,7 @@ bool TReadWrite::ReadCell (int AXPlace,
       cout << "FinishedReadCell" << endl;
       }*/
     OneChar = *pChar++;
-    if ((AXPlace == 1) && (AYPlace == 916030))cout << "A" << endl;
+    //if ((AXPlace == 1) && (AYPlace == 916030))cout << "A" << endl;
     while (OneChar != EOF)
     {
         if (IsSeparator(OneChar) || IsEndOfLine(OneChar))
