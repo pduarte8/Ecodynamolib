@@ -11,7 +11,8 @@
 #include "hydrobjt.h"
 #include "iodll.h"
 #include "SymbiosesFramework.h"
-#include "HydrodynamicModel.h"
+//#include "HydrodynamicModel.h"
+#include "HydrodynamicGridModel.h"
 #include "AtmosphericModel.h"
 
 TTriDimensionalSymbioses::TTriDimensionalSymbioses(TEcoDynClass* PEcoDynClass,
@@ -26,7 +27,7 @@ TTriDimensionalSymbioses::TTriDimensionalSymbioses(TEcoDynClass* PEcoDynClass,
     //I have these in EcoDynamo configuration files: GridLines, GridLines, GridLayers, Lats and Longs and these are the ones I should use
     //for I may want to use a subdomain
     Tilt = (double*) calloc(NumberOfBoxes, sizeof(double));
-    //cout<<NumberOfBoxes<<endl;
+    cout<<NumberOfBoxes<<endl;
     int X,Y, XV, YV;
     double MyValue;
     TReadWrite* PReadWrite = (TReadWrite*)MyPEcoDynClass->OpenParametersFile("Transport");
@@ -107,7 +108,7 @@ void TTriDimensionalSymbioses::Go()   //This overwrites previous Go to prevent E
 {
    cout<<"Start Go"<<endl;
    ReadVariablesFromSymbioses();
-   CorrectVelocities();
+   //CorrectVelocities();
    Continuity();
    GenericLoad = SaltLoad;
    AdvectDiffuse(Salt); //Salinity being transported - once we get this from SYMBIOSES this line should be removed
@@ -117,7 +118,19 @@ void TTriDimensionalSymbioses::Go()   //This overwrites previous Go to prevent E
 void TTriDimensionalSymbioses::ReadVariablesFromSymbioses()
 {
     int index3D;
-    float v[3], MyLat, MyLong, layers[GridLayers], d, MyDepth;
+    float v[3], MyLat, MyLong, layers[GridLayers], MyDepth;
+    double* MyUVelocity = new double[NumberOfBoxes + GridLines * GridLayers];
+    double* MyVVelocity = new double[NumberOfBoxes + GridColumns * GridLayers];
+    double* MyWVelocity = new double[NumberOfBoxes];
+    double* MyElevation = new double[NumberOfBoxes];
+    ocean->getUGrid(MyUVelocity);
+    ocean->getVGrid(MyVVelocity);
+    ocean->getWGrid(MyWVelocity);
+    ocean->getElevatedDepthGrid(MyElevation);
+    cout<<MyElevation[Get3DIndex(0,0,0)]<<endl;
+    cout<<MyElevation[Get3DIndex(0,0,35)]<<endl;
+    cout<<MyElevation[Get3DIndex(335,0,0)]<<endl;
+    cout<<MyElevation[Get3DIndex(335,0,35)]<<endl;
     SubDomain *pSubDomain = MyPEcoDynClass->GetSubDomain();
     for (int i = pSubDomain->FirstLine; i <= pSubDomain->LastLine; i++)
     {
@@ -131,26 +144,16 @@ void TTriDimensionalSymbioses::ReadVariablesFromSymbioses()
             for (int k = GridLayers - 1; k >= 0; k--)  //From surface to bottom in EcoDynamo
             {
                 index3D = Get3DIndex(i,j,k);          //In EcoDynamo the zero layer it is at the bottom wheras in SYMBIOSES it is at the surface.
-                float d = layers[GridLayers - 1 - k]; //Therefore, here layer coordinates are "inverted" to properly map SYMBIOSES layers
-                float e = layers[GridLayers - 1 - k + 1];
-                /*if (k == GridLayers - 1)
-                    BoxDepth[index3D] = layers[k];     //In spite of the name...BoxDepth correspons to layer thickness in EcoDynamo.
-                //BoxDepth[index3D] = 2.0 * layers[k];   //In case layer depth is evaluated at the box "centroid"
-                else
-                    BoxDepth[index3D] = layers[k] - layers[k + 1];
-                //BoxDepth[index3D] = 2.0 * (layers[k] - layers[k + 1] - 0.5 * BoxDepth[Get3DIndex(i,j,k + 1)]);  //In case layer depth is evaluated at the box "centroid"
-                */
-                //Salt[index3D] = ocean->getSalinity(lat, lon, d);  //Let's try to calculate salinity withint EcoDynamo for mass conservation testing
-		//BoxDepth[index3D] = e - d;
-                //ocean->getVelocity(MyLat, MyLong, d, v);
-                MyDepth = MyDepth + BoxDepth[index3D];
-                ocean->getVelocity(MyLat, MyLong, MyDepth,v);
-                UVelocity[Get3DIndexForUVelocity(i,j,k)] = v[1];
-                VVelocity[Get3DIndexForVVelocity(i,j,k)] = v[0];
-                WVelocity[index3D] = v[2];
+
+                //MyDepth = MyDepth + BoxDepth[index3D];
+                //ocean->getVelocity(MyLat, MyLong, MyDepth,v);
+                UVelocity[Get3DIndexForUVelocity(i,j,k)] = MyUVelocity[Get3DIndexForUVelocity(i,j,k - GridLayers)];
+                VVelocity[Get3DIndexForVVelocity(i,j,k)] = MyVVelocity[Get3DIndexForVVelocity(i,j,k - GridLayers)];
+                WVelocity[index3D] = MyWVelocity[Get3DIndex(i,j,k - GridLayers)];
             }
         }
     }
+    delete [] MyUVelocity; delete [] MyVVelocity; delete [] MyWVelocity; delete [] MyElevation;
 }
 
 void TTriDimensionalSymbioses::CorrectVelocities()
