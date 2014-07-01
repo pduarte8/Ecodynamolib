@@ -26,7 +26,7 @@ TTriDimensionalSymbioses::TTriDimensionalSymbioses(TEcoDynClass* PEcoDynClass,
     //I have these in EcoDynamo configuration files: GridLines, GridLines, GridLayers, Lats and Longs and these are the ones I should use
     //for I may want to use a subdomain
     Tilt = (double*) calloc(NumberOfBoxes, sizeof(double));
-    cout<<NumberOfBoxes<<endl;
+    //cout<<NumberOfBoxes<<endl;
     int X,Y, XV, YV;
     double MyValue;
     TReadWrite* PReadWrite = (TReadWrite*)MyPEcoDynClass->OpenParametersFile("Transport");
