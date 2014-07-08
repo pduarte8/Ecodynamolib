@@ -7,9 +7,10 @@
 
 #ifndef HYDROBJT_H
 #define HYDROBJT_H
-
 #include "EcoDynClass.h"
-#include "HydrodynamicGridModel.h"
+#define RAW_GRIDS
+#include "HydrodynamicModel.h"
+//include "HydrodynamicGridModel.h"
 #include "AtmosphericModel.h"
 
 // DLL header file
