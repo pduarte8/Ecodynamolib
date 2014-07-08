@@ -7,13 +7,18 @@
 	using namespace std;
 #endif  // __BORLANDC__
 
+#define RAW_GRIDS
 #include "ecodyn.rh"
 #include "hydrobjt.h"
 #include "iodll.h"
 #include "SymbiosesFramework.h"
+<<<<<<< HEAD
 #define RAW_GRIDS
 #include "HydrodynamicModel.h"
 //#include "HydrodynamicGridModel.h"
+=======
+#include "HydrodynamicModel.h"
+>>>>>>> 1231e410f0abd2ef019f454ca2c8e78764228a22
 #include "AtmosphericModel.h"
 
 TTriDimensionalSymbioses::TTriDimensionalSymbioses(TEcoDynClass* PEcoDynClass,
@@ -337,14 +342,14 @@ void TTriDimensionalSymbioses::Continuity()
                    cout<<DischargeFlux<<endl;
                    cout<<UptakeFlux<<endl;
                    cout<<ATimeStep<<endl;
-                   int h;  
-                   cin >> h; 
+                   int h;
+                   cin >> h;
                 }    */
                  /*BoxVolume[index] = PastBoxVolume[index] +
                                    (
                                      (WesternFlux - EasternFlux) +
                                      (SouthernFlux - NorthernFlux) +
-                                     WVelocity[index] * BoxWidth[index] * BoxLength[index] + 
+                                     WVelocity[index] * BoxWidth[index] * BoxLength[index] +
                                      (DischargeFlux - UptakeFlux)
                                    ) * ATimeStep;  */
              double DepthVariation;
