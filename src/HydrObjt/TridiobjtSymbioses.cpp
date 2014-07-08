@@ -7,12 +7,12 @@
 	using namespace std;
 #endif  // __BORLANDC__
 
+#define RAW_GRIDS
 #include "ecodyn.rh"
 #include "hydrobjt.h"
 #include "iodll.h"
 #include "SymbiosesFramework.h"
-//#include "HydrodynamicModel.h"
-#include "HydrodynamicGridModel.h"
+#include "HydrodynamicModel.h"
 #include "AtmosphericModel.h"
 
 TTriDimensionalSymbioses::TTriDimensionalSymbioses(TEcoDynClass* PEcoDynClass,
@@ -119,10 +119,10 @@ void TTriDimensionalSymbioses::ReadVariablesFromSymbioses()
 {
     int index3D;
     float v[3], MyLat, MyLong, layers[GridLayers], MyDepth;
-    double* MyUVelocity = new double[NumberOfBoxes + GridLines * GridLayers];
-    double* MyVVelocity = new double[NumberOfBoxes + GridColumns * GridLayers];
-    double* MyWVelocity = new double[NumberOfBoxes];
-    double* MyElevation = new double[NumberOfBoxes];
+    float* MyUVelocity = new float[NumberOfBoxes + GridLines * GridLayers];
+    float* MyVVelocity = new float[NumberOfBoxes + GridColumns * GridLayers];
+    float* MyWVelocity = new float[NumberOfBoxes];
+    float* MyElevation = new float[NumberOfBoxes];
     ocean->getUGrid(MyUVelocity);
     ocean->getVGrid(MyVVelocity);
     ocean->getWGrid(MyWVelocity);
@@ -336,14 +336,14 @@ void TTriDimensionalSymbioses::Continuity()
                    cout<<DischargeFlux<<endl;
                    cout<<UptakeFlux<<endl;
                    cout<<ATimeStep<<endl;
-                   int h;  
-                   cin >> h; 
+                   int h;
+                   cin >> h;
                 }    */
                  /*BoxVolume[index] = PastBoxVolume[index] +
                                    (
                                      (WesternFlux - EasternFlux) +
                                      (SouthernFlux - NorthernFlux) +
-                                     WVelocity[index] * BoxWidth[index] * BoxLength[index] + 
+                                     WVelocity[index] * BoxWidth[index] * BoxLength[index] +
                                      (DischargeFlux - UptakeFlux)
                                    ) * ATimeStep;  */
              double DepthVariation;
