@@ -12,13 +12,7 @@
 #include "hydrobjt.h"
 #include "iodll.h"
 #include "SymbiosesFramework.h"
-<<<<<<< HEAD
-#define RAW_GRIDS
 #include "HydrodynamicModel.h"
-//#include "HydrodynamicGridModel.h"
-=======
-#include "HydrodynamicModel.h"
->>>>>>> 1231e410f0abd2ef019f454ca2c8e78764228a22
 #include "AtmosphericModel.h"
 
 TTriDimensionalSymbioses::TTriDimensionalSymbioses(TEcoDynClass* PEcoDynClass,
@@ -150,7 +144,7 @@ void TTriDimensionalSymbioses::ReadVariablesFromSymbioses()
             for (int k = GridLayers - 1; k >= 0; k--)  //From surface to bottom in EcoDynamo
             {
                 index3D = Get3DIndex(i,j,k);          //In EcoDynamo the zero layer it is at the bottom wheras in SYMBIOSES it is at the surface.
-                ocean->getUGridPoint(i,j,k);
+
                 //MyDepth = MyDepth + BoxDepth[index3D];
                 //ocean->getVelocity(MyLat, MyLong, MyDepth,v);
                 UVelocity[Get3DIndexForUVelocity(i,j,k)] = MyUVelocity[Get3DIndexForUVelocity(i,j,k - GridLayers)];
