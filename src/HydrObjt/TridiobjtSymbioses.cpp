@@ -7,12 +7,12 @@
 	using namespace std;
 #endif  // __BORLANDC__
 
+#define RAW_GRIDS
 #include "ecodyn.rh"
 #include "hydrobjt.h"
 #include "iodll.h"
 #include "SymbiosesFramework.h"
-//#include "HydrodynamicModel.h"
-#include "HydrodynamicGridModel.h"
+#include "HydrodynamicModel.h"
 #include "AtmosphericModel.h"
 
 TTriDimensionalSymbioses::TTriDimensionalSymbioses(TEcoDynClass* PEcoDynClass,
@@ -21,7 +21,9 @@ TTriDimensionalSymbioses::TTriDimensionalSymbioses(TEcoDynClass* PEcoDynClass,
     SymbiosesFramework &symb = SymbiosesFramework::getInstance();
     ocean = symb.getHydrodynamicModel("ocean");
     atmo = symb.getAtmosphericModel("meteo");
-    /*griddims = symb.getReferenceGridDimensions();
+    /*griddims = new int[3];
+    griddims = symb.getReferenceGridDimensions();
+    cout<<griddims[0]<<endl; cout<<griddims[1]<<endl; cout<<griddims[2]<<endl;
     gridlats = symb.getReferenceGridLatitudes();
     gridlons = symb.getReferenceGridLongitudes(); */
     //I have these in EcoDynamo configuration files: GridLines, GridLines, GridLayers, Lats and Longs and these are the ones I should use
@@ -107,10 +109,14 @@ void TTriDimensionalSymbioses::freeMemory()
 void TTriDimensionalSymbioses::Go()   //This overwrites previous Go to prevent EcoDynamo from calulating hydrodynamics
 {
    cout<<"Start Go"<<endl;
+   cout<<"Read variables"<<endl;
    ReadVariablesFromSymbioses();
+   cout<<"Continuity"<<endl;
    //CorrectVelocities();
    Continuity();
+   cout<<"Generic load"<<endl;
    GenericLoad = SaltLoad;
+   cout<<"AdvectDiffuse"<<endl;
    AdvectDiffuse(Salt); //Salinity being transported - once we get this from SYMBIOSES this line should be removed
    cout<<"End Go"<<endl;
 }
@@ -119,11 +125,12 @@ void TTriDimensionalSymbioses::ReadVariablesFromSymbioses()
 {
     int index3D;
     float v[3], MyLat, MyLong, layers[GridLayers], MyDepth;
-    double* MyUVelocity = new double[NumberOfBoxes + GridLines * GridLayers];
-    double* MyVVelocity = new double[NumberOfBoxes + GridColumns * GridLayers];
-    double* MyWVelocity = new double[NumberOfBoxes];
-    double* MyElevation = new double[NumberOfBoxes];
-    ocean->getUGrid(MyUVelocity);
+    float* MyUVelocity = new float[NumberOfBoxes];
+    float* MyVVelocity = new float[NumberOfBoxes + GridColumns * GridLayers];
+    float* MyWVelocity = new float[NumberOfBoxes];
+    float* MyElevation = new float[NumberOfBoxes];
+    cout<<NumberOfBoxes<<endl;
+    ocean->getUGrid(MyUVelocity); cout<<3<<endl;
     ocean->getVGrid(MyVVelocity);
     ocean->getWGrid(MyWVelocity);
     ocean->getElevatedDepthGrid(MyElevation);
@@ -336,14 +343,14 @@ void TTriDimensionalSymbioses::Continuity()
                    cout<<DischargeFlux<<endl;
                    cout<<UptakeFlux<<endl;
                    cout<<ATimeStep<<endl;
-                   int h;  
-                   cin >> h; 
+                   int h;
+                   cin >> h;
                 }    */
                  /*BoxVolume[index] = PastBoxVolume[index] +
                                    (
                                      (WesternFlux - EasternFlux) +
                                      (SouthernFlux - NorthernFlux) +
-                                     WVelocity[index] * BoxWidth[index] * BoxLength[index] + 
+                                     WVelocity[index] * BoxWidth[index] * BoxLength[index] +
                                      (DischargeFlux - UptakeFlux)
                                    ) * ATimeStep;  */
              double DepthVariation;
