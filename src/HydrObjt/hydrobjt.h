@@ -10,7 +10,6 @@
 #include "EcoDynClass.h"
 #define RAW_GRIDS
 #include "HydrodynamicModel.h"
-//include "HydrodynamicGridModel.h"
 #include "AtmosphericModel.h"
 
 // DLL header file
