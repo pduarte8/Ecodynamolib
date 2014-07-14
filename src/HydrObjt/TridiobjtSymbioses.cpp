@@ -21,7 +21,9 @@ TTriDimensionalSymbioses::TTriDimensionalSymbioses(TEcoDynClass* PEcoDynClass,
     SymbiosesFramework &symb = SymbiosesFramework::getInstance();
     ocean = symb.getHydrodynamicModel("ocean");
     atmo = symb.getAtmosphericModel("meteo");
-    /*griddims = symb.getReferenceGridDimensions();
+    /*griddims = new int[3];
+    griddims = symb.getReferenceGridDimensions();
+    cout<<griddims[0]<<endl; cout<<griddims[1]<<endl; cout<<griddims[2]<<endl;
     gridlats = symb.getReferenceGridLatitudes();
     gridlons = symb.getReferenceGridLongitudes(); */
     //I have these in EcoDynamo configuration files: GridLines, GridLines, GridLayers, Lats and Longs and these are the ones I should use
@@ -107,10 +109,14 @@ void TTriDimensionalSymbioses::freeMemory()
 void TTriDimensionalSymbioses::Go()   //This overwrites previous Go to prevent EcoDynamo from calulating hydrodynamics
 {
    cout<<"Start Go"<<endl;
+   cout<<"Read variables"<<endl;
    ReadVariablesFromSymbioses();
+   cout<<"Continuity"<<endl;
    //CorrectVelocities();
    Continuity();
+   cout<<"Generic load"<<endl;
    GenericLoad = SaltLoad;
+   cout<<"AdvectDiffuse"<<endl;
    AdvectDiffuse(Salt); //Salinity being transported - once we get this from SYMBIOSES this line should be removed
    cout<<"End Go"<<endl;
 }
@@ -119,18 +125,19 @@ void TTriDimensionalSymbioses::ReadVariablesFromSymbioses()
 {
     int index3D;
     float v[3], MyLat, MyLong, layers[GridLayers], MyDepth;
-    float* MyUVelocity = new float[NumberOfBoxes + GridLines * GridLayers];
-    float* MyVVelocity = new float[NumberOfBoxes + GridColumns * GridLayers];
+    float* MyUVelocity = new float[NumberOfBoxes];
+    float* MyVVelocity = new float[NumberOfBoxes];
     float* MyWVelocity = new float[NumberOfBoxes];
     float* MyElevation = new float[NumberOfBoxes];
+    cout<<NumberOfBoxes<<endl;
     ocean->getUGrid(MyUVelocity);
     ocean->getVGrid(MyVVelocity);
     ocean->getWGrid(MyWVelocity);
     ocean->getElevatedDepthGrid(MyElevation);
     cout<<MyElevation[Get3DIndex(0,0,0)]<<endl;
     cout<<MyElevation[Get3DIndex(0,0,35)]<<endl;
-    cout<<MyElevation[Get3DIndex(335,0,0)]<<endl;
     cout<<MyElevation[Get3DIndex(335,0,35)]<<endl;
+    cout<<MyElevation[Get3DIndex(330,10,35)]<<endl;
     SubDomain *pSubDomain = MyPEcoDynClass->GetSubDomain();
     for (int i = pSubDomain->FirstLine; i <= pSubDomain->LastLine; i++)
     {
@@ -147,8 +154,8 @@ void TTriDimensionalSymbioses::ReadVariablesFromSymbioses()
 
                 //MyDepth = MyDepth + BoxDepth[index3D];
                 //ocean->getVelocity(MyLat, MyLong, MyDepth,v);
-                UVelocity[Get3DIndexForUVelocity(i,j,k)] = MyUVelocity[Get3DIndexForUVelocity(i,j,k - GridLayers)];
-                VVelocity[Get3DIndexForVVelocity(i,j,k)] = MyVVelocity[Get3DIndexForVVelocity(i,j,k - GridLayers)];
+                UVelocity[Get3DIndexForUVelocity(i,j,k)] = MyUVelocity[Get3DIndex(i,j,k - GridLayers)];
+                VVelocity[Get3DIndexForVVelocity(i,j,k)] = MyVVelocity[Get3DIndex(i,j,k - GridLayers)];
                 WVelocity[index3D] = MyWVelocity[Get3DIndex(i,j,k - GridLayers)];
             }
         }
