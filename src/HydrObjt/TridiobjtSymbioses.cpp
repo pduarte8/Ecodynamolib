@@ -21,11 +21,6 @@ TTriDimensionalSymbioses::TTriDimensionalSymbioses(TEcoDynClass* PEcoDynClass,
     SymbiosesFramework &symb = SymbiosesFramework::getInstance();
     ocean = symb.getHydrodynamicModel("ocean");
     atmo = symb.getAtmosphericModel("meteo");
-    /*griddims = new int[3];
-    griddims = symb.getReferenceGridDimensions();
-    cout<<griddims[0]<<endl; cout<<griddims[1]<<endl; cout<<griddims[2]<<endl;
-    gridlats = symb.getReferenceGridLatitudes();
-    gridlons = symb.getReferenceGridLongitudes(); */
     //I have these in EcoDynamo configuration files: GridLines, GridLines, GridLayers, Lats and Longs and these are the ones I should use
     //for I may want to use a subdomain
     Tilt = (double*) calloc(NumberOfBoxes, sizeof(double));
@@ -77,6 +72,7 @@ TTriDimensionalSymbioses::TTriDimensionalSymbioses(TEcoDynClass* PEcoDynClass,
         }
         CloseDataFile((void*)PReadWrite);
     }
+    ATimeStep = ATimeStep; /*/ 100.0;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 }
 
 TTriDimensionalSymbioses::~TTriDimensionalSymbioses()
@@ -112,7 +108,6 @@ void TTriDimensionalSymbioses::Go()   //This overwrites previous Go to prevent E
    cout<<"Read variables"<<endl;
    ReadVariablesFromSymbioses();
    cout<<"Continuity"<<endl;
-   //CorrectVelocities();
    Continuity();
    cout<<"Generic load"<<endl;
    GenericLoad = SaltLoad;
@@ -129,69 +124,56 @@ void TTriDimensionalSymbioses::ReadVariablesFromSymbioses()
     float* MyVVelocity = new float[NumberOfBoxes];
     float* MyWVelocity = new float[NumberOfBoxes];
     float* MyElevation = new float[NumberOfBoxes];
-    cout<<NumberOfBoxes<<endl;
     ocean->getUGrid(MyUVelocity);
     ocean->getVGrid(MyVVelocity);
     ocean->getWGrid(MyWVelocity);
     ocean->getElevatedDepthGrid(MyElevation);
-    cout<<MyElevation[Get3DIndex(0,0,0)]<<endl;
-    cout<<MyElevation[Get3DIndex(0,0,35)]<<endl;
-    cout<<MyElevation[Get3DIndex(335,0,35)]<<endl;
-    cout<<MyElevation[Get3DIndex(330,10,35)]<<endl;
+    /*cout<<MyElevation[Get3DIndex(0,0,0)]<<endl;
+    // cout<<MyElevation[Get3DIndex(0,0,34)]<<endl;
+    // cout<<MyElevation[Get3DIndex(334,0,0)]<<endl;
+    // cout<<MyElevation[Get3DIndex(334,0,34)]<<endl;
+    // cout<<MyElevation[Get3DIndex(334,0,33)]<<endl;
+    // cout<<MyElevation[Get3DIndex(334,0,32)]<<endl;
+    // cout<<MyElevation[Get3DIndex(334,114,0)]<<endl;
+    // cout<<MyElevation[Get3DIndex(334,114,34)]<<endl;
+    // cout<<MyUVelocity[Get3DIndex(334,0,0)]<<endl;
+    // cout<<MyUVelocity[Get3DIndex(334,0,34)]<<endl;
+    // cout<<MyUVelocity[Get3DIndex(334,114,0)]<<endl;
+    // cout<<MyUVelocity[Get3DIndex(334,114,34)]<<endl;
+    // cout<<MyElevation[335*34]<<endl;
+    cout<<MyElevation[335*35-1]<<endl;*/
     SubDomain *pSubDomain = MyPEcoDynClass->GetSubDomain();
-    for (int i = pSubDomain->FirstLine; i <= pSubDomain->LastLine; i++)
+    index3D = 0;
+    for (int k = GridLayers - 1; k >= 0; k--)  //From surface to bottom in EcoDynamo
     {
-        for (int j = pSubDomain->IColumn[i]; j <= MIN(pSubDomain->FColumn[i],GridColumns-1); j++)
-        {
-            int ABoxNumber;
-            MyLat = MyPEcoDynClass->GetBoxLatitude(Get2DIndex(i,j));
-            MyLong = MyPEcoDynClass->GetBoxLongitude(Get2DIndex(i,j));
-            ocean->getLayerDepths(MyLat, MyLong, layers);   //I am assuming that getLayerDepths returns the cumulative layer depth from the surface till the bottom
-            MyDepth = 0.0;
-            for (int k = GridLayers - 1; k >= 0; k--)  //From surface to bottom in EcoDynamo
+	//for (int i = pSubDomain->FirstLine; i <= pSubDomain->LastLine; i++)
+	//for (int j = pSubDomain->FirstColumn; j <= MIN(pSubDomain->LastColumn,GridColumns-1); j++)
+        for (int j = MIN(pSubDomain->LastColumn,GridColumns-1); j>= pSubDomain->FirstColumn; j--)
+	{
+	  //for (int j = pSubDomain->IColumn[i]; j <= MIN(pSubDomain->FColumn[i],GridColumns-1); j++)
+	  //for (int i = pSubDomain->ILine[j]; i <= MIN(pSubDomain->FLine[j],GridLines-1); i++)
+	  for (int i =  MIN(pSubDomain->FLine[j],GridLines-1); i >= pSubDomain->ILine[j];i--)
             {
-                index3D = Get3DIndex(i,j,k);          //In EcoDynamo the zero layer it is at the bottom wheras in SYMBIOSES it is at the surface.
+		int ABoxNumber;
+		MyLat = MyPEcoDynClass->GetBoxLatitude(Get2DIndex(i,j));
+		MyLong = MyPEcoDynClass->GetBoxLongitude(Get2DIndex(i,j));
+		ocean->getLayerDepths(MyLat, MyLong, layers);   //I am assuming that getLayerDepths returns the cumulative layer depth from the surface till the bottom
+		MyDepth = 0.0;
+		//for (int k = GridLayers - 1; k >= 0; k--)  //From surface to bottom in EcoDynamo
+		//{
+			     //In EcoDynamo the zero layer it is at the bottom wheras in SYMBIOSES it is at the surface.
 
-                //MyDepth = MyDepth + BoxDepth[index3D];
-                //ocean->getVelocity(MyLat, MyLong, MyDepth,v);
-                UVelocity[Get3DIndexForUVelocity(i,j,k)] = MyUVelocity[Get3DIndex(i,j,k - GridLayers)];
-                VVelocity[Get3DIndexForVVelocity(i,j,k)] = MyVVelocity[Get3DIndex(i,j,k - GridLayers)];
-                WVelocity[index3D] = MyWVelocity[Get3DIndex(i,j,k - GridLayers)];
-            }
-        }
+		    //MyDepth = MyDepth + BoxDepth[index3D];
+		    //ocean->getVelocity(MyLat, MyLong, MyDepth,v);
+		    UVelocity[Get3DIndexForUVelocity(i,j,k)] = MyVVelocity[index3D];
+		    VVelocity[Get3DIndexForVVelocity(i,j,k)] = MyUVelocity[index3D];
+		    WVelocity[index3D] = MyWVelocity[index3D];
+		    index3D++;
+		 //}
+	    }
+	}
     }
     delete [] MyUVelocity; delete [] MyVVelocity; delete [] MyWVelocity; delete [] MyElevation;
-}
-
-void TTriDimensionalSymbioses::CorrectVelocities()
-{
-   SubDomain *pSubDomain = MyPEcoDynClass->GetSubDomain();
-   int index2D;
-   double ResultantDirection, ResultantVelocity, TINNY;
-   TINNY = 0.0000001;
-   for (int i = pSubDomain->FirstLine; i <= pSubDomain->LastLine; i++)
-   {
-        for (int j = pSubDomain->IColumn[i]; j <= MIN(pSubDomain->FColumn[i],GridColumns-1); j++)
-        {
-            for (int k = GridLayers - 1; k >= 0; k--)  //From surface to bottom in EcoDynamo
-            {
-                index2D = Get2DIndex(i,j);          //In EcoDynamo the zero layer it is at the bottom wheras in SYMBIOSES it is at the surface.
-                ResultantVelocity = sqrt(pow(UVelocity[Get3DIndexForUVelocity(i,j,k)],2.0) + pow(VVelocity[Get3DIndexForVVelocity(i,j,k)],2.0));
-
-                if (ResultantVelocity <= TINNY)
-                   ResultantDirection = 0.0;
-                else
-                {
-                   if (UVelocity[Get3DIndexForUVelocity(i,j,k)] > 0.0)
-                      ResultantDirection =  acos(VVelocity[Get3DIndexForVVelocity(i,j,k)] / ResultantVelocity);
-                   else
-                      ResultantDirection =  2.0 * M_PI - acos(VVelocity[Get3DIndexForVVelocity(i,j,k)] / ResultantVelocity);
-                }
-                UVelocity[Get3DIndexForUVelocity(i,j,k)] = UVelocity[Get3DIndexForUVelocity(i,j,k)] * sin(ResultantDirection + Tilt[index2D]);
-                VVelocity[Get3DIndexForVVelocity(i,j,k)] = VVelocity[Get3DIndexForVVelocity(i,j,k)] * cos(ResultantDirection + Tilt[index2D]);
-            }
-        }
-    }
 }
 
 

@@ -1334,6 +1334,7 @@ class _export TTriDimensionalWithBodyDrag2 : public TTriDimensionalWithBodyDrag
         double Superbee(double r);
 };
 
+//This object uses raw velocities from Symbioses calculated with SinMod
 class _export TTriDimensionalSymbioses : public TTriDimensionalWithBodyDrag2
 {
     public :
@@ -1344,6 +1345,24 @@ class _export TTriDimensionalSymbioses : public TTriDimensionalWithBodyDrag2
     protected:
         virtual void Continuity();
         virtual void AdvectDiffuse(double* Generic);
+    private:
+        /*int *griddims;
+        float *gridlats;
+        float *gridlons;*/
+        HydrodynamicModel *ocean;
+        AtmosphericModel *atmo;
+        void ReadVariablesFromSymbioses();
+        double *Tilt;
+};
+
+//This object uses velocities calculated originally with SinMod but that were interpolated and oriented to lats/longs by Symbioses 
+class _export TTriDimensionalSymbiosesV1 : public TTriDimensionalSymbioses
+{
+    public :
+        TTriDimensionalSymbiosesV1(TEcoDynClass* PEcoDynClass, char* className);
+        ~TTriDimensionalSymbiosesV1();
+        virtual void freeMemory();
+        virtual void Go();
     private:
         int *griddims;
         float *gridlats;

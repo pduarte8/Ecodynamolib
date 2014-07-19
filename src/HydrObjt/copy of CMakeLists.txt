@@ -36,7 +36,6 @@ set(SRC
 	TriDimensionalWithBodyDrag.cpp 
 	TriDimensionalWithBodyDrag2.cpp 
         TridiobjtSymbioses.cpp
-        TridiobjtSymbiosesV1.cpp
 	Uniobjt.cpp 
 	UniobjtExplicit.cpp
     #SymbiosesExample.cpp 
