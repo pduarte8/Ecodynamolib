@@ -103,7 +103,7 @@ void TTriDimensionalSymbiosesV1::freeMemory()
    #endif  // __BORLANDC__
 }
 
-void TTriDimensionalSymbiosesV1::Go()   //This overwrites previous Go to prevent EcoDynamo from calulating hydrodynamics
+void TTriDimensionalSymbiosesV1::Go()   //This overwrites previous Go to prevent EcoDynamo from calculating hydrodynamics
 {
    cout<<"Start Go"<<endl;
    ReadVariablesFromSymbioses();

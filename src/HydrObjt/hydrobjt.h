@@ -1345,14 +1345,15 @@ class _export TTriDimensionalSymbioses : public TTriDimensionalWithBodyDrag2
     protected:
         virtual void Continuity();
         virtual void AdvectDiffuse(double* Generic);
-    private:
-        /*int *griddims;
-        float *gridlats;
-        float *gridlons;*/
         HydrodynamicModel *ocean;
         AtmosphericModel *atmo;
         void ReadVariablesFromSymbioses();
         double *Tilt;
+    private:
+	/* HydrodynamicModel *ocean;
+        AtmosphericModel *atmo;
+        void ReadVariablesFromSymbioses();
+        double *Tilt;*/
 };
 
 //This object uses velocities calculated originally with SinMod but that were interpolated and oriented to lats/longs by Symbioses 
@@ -1363,16 +1364,47 @@ class _export TTriDimensionalSymbiosesV1 : public TTriDimensionalSymbioses
         ~TTriDimensionalSymbiosesV1();
         virtual void freeMemory();
         virtual void Go();
-    private:
+    protected:
         int *griddims;
         float *gridlats;
         float *gridlons;
-        HydrodynamicModel *ocean;
-        AtmosphericModel *atmo;
+	/* HydrodynamicModel *ocean;
+	   AtmosphericModel *atmo;*/
         void ReadVariablesFromSymbioses();
         void CorrectVelocities();
         double *Tilt;
 };
+
+class _export TTriDimensionalSymbiosesV2 : public TTriDimensionalSymbioses
+{
+    public :
+        TTriDimensionalSymbiosesV2(TEcoDynClass* PEcoDynClass, char* className);
+        ~TTriDimensionalSymbiosesV2();
+        virtual void Go();
+    protected:
+        virtual void Continuity();
+        virtual void AdvectDiffuse(double* Generic);
+        /*HydrodynamicModel *ocean;
+        AtmosphericModel *atmo;
+        void ReadVariablesFromSymbioses();*/
+	int Step;
+};
+
+class _export TTriDimensionalSymbiosesV3 : public TTriDimensionalSymbioses
+{
+    public :
+        TTriDimensionalSymbiosesV3(TEcoDynClass* PEcoDynClass, char* className);
+        ~TTriDimensionalSymbiosesV3();
+        virtual void freeMemory();
+        virtual void Go();
+    protected:
+        int MyDimensions;
+	float *field,*MySalt;
+        virtual void AdvectDiffuse(double* Generic, float *GenericWithBoundaries);
+        int Get3DIndexWithBoundaries(int LineNr,int ColumnNr,int LayerNr)
+	{return (LineNr * (NumberOfColumns + 2) + ColumnNr) + LayerNr * ((NumberOfLines + 2) * (NumberOfColumns + 2));}
+};
+
 
 
 

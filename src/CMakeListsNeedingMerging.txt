@@ -1,0 +1,147 @@
+<<<<<<< HEAD
+find_package(Threads REQUIRED)
+include_directories(
+    BacterObjt
+    DissObjt
+    ECDProtocol
+    EcoClass
+    EcoDynamo
+    FishObjt
+    FlowObjt
+    HydrObjt
+    IceAlgaeObjt
+    IceObjt
+    include
+    Iodll
+    libecodynamo
+    LiteObjt
+    MacrObjt
+    ManObjt
+    OutputResults
+    params
+    PhytObjt
+    PredatorObjt
+    PreyObjt
+    Sediments
+    SpmObjt
+    TAirObjt
+    Tidedll
+    TideObjt
+    TWatObjt
+    Utilities
+    WindObjt
+    ZoobObjt
+    ZoopObjt
+    )
+
+add_subdirectory(BacterObjt)
+add_subdirectory(DissObjt)
+add_subdirectory(ECDProtocol)
+add_subdirectory(EcoClass)
+add_subdirectory(EcoDynamo)
+add_subdirectory(EcoDynamo-UX)
+add_subdirectory(FishObjt)
+add_subdirectory(FlowObjt)
+add_subdirectory(HydrObjt)
+add_subdirectory(IceAlgaeObjt)
+add_subdirectory(IceObjt)
+add_subdirectory(Iodll)
+add_subdirectory(LiteObjt)
+add_subdirectory(MacrObjt)
+add_subdirectory(ManObjt)
+add_subdirectory(OutputResults)
+add_subdirectory(params)
+add_subdirectory(PhytObjt)
+add_subdirectory(PredatorObjt)
+add_subdirectory(PreyObjt)
+add_subdirectory(Sediments)
+add_subdirectory(SpmObjt)
+add_subdirectory(symbioses)
+add_subdirectory(TAirObjt)
+add_subdirectory(Tidedll)
+add_subdirectory(TideObjt)
+add_subdirectory(TWatObjt)
+add_subdirectory(Utilities)
+add_subdirectory(WindObjt)
+add_subdirectory(ZoobObjt)
+add_subdirectory(ZoopObjt)
+=======
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_INSTALL_PREFIX}/include
+    ${CMAKE_BINARY_DIR}/modules/libsymbioses/include
+    ${CMAKE_BINARY_DIR}/modules/libsymbioses/include/fortran
+    )
+link_directories(
+    ${CMAKE_BINARY_DIR}/modules/libsymbioses/lib
+    )
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/symbioses.py.in
+    ${CMAKE_CURRENT_BINARY_DIR}/symbioses.py
+    )
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/symbioses.sh.in
+    ${CMAKE_CURRENT_BINARY_DIR}/symbioses
+    )
+
+add_library(propmesh SHARED PropertyMesh.f90)
+add_dependencies(propmesh libsymbioses)
+target_link_libraries(propmesh symbioses)
+
+set_source_files_properties(
+    PropertyMesh.pxd
+    PropertyMesh.pyx
+    PROPERTIES CYTHON_IS_C TRUE
+    )
+
+cython_add_module(PropertyMesh
+    PropertyMesh.pxd
+    PropertyMesh.pyx
+    )
+target_link_libraries(PropertyMesh propmesh)
+add_dependencies(PropertyMesh libsymbioses)
+
+install(TARGETS
+    propmesh
+    LIBRARY DESTINATION lib
+    )
+
+install(TARGETS
+    PropertyMesh
+    LIBRARY DESTINATION ${PYTHON_SITE_INSTALL_DIR}
+    )
+
+install(PROGRAMS
+    ${CMAKE_CURRENT_BINARY_DIR}/symbioses
+    ${CMAKE_CURRENT_SOURCE_DIR}/plotsymb.py
+    ${CMAKE_CURRENT_SOURCE_DIR}/diffsymb.py
+    DESTINATION bin
+    )
+install(FILES
+    Driver.py
+    Archiver.py
+    Bootstrap.py
+    plotsymb.py
+    diffsymb.py
+    ${CMAKE_CURRENT_BINARY_DIR}/symbioses.py
+    DESTINATION ${PYTHON_SITE_INSTALL_DIR}
+    )
+
+install(FILES
+    PropertyMesh.pxd
+    DESTINATION include
+    )
+if (ENABLE_SINMOD)
+    install(FILES
+        ${SYMBIOSES_DATA_DIR}/sinmod/lib/python2.7/site-packages/Symbioses/Sinmod.so
+        DESTINATION ${PYTHON_SITE_INSTALL_DIR}
+        )
+    install(FILES
+        ${SYMBIOSES_DATA_DIR}/sinmod/lib/libsinmod.so
+        ${SYMBIOSES_DATA_DIR}/sinmod/lib/libsinmod-barent.so
+        ${SYMBIOSES_DATA_DIR}/sinmod/lib/libsinmod-bio3.so
+        ${SYMBIOSES_DATA_DIR}/sinmod/lib/libsymbioses-sinmod.so
+        DESTINATION
+        lib
+        )
+endif()
+>>>>>>> 86b304a7ec6f7db4d55b6281a0475cb8da388d08
+

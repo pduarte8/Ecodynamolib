@@ -90,18 +90,20 @@ TEcoDynClass *EcoDynamo::init()
 
 void EcoDynamo::next()
 {
+  /* for (int ii = 0; ii < 100; ii++){  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
    cout << "EcoDynamo::next beginning" << endl;
    //---- Place execute code here ----
    TEcoDynClass* pEDC = NULL;
-
-    if ((MyTime >= defaultsRecord.OutputStartTime)
+    if (firstRegister) {  
+         if ((MyTime >= defaultsRecord.OutputStartTime)
             && (MyTime <= defaultsRecord.OutputFinishTime)) {
-
-        if (firstRegister) {        // force first output register
+	   cout<<"Update1"<<endl;
+          /*if (firstRegister) {        // force first output register
             firstRegister = false;
-        }
-        pResults->UpdateOutput(MyTime, MyPEcoDynClass->GetCurrTime());
-        TimeSpent = 0.0;
+	    }*/
+         pResults->UpdateOutput(MyTime, MyPEcoDynClass->GetCurrTime());
+         TimeSpent = 0.0;
+       }
     }
 
 	for (int i = 0; i < pEDCQueue->size(); i++) {
@@ -122,7 +124,7 @@ void EcoDynamo::next()
 	}
 
 	// get next step time
-	double stepTime = MyPEcoDynClass->GetTimeStep();
+	double stepTime = MyPEcoDynClass->GetTimeStep(); /*/ 100.0;*!!!!!!!!!!!!!!*/
 
 	MyPEcoDynClass->SetTime(MyTime + stepTime);
 	MyPEcoDynClass->SetMyTime(MyTime + stepTime);
@@ -134,17 +136,19 @@ void EcoDynamo::next()
 			&& (MyTime <= defaultsRecord.OutputFinishTime)) {
 
 		if (firstRegister) {        // force first output register
-			firstRegister = false;
+		  firstRegister = false;
 			TimeSpent = defaultsRecord.OutputFrequency;
 		}
 		TimeSpent += stepTime;
 
 		if (TimeSpent >= defaultsRecord.OutputFrequency)
 		{
+		        cout<<"Update2"<<endl;
 			pResults->UpdateOutput(MyTime, MyPEcoDynClass->GetCurrTime());
 			TimeSpent = 0.0;
 		}
 	}
+   /*}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 }
 //---------------------------------------------------------------------------
 
