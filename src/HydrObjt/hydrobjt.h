@@ -20,62 +20,62 @@
 
 class _export TTransport : public TEcoDynClass
 {
-	public :
+    public :
         // constructors used outside EcoDyn
         TTransport(char* className, float timeStep, char* morphologyFilename);
         TTransport(char* className, float timeStep, int nLines, int nColumns, double aDepth[],
-                   double aLength[], double aWidth[], double aElevation[], int aType[],
-                   int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[]);
+                double aLength[], double aWidth[], double aElevation[], int aType[],
+                int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[]);
 
-		TTransport(TEcoDynClass* PEcoDynClass, char* className);
-		~TTransport();
+        TTransport(TEcoDynClass* PEcoDynClass, char* className);
+        ~TTransport();
         virtual void freeMemory();
 
-		virtual void Go(){};
+        virtual void Go(){};
 
-		virtual void Go(double*,
-				double*,
+        virtual void Go(double*,
+                double*,
                 double ARiver,
                 double AOcean);
 
-		virtual void Go(double*,
-				double*,
-				double*,
+        virtual void Go(double*,
+                double*,
+                double*,
                 double ARiver,
                 double AOcean);
 
 
-		virtual void Inquiry(char* srcName,
-        			 double &Value,
-        			 int BoxNumber,
-                     char* ParameterName,
-                     int AnObjectCode);
-		// Make into a Go function
+        virtual void Inquiry(char* srcName,
+                double &Value,
+                int BoxNumber,
+                char* ParameterName,
+                int AnObjectCode);
+        // Make into a Go function
 
-		virtual void EnergyAcrossSurface(double*,
-										 int BoxNumber,
-                                         char* ParameterName);
+        virtual void EnergyAcrossSurface(double*,
+                int BoxNumber,
+                char* ParameterName);
         // AP, 2007.05.28
         virtual bool SetVariableValue(char* srcName,
-                            double Value,
-                             int BoxNumber,
-                             char* VariableName);
+                double Value,
+                int BoxNumber,
+                char* VariableName);
 
-	protected :
-		double
-                  *Salt,
-                  *SaltLoad,
-                  *FlowDischarge,
-                  *FlowUptake,
-                  *MixedLayer;
-                  /**MyLoads,
-                  *MyLosses*/
+    protected :
+        double
+            *Salt,
+            *SaltLoad,
+            *FlowDischarge,
+            *FlowUptake,
+            *MixedLayer;
+        /**MyLoads,
+         *MyLosses*/
 
-		double RiverSalt,
-				 OceanSalt,ATimeStep;
+        double RiverSalt,
+               OceanSalt,ATimeStep;
         double MyLatitude;
-		virtual void AdvectDiffuse(double* Generic);
-		virtual void MixedLayerDepth();
+        virtual void AdvectDiffuse(double* Generic);
+        virtual void MixedLayerDepth();
         void BuildTransport(char* className);
 
         LoadsRecord *MyLoadRecord;
@@ -87,19 +87,19 @@ class _export TTransport : public TEcoDynClass
 
 class _export TMixedReactor : public TTransport
 {
-	public :
+    public :
         TMixedReactor(TEcoDynClass* PEcoDynClass, char* className);
-		~TMixedReactor();
+        ~TMixedReactor();
         virtual void freeMemory();
         virtual void Inquiry(char* srcName,double &Value,int BoxNumber,char* ParameterName,int AnObjectCode);
         virtual bool SetVariableValue(char* srcName,
-                            double Value,
-                             int BoxNumber,
-                             char* VariableName);
+                double Value,
+                int BoxNumber,
+                char* VariableName);
         virtual bool SaveVariables();
         virtual void Go();
         virtual void Go(double*,double*,double ARiver,double AOcean);
-     protected :
+    protected :
         void BuildMixedReactor();
         virtual void Continuity();
         virtual void Mix(double* Generic);
@@ -111,59 +111,59 @@ class _export TMixedReactor : public TTransport
 
 class _export TMixedLayerTransport : public TTransport
 {
-	public :
+    public :
         // constructors used outside EcoDyn
         TMixedLayerTransport(char* className, float timeStep, char* morphologyFilename,
-                            char* variablesFilename, char* parametersFilename);
+                char* variablesFilename, char* parametersFilename);
         TMixedLayerTransport(char* className,
-                   float timeStep, int nLines, int nColumns, double aDepth[],
-                   double aLength[], double aWidth[], double aElevation[], int aType[],
-                   int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[],
-                   int nVars, VNA aVarsNames[], double aSalt[], double aMixedLayerDepth[],
-                   double aWaterDensity[], double aUVelocity[], double aVVelocity[],
-                   double aRichardsonNumber[], double aExchangedFraction[],
-                   int nParams, double latitude, double coefManning);
+                float timeStep, int nLines, int nColumns, double aDepth[],
+                double aLength[], double aWidth[], double aElevation[], int aType[],
+                int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[],
+                int nVars, VNA aVarsNames[], double aSalt[], double aMixedLayerDepth[],
+                double aWaterDensity[], double aUVelocity[], double aVVelocity[],
+                double aRichardsonNumber[], double aExchangedFraction[],
+                int nParams, double latitude, double coefManning);
 
-		TMixedLayerTransport(TEcoDynClass* PEcoDynClass, char* className);
-		~TMixedLayerTransport();
+        TMixedLayerTransport(TEcoDynClass* PEcoDynClass, char* className);
+        ~TMixedLayerTransport();
         virtual void freeMemory();
-		virtual void Go();
-      virtual double GetParameterValue(char* parmName);
-      virtual bool SetParameterValue(char* parmName, double value);
-		virtual void Inquiry(char* srcName,
-        			 double &Value,
-        			 int BoxNumber,
-                     char* ParameterName,
-					 int AnObjectCode);
+        virtual void Go();
+        virtual double GetParameterValue(char* parmName);
+        virtual bool SetParameterValue(char* parmName, double value);
+        virtual void Inquiry(char* srcName,
+                double &Value,
+                int BoxNumber,
+                char* ParameterName,
+                int AnObjectCode);
         // AP, 2007.05.28
         virtual bool SetVariableValue(char* srcName,
-                            double Value,
-                             int BoxNumber,
-                             char* VariableName);
+                double Value,
+                int BoxNumber,
+                char* VariableName);
         // AP, 2007.07.09
         virtual bool SaveVariables();
         virtual bool SaveParameters();
 
-	protected :
-		double MixedLayerDepth, CoefManning, gravity;
+    protected :
+        double MixedLayerDepth, CoefManning, gravity;
 
-		double
-        	 *UVelocity,
-             *VVelocity,
-             *WaterDensity,
-             *RichardsonNumber,
-             *ExchangedFraction;
+        double
+            *UVelocity,
+            *VVelocity,
+            *WaterDensity,
+            *RichardsonNumber,
+            *ExchangedFraction;
 
-		int ConvectiveBox;
-		bool Convection;
+        int ConvectiveBox;
+        bool Convection;
 
-		virtual void DeterministicPhase();
-		virtual void AdvectDiffuse(double* Generic);
-		virtual void ConvectiveMixing();
-		virtual void DynamicMixing();
-		virtual double Coriolis(float ALatitude);
-		virtual double WindStress(double AWindSpeed,
-								  double AWindComponent);
+        virtual void DeterministicPhase();
+        virtual void AdvectDiffuse(double* Generic);
+        virtual void ConvectiveMixing();
+        virtual void DynamicMixing();
+        virtual double Coriolis(float ALatitude);
+        virtual double WindStress(double AWindSpeed,
+                double AWindComponent);
         virtual double CoefRugosidade(int ABoxNumber);
         void PreBuildMixedLayerTransport();
         void BuildMixedLayerTransport();
@@ -172,22 +172,22 @@ class _export TMixedLayerTransport : public TTransport
 
 class _export TMixedLayerTransportStoa : public TMixedLayerTransport
 {
-	public :
+    public :
         // constructors used outside EcoDyn
         TMixedLayerTransportStoa(char* className, float timeStep, char* morphologyFilename,
-                            char* variablesFilename, char* parametersFilename);
+                char* variablesFilename, char* parametersFilename);
         TMixedLayerTransportStoa(char* className,
-                   float timeStep, int nLines, int nColumns, double aDepth[],
-                   double aLength[], double aWidth[], double aElevation[], int aType[],
-                   int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[],
-                   int nVars, VNA aVarsNames[], double aSalt[], double aMixedLayerDepth[],
-                   double aWaterDensity[], double aUVelocity[], double aVVelocity[],
-                   double aRichardsonNumber[], double aExchangedFraction[],
-                   int nParams, double latitude, double coefManning);
+                float timeStep, int nLines, int nColumns, double aDepth[],
+                double aLength[], double aWidth[], double aElevation[], int aType[],
+                int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[],
+                int nVars, VNA aVarsNames[], double aSalt[], double aMixedLayerDepth[],
+                double aWaterDensity[], double aUVelocity[], double aVVelocity[],
+                double aRichardsonNumber[], double aExchangedFraction[],
+                int nParams, double latitude, double coefManning);
 
-		TMixedLayerTransportStoa(TEcoDynClass* PEcoDynClass, char* className);
-	protected :
-		virtual void DeterministicPhase();
+        TMixedLayerTransportStoa(TEcoDynClass* PEcoDynClass, char* className);
+    protected :
+        virtual void DeterministicPhase();
 };
 
 
@@ -196,126 +196,126 @@ class _export TMixedLayerTransportStoa : public TMixedLayerTransport
 
 class _export TOneDimensionalDITransport : public TTransport
 {
-/*This object computes the one dimensional motion of a fluid with homogeneous
-  density. The motion is forced by the slope of the fluid surface. The basic equation
-  is a unidimensional version of the Navie-Stokes equation. Bottom friction can be eliminated
-  in the parameters file.*/
-	public :
+    /*This object computes the one dimensional motion of a fluid with homogeneous
+      density. The motion is forced by the slope of the fluid surface. The basic equation
+      is a unidimensional version of the Navie-Stokes equation. Bottom friction can be eliminated
+      in the parameters file.*/
+    public :
         // constructors used outside EcoDyn
-		TOneDimensionalDITransport(char* className, float timeStep, char* morphologyFilename);
+        TOneDimensionalDITransport(char* className, float timeStep, char* morphologyFilename);
         TOneDimensionalDITransport(char* className,
-                   float timeStep, int nLines, int nColumns, double aDepth[],
-                   double aLength[], double aWidth[], double aElevation[], int aType[],
-                   int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[]);
+                float timeStep, int nLines, int nColumns, double aDepth[],
+                double aLength[], double aWidth[], double aElevation[], int aType[],
+                int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[]);
 
-		TOneDimensionalDITransport(TEcoDynClass* PEcoDynClass, char* className);
-		~TOneDimensionalDITransport();
+        TOneDimensionalDITransport(TEcoDynClass* PEcoDynClass, char* className);
+        ~TOneDimensionalDITransport();
         virtual void freeMemory();
-      virtual double GetParameterValue(char* parmName);
-      virtual bool SetParameterValue(char* parmName, double value);
-		virtual void Go();
-                virtual void Go(double* AGeneric,
-                                double* AGenericLoad,
-                                double ARiver,
-                                double AOcean);
-		virtual void Inquiry(char* srcName,
-        			 double &Value,
-                     int BoxNumber,
-                     char* ParameterName,
-                     int AnObjectCode);
+        virtual double GetParameterValue(char* parmName);
+        virtual bool SetParameterValue(char* parmName, double value);
+        virtual void Go();
+        virtual void Go(double* AGeneric,
+                double* AGenericLoad,
+                double ARiver,
+                double AOcean);
+        virtual void Inquiry(char* srcName,
+                double &Value,
+                int BoxNumber,
+                char* ParameterName,
+                int AnObjectCode);
         // AP, 2007.05.28
         virtual bool SetVariableValue(char* srcName,
-                            double Value,
-                             int BoxNumber,
-                             char* VariableName);
+                double Value,
+                int BoxNumber,
+                char* VariableName);
         // AP, 2007.07.09
         virtual bool SaveVariables();
         virtual bool SaveParameters();
 
-	protected :
+    protected :
         void BuildOneDimensionalDITransport();
-		virtual void EquationOfMotion();
-		virtual void Continuity();
-		virtual void AdvectDiffuse(double* Generic);
+        virtual void EquationOfMotion();
+        virtual void Continuity();
+        virtual void AdvectDiffuse(double* Generic);
         virtual void Evaporate();
         virtual double GetSaturationVapourPressure(double ATemperature);
         virtual double WaterVapourMassTransferCoefficient(int ABoxNumber);
         virtual double CoefRugosidade(int ABoxNumber);
         double
-             *DynamicHeight,
-             *PastHeight,
-             *UVelocity,
-             *PastUVelocity,
-             *FlowBetweenBoxes,
-             *PastFlowBetweenBoxes,
-             *WaterDensity,
-             *CoefManning,
-             *BoxDepth, *PastBoxDepth, *BoxLength, *BoxVolume, *PastBoxVolume,
-             *BoxWidth, *BoxCrossSectionalArea, *PastBoxCrossSectionalArea,
-//             *PastGeneric,
-             *EvaporativeFlux;
-		double Gravity, StartYear, AlfaA, AlfaB, HydraulicRadius, RiverFlow,
-			   MeanWidthBeforeBox, MeanWidthAfterBox, HorizontalDiffCoef, kdiffusion;
+            *DynamicHeight,
+            *PastHeight,
+            *UVelocity,
+            *PastUVelocity,
+            *FlowBetweenBoxes,
+            *PastFlowBetweenBoxes,
+            *WaterDensity,
+            *CoefManning,
+            *BoxDepth, *PastBoxDepth, *BoxLength, *BoxVolume, *PastBoxVolume,
+            *BoxWidth, *BoxCrossSectionalArea, *PastBoxCrossSectionalArea,
+            //             *PastGeneric,
+            *EvaporativeFlux;
+        double Gravity, StartYear, AlfaA, AlfaB, HydraulicRadius, RiverFlow,
+               MeanWidthBeforeBox, MeanWidthAfterBox, HorizontalDiffCoef, kdiffusion;
         bool CalculateEvaporation;
         int GridColumns, GridLines, UpperLayer;
 };
 
 class _export TOneDimensionalDIExplicit : public TOneDimensionalDITransport
 {
-	public :
+    public :
         // constructors used outside EcoDyn
         TOneDimensionalDIExplicit(char* className, float timeStep, char* morphologyFilename);
         TOneDimensionalDIExplicit(char* className,
-                   float timeStep, int nLines, int nColumns, double aDepth[],
-                   double aLength[], double aWidth[], double aElevation[], int aType[],
-                   int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[]);
+                float timeStep, int nLines, int nColumns, double aDepth[],
+                double aLength[], double aWidth[], double aElevation[], int aType[],
+                int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[]);
 
-		TOneDimensionalDIExplicit(TEcoDynClass* PEcoDynClass, char* className);
-		virtual void Go();
-	protected :
-		virtual void EquationOfMotion();
+        TOneDimensionalDIExplicit(TEcoDynClass* PEcoDynClass, char* className);
+        virtual void Go();
+    protected :
+        virtual void EquationOfMotion();
 };
 
 
 /*This object calculates the semitimestep as half of the timestep given by the shell*/
 class _export TBiDimensional : public TOneDimensionalDITransport
 {
-	public :
+    public :
         // constructors used outside EcoDyn
-		TBiDimensional(char* className, float timeStep, char* morphologyFilename);
+        TBiDimensional(char* className, float timeStep, char* morphologyFilename);
         TBiDimensional(char* className, float timeStep, int nLines, int nColumns, double aDepth[],
-                   double aLength[], double aWidth[], double aElevation[], int aType[],
-                   int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[]);
+                double aLength[], double aWidth[], double aElevation[], int aType[],
+                int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[]);
 
-		TBiDimensional(TEcoDynClass* PEcoDynClass, char* className);
+        TBiDimensional(TEcoDynClass* PEcoDynClass, char* className);
         ~TBiDimensional();
         virtual void freeMemory();
-		virtual void Go();
-		virtual void Go(double* AGeneric,
+        virtual void Go();
+        virtual void Go(double* AGeneric,
                 double* AGenericLoad,
                 double ARiver,
                 double AOcean);
-		virtual void Inquiry(char* srcName,
-        			 double &Value,
-                     int BoxNumber,
-                     char* ParameterName,
-                     int AnObjectCode);
+        virtual void Inquiry(char* srcName,
+                double &Value,
+                int BoxNumber,
+                char* ParameterName,
+                int AnObjectCode);
         VNA* Inquiry(char* srcName, int &TimeSeriesVariables);
         // AP, 2007.05.28
         virtual bool SetVariableValue(char* srcName,
-                            double Value,
-                             int BoxNumber,
-                             char* VariableName);
+                double Value,
+                int BoxNumber,
+                char* VariableName);
 
-	protected :
+    protected :
         virtual void ClearMeanSamples();
         virtual void UpdateMeanSamples();
 
         void BuildBiDimensional();
-		virtual void EquationOfMotion();
-		virtual void Continuity();
+        virtual void EquationOfMotion();
+        virtual void Continuity();
         virtual void AdvectDiffuse(double* Generic);
-		virtual void TransportEquation();
+        virtual void TransportEquation();
         virtual void TideForcing();
         virtual void RiverForcing();
         virtual void UpdateOfTidalBoundariesVelocities();
@@ -323,10 +323,10 @@ class _export TBiDimensional : public TOneDimensionalDITransport
         virtual double UPStreamVVelocity(int i, int j);
         virtual double DOWNStreamUVelocity(int i, int j);
         virtual double DOWNStreamVVelocity(int i, int j);
-		virtual double UpperUVelocity(int i, int j);
-		virtual double LowerUVelocity(int i, int j);
-		virtual double LeftVVelocity(int i, int j);
-		virtual double RightVVelocity(int i, int j);
+        virtual double UpperUVelocity(int i, int j);
+        virtual double LowerUVelocity(int i, int j);
+        virtual double LeftVVelocity(int i, int j);
+        virtual double RightVVelocity(int i, int j);
         virtual double UpperLeftCornerUVelocity(int i, int j);
         virtual double UpperRightCornerUVelocity(int i, int j);
         virtual double LowerLeftCornerUVelocity(int i, int j);
@@ -378,16 +378,16 @@ class _export TBiDimensional : public TOneDimensionalDITransport
         virtual double UVAdvectionOfVEquation(int i, int j);
         virtual double UVAdvectionOfUEquation(int i, int j);
         double *VVelocity,
-                *UVelocityPast, *VVelocityPast,
-                *UFlowBetweenBoxes,*VFlowBetweenBoxes,
-                *atemporary, *btemporary, *ctemporary, *rtemporary,
-                *HorizontalDiffCoefU, *HorizontalDiffCoefV;
+               *UVelocityPast, *VVelocityPast,
+               *UFlowBetweenBoxes,*VFlowBetweenBoxes,
+               *atemporary, *btemporary, *ctemporary, *rtemporary,
+               *HorizontalDiffCoefU, *HorizontalDiffCoefV;
 
         double ATimeStep, ASpatialStep, CriticalDepthForLandBoundary;
         double AUPStreamU,AUPStreamV, ADOWNStreamU, ADOWNStreamV;
-   	    double AUpperLeftDepth, AUpperRightDepth, ALowerLeftDepth, ALowerRightDepth;
-   	    double AUpperLeftUVelocity, AUpperRightUVelocity, ALowerLeftUVelocity, ALowerRightUVelocity;
-   	    double AUpperLeftVVelocity, AUpperRightVVelocity, ALowerLeftVVelocity, ALowerRightVVelocity;
+        double AUpperLeftDepth, AUpperRightDepth, ALowerLeftDepth, ALowerRightDepth;
+        double AUpperLeftUVelocity, AUpperRightUVelocity, ALowerLeftUVelocity, ALowerRightUVelocity;
+        double AUpperLeftVVelocity, AUpperRightVVelocity, ALowerLeftVVelocity, ALowerRightVVelocity;
         double SurfaceHeight;
         int GridColumns, GridLines, SemiTimeStep;
         int WesternBoundaryNumber, SouthernBoundaryNumber,
@@ -402,24 +402,24 @@ class _export TBiDimensional : public TOneDimensionalDITransport
 
         int samples;
         double *MeanUVelocity, *MeanVVelocity,
-                *MeanUFlow, *MeanVFlow;
+               *MeanUFlow, *MeanVFlow;
         double CorrectionOfHorizontalDiffCoef(double ADepth, double AVelocityComponent);
 };
 
 
 
 /*This object assumes that the timestep given by the shell is the semitimestep. Therefore for the results of two simulations based
-on this object and its ascendant to be equal, the timestep used with this object must be half of that used with his ascendant*/
+  on this object and its ascendant to be equal, the timestep used with this object must be half of that used with his ascendant*/
 class _export TBiDimensionalNormalTimeStep : public TBiDimensional
 {
-	public :
+    public :
         // constructors used outside EcoDyn
-		TBiDimensionalNormalTimeStep(char* className, float timeStep, char* morphologyFilename);
+        TBiDimensionalNormalTimeStep(char* className, float timeStep, char* morphologyFilename);
         TBiDimensionalNormalTimeStep(char* className, float timeStep, int nLines, int nColumns, double aDepth[],
-                   double aLength[], double aWidth[], double aElevation[], int aType[],
-                   int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[]);
+                double aLength[], double aWidth[], double aElevation[], int aType[],
+                int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[]);
 
-		TBiDimensionalNormalTimeStep(TEcoDynClass* PEcoDynClass, char* className);
+        TBiDimensionalNormalTimeStep(TEcoDynClass* PEcoDynClass, char* className);
         ~TBiDimensionalNormalTimeStep();
         virtual void Go();
         virtual void Reinitialize();
@@ -431,37 +431,37 @@ class _export TBiDimensionalNormalTimeStep : public TBiDimensional
 
 class _export TBiDimensionalExplicit : public TBiDimensionalNormalTimeStep
 {
-	public :
+    public :
         // constructor used outside EcoDyn
-		TBiDimensionalExplicit(char* className, float timeStep, char* morphologyFilename);
+        TBiDimensionalExplicit(char* className, float timeStep, char* morphologyFilename);
 
-		TBiDimensionalExplicit(TEcoDynClass* PEcoDynClass, char* className);
+        TBiDimensionalExplicit(TEcoDynClass* PEcoDynClass, char* className);
         ~TBiDimensionalExplicit();
         virtual void Go();
         virtual void Reinitialize();
-   protected :
-		virtual void EquationOfMotion();
+    protected :
+        virtual void EquationOfMotion();
 };
 
 class _export TBiDimensionalTidalTest : public TBiDimensionalNormalTimeStep
 {
-	public :
+    public :
         // constructor used outside EcoDyn
-		TBiDimensionalTidalTest(char* className, float timeStep, char* morphologyFilename);
+        TBiDimensionalTidalTest(char* className, float timeStep, char* morphologyFilename);
 
-		TBiDimensionalTidalTest(TEcoDynClass* PEcoDynClass, char* className);
+        TBiDimensionalTidalTest(TEcoDynClass* PEcoDynClass, char* className);
         ~TBiDimensionalTidalTest();
-/*        void Go();
-        virtual void EquationOfMotion();
-        virtual double UPStreamUVelocity(int i, int j);
-        virtual double UPStreamVVelocity(int i, int j);
-        virtual double DOWNStreamUVelocity(int i, int j);
-        virtual double DOWNStreamVVelocity(int i, int j); **/
+        /*        void Go();
+                  virtual void EquationOfMotion();
+                  virtual double UPStreamUVelocity(int i, int j);
+                  virtual double UPStreamVVelocity(int i, int j);
+                  virtual double DOWNStreamUVelocity(int i, int j);
+                  virtual double DOWNStreamVVelocity(int i, int j); **/
         virtual void TideForcing();
         virtual void RiverForcing();
         //void Reinitialize();
-      virtual double GetParameterValue(char* parmName);
-      virtual bool SetParameterValue(char* parmName, double value);
+        virtual double GetParameterValue(char* parmName);
+        virtual bool SetParameterValue(char* parmName, double value);
         double caudal;
         double *A, *B;
         int *Indx;
@@ -470,27 +470,27 @@ class _export TBiDimensionalTidalTest : public TBiDimensionalNormalTimeStep
 
 class _export TBiDimensionalSango1 : public TBiDimensionalNormalTimeStep
 {
-	public :
+    public :
         // constructors used outside EcoDyn
-		TBiDimensionalSango1(char* className, float timeStep, char* morphologyFilename,
-                            char* variablesFilename, char* parametersFilename);
+        TBiDimensionalSango1(char* className, float timeStep, char* morphologyFilename,
+                char* variablesFilename, char* parametersFilename);
         TBiDimensionalSango1(char* className,
-                   float timeStep, int nLines, int nColumns, double aDepth[],
-                   double aLength[], double aWidth[], double aElevation[], int aType[],
-                   int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[],
-                   int nVars, VNA aVarsNames[], double aSalt[], double aDynamicHeight[],
-                   double aWaterDensity[], double aUVelocity[], double aVVelocity[],
-                   double aFlow[], double aVFlow[],
-                   int nParams, double latitude, double aCoefManning[],
-                   double gravity, double horizontalDiffCoef, double startYear,
-                   double criticalDepthForLandBoundary, int northernTidalReference,
-                   int southernTidalReference);
+                float timeStep, int nLines, int nColumns, double aDepth[],
+                double aLength[], double aWidth[], double aElevation[], int aType[],
+                int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[],
+                int nVars, VNA aVarsNames[], double aSalt[], double aDynamicHeight[],
+                double aWaterDensity[], double aUVelocity[], double aVVelocity[],
+                double aFlow[], double aVFlow[],
+                int nParams, double latitude, double aCoefManning[],
+                double gravity, double horizontalDiffCoef, double startYear,
+                double criticalDepthForLandBoundary, int northernTidalReference,
+                int southernTidalReference);
 
-		TBiDimensionalSango1(TEcoDynClass* PEcoDynClass, char* className);
+        TBiDimensionalSango1(TEcoDynClass* PEcoDynClass, char* className);
         ~TBiDimensionalSango1();
         virtual void freeMemory();
-      virtual double GetParameterValue(char* parmName);
-      virtual bool SetParameterValue(char* parmName, double value);
+        virtual double GetParameterValue(char* parmName);
+        virtual bool SetParameterValue(char* parmName, double value);
         virtual void Go();
         virtual void Reinitialize();
 
@@ -516,27 +516,27 @@ class _export TBiDimensionalSango1 : public TBiDimensionalNormalTimeStep
 
 class _export TBiDimensionalSango2 : public TBiDimensionalNormalTimeStep
 {
-	public :
+    public :
         // constructors used outside EcoDyn
-		TBiDimensionalSango2(char* className, float timeStep, char* morphologyFilename,
-                            char* variablesFilename, char* parametersFilename);
+        TBiDimensionalSango2(char* className, float timeStep, char* morphologyFilename,
+                char* variablesFilename, char* parametersFilename);
         TBiDimensionalSango2(char* className,
-                   float timeStep, int nLines, int nColumns, double aDepth[],
-                   double aLength[], double aWidth[], double aElevation[], int aType[],
-                   int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[],
-                   int nVars, VNA aVarsNames[], double aSalt[], double aDynamicHeight[],
-                   double aWaterDensity[], double aUVelocity[], double aVVelocity[],
-                   double aFlow[], double aVFlow[],
-                   int nParams, double latitude, double* pCoefManning,
-                   double gravity, double horizontalDiffCoef, double startYear,
-                   double criticalDepthForLandBoundary, int northernTidalReference,
-                   int southernTidalReference, double phaseLag);
+                float timeStep, int nLines, int nColumns, double aDepth[],
+                double aLength[], double aWidth[], double aElevation[], int aType[],
+                int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[],
+                int nVars, VNA aVarsNames[], double aSalt[], double aDynamicHeight[],
+                double aWaterDensity[], double aUVelocity[], double aVVelocity[],
+                double aFlow[], double aVFlow[],
+                int nParams, double latitude, double* pCoefManning,
+                double gravity, double horizontalDiffCoef, double startYear,
+                double criticalDepthForLandBoundary, int northernTidalReference,
+                int southernTidalReference, double phaseLag);
 
-		TBiDimensionalSango2(TEcoDynClass* PEcoDynClass, char* className);
+        TBiDimensionalSango2(TEcoDynClass* PEcoDynClass, char* className);
         ~TBiDimensionalSango2();
         virtual void freeMemory();
-      virtual double GetParameterValue(char* parmName);
-      virtual bool SetParameterValue(char* parmName, double value);
+        virtual double GetParameterValue(char* parmName);
+        virtual bool SetParameterValue(char* parmName, double value);
         virtual void TideForcing();
         int NorthernTidalReference, SouthernTidalReference;
         double PhaseLag;
@@ -551,47 +551,47 @@ class _export TBiDimensionalSango2 : public TBiDimensionalNormalTimeStep
 
 class _export TBiDimensionalSango3 : public TBiDimensionalSango1  //Object with continuosly varying harmonics from south to north
 {
-	public :
+    public :
         // constructors used outside EcoDyn
-		TBiDimensionalSango3(char* className, float timeStep, char* morphologyFilename,
-                            char* variablesFilename, char* parametersFilename);
+        TBiDimensionalSango3(char* className, float timeStep, char* morphologyFilename,
+                char* variablesFilename, char* parametersFilename);
         TBiDimensionalSango3(char* className,
-                   float timeStep, int nLines, int nColumns, double aDepth[],
-                   double aLength[], double aWidth[], double aElevation[], int aType[],
-                   int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[],
-                   int nVars, VNA aVarsNames[], double aSalt[], double aDynamicHeight[],
-                   double aWaterDensity[], double aUVelocity[], double aVVelocity[],
-                   double aFlow[], double aVFlow[],
-                   int nParams, double latitude, double aCoefManning[],
-                   double gravity, double horizontalDiffCoef, double startYear,
-                   double criticalDepthForLandBoundary, int northernTidalReference,
-                   int southernTidalReference);
+                float timeStep, int nLines, int nColumns, double aDepth[],
+                double aLength[], double aWidth[], double aElevation[], int aType[],
+                int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[],
+                int nVars, VNA aVarsNames[], double aSalt[], double aDynamicHeight[],
+                double aWaterDensity[], double aUVelocity[], double aVVelocity[],
+                double aFlow[], double aVFlow[],
+                int nParams, double latitude, double aCoefManning[],
+                double gravity, double horizontalDiffCoef, double startYear,
+                double criticalDepthForLandBoundary, int northernTidalReference,
+                int southernTidalReference);
 
-		TBiDimensionalSango3(TEcoDynClass* PEcoDynClass, char* className);
+        TBiDimensionalSango3(TEcoDynClass* PEcoDynClass, char* className);
         virtual void TideForcing();
 };
 
 class _export TBiDimensionalIntertidal : public TBiDimensionalNormalTimeStep
 {
-	public :
+    public :
         // constructors used outside EcoDyn
-		TBiDimensionalIntertidal(char* className, float timeStep, char* morphologyFilename);
+        TBiDimensionalIntertidal(char* className, float timeStep, char* morphologyFilename);
         TBiDimensionalIntertidal(char* className,
-                   float timeStep, int nLines, int nColumns, double aDepth[],
-                   double aLength[], double aWidth[], double aElevation[], int aType[],
-                   int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[]);
+                float timeStep, int nLines, int nColumns, double aDepth[],
+                double aLength[], double aWidth[], double aElevation[], int aType[],
+                int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[]);
 
-		TBiDimensionalIntertidal(TEcoDynClass* PEcoDynClass, char* className);
+        TBiDimensionalIntertidal(TEcoDynClass* PEcoDynClass, char* className);
         ~TBiDimensionalIntertidal();
         virtual void freeMemory();
         virtual void Go();
         virtual void Reinitialize();
-		virtual void Continuity();
+        virtual void Continuity();
 
-	protected :
+    protected :
         void BuildBiDimensionalIntertidal();
-		virtual void EquationOfMotion();
-		void DoContinuity();
+        virtual void EquationOfMotion();
+        void DoContinuity();
         virtual void AdvectDiffuse(double* Generic);
         virtual void TideForcing();
         virtual void RiverForcing();
@@ -600,10 +600,10 @@ class _export TBiDimensionalIntertidal : public TBiDimensionalNormalTimeStep
         virtual double UPStreamVVelocity(int i, int j);
         virtual double DOWNStreamUVelocity(int i, int j);
         virtual double DOWNStreamVVelocity(int i, int j);
-		virtual double UpperUVelocity(int i, int j);
-		virtual double LowerUVelocity(int i, int j);
-		virtual double LeftVVelocity(int i, int j);
-		virtual double RightVVelocity(int i, int j);
+        virtual double UpperUVelocity(int i, int j);
+        virtual double LowerUVelocity(int i, int j);
+        virtual double LeftVVelocity(int i, int j);
+        virtual double RightVVelocity(int i, int j);
         virtual double UpperLeftCornerUVelocity(int i, int j);
         virtual double UpperRightCornerUVelocity(int i, int j);
         virtual double LowerLeftCornerUVelocity(int i, int j);
@@ -663,28 +663,28 @@ class _export TBiDimensionalIntertidal : public TBiDimensionalNormalTimeStep
 
 class _export TBiDimensionalDouro : public TBiDimensionalIntertidal
 {
-	public :
+    public :
         // constructors used outside EcoDyn
-		TBiDimensionalDouro(char* className, float timeStep, char* morphologyFilename,
-                            char* variablesFilename, char* parametersFilename);
+        TBiDimensionalDouro(char* className, float timeStep, char* morphologyFilename,
+                char* variablesFilename, char* parametersFilename);
         TBiDimensionalDouro(char* className,
-                   float timeStep, int nLines, int nColumns, double aDepth[],
-                   double aLength[], double aWidth[], double aElevation[], int aType[],
-                   int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[],
-                   int nVars, VNA aVarsNames[], double aSalt[], double aDynamicHeight[],
-                   double aWaterDensity[], double aUVelocity[], double aVVelocity[],
-                   double aFlow[], double aVFlow[],
-                   int nParams, double latitude, double aCoefManning[],
-                   double gravity, double horizontalDiffCoef, double startYear,
-                   double criticalDepthForLandBoundary);
+                float timeStep, int nLines, int nColumns, double aDepth[],
+                double aLength[], double aWidth[], double aElevation[], int aType[],
+                int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[],
+                int nVars, VNA aVarsNames[], double aSalt[], double aDynamicHeight[],
+                double aWaterDensity[], double aUVelocity[], double aVVelocity[],
+                double aFlow[], double aVFlow[],
+                int nParams, double latitude, double aCoefManning[],
+                double gravity, double horizontalDiffCoef, double startYear,
+                double criticalDepthForLandBoundary);
 
-		TBiDimensionalDouro(TEcoDynClass* PEcoDynClass, char* className);
+        TBiDimensionalDouro(TEcoDynClass* PEcoDynClass, char* className);
         ~TBiDimensionalDouro();
         virtual void freeMemory();
         virtual void TideForcing();
         virtual void RiverForcing();
-      virtual double GetParameterValue(char* parmName);
-      virtual bool SetParameterValue(char* parmName, double value);
+        virtual double GetParameterValue(char* parmName);
+        virtual bool SetParameterValue(char* parmName, double value);
 
         // AP, 2007.07.09
         virtual bool SaveVariables();
@@ -696,22 +696,22 @@ class _export TBiDimensionalDouro : public TBiDimensionalIntertidal
 
 class _export TBiDimensionalRiaFormosa : public TBiDimensionalDouro
 {
-	public :
+    public :
         // constructors used outside EcoDyn
-		TBiDimensionalRiaFormosa(char* className, float timeStep, char* morphologyFilename,
-                            char* variablesFilename, char* parametersFilename);
+        TBiDimensionalRiaFormosa(char* className, float timeStep, char* morphologyFilename,
+                char* variablesFilename, char* parametersFilename);
         TBiDimensionalRiaFormosa(char* className,
-                   float timeStep, int nLines, int nColumns, double aDepth[],
-                   double aLength[], double aWidth[], double aElevation[], int aType[],
-                   int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[],
-                   int nVars, VNA aVarsNames[], double aSalt[], double aDynamicHeight[],
-                   double aWaterDensity[], double aUVelocity[], double aVVelocity[],
-                   double aFlow[], double aVFlow[],
-                   int nParams, double latitude, double aCoefManning[],
-                   double gravity, double horizontalDiffCoef, double startYear,
-                   double criticalDepthForLandBoundary);
+                float timeStep, int nLines, int nColumns, double aDepth[],
+                double aLength[], double aWidth[], double aElevation[], int aType[],
+                int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[],
+                int nVars, VNA aVarsNames[], double aSalt[], double aDynamicHeight[],
+                double aWaterDensity[], double aUVelocity[], double aVVelocity[],
+                double aFlow[], double aVFlow[],
+                int nParams, double latitude, double aCoefManning[],
+                double gravity, double horizontalDiffCoef, double startYear,
+                double criticalDepthForLandBoundary);
 
-		TBiDimensionalRiaFormosa(TEcoDynClass* PEcoDynClass, char* className);
+        TBiDimensionalRiaFormosa(TEcoDynClass* PEcoDynClass, char* className);
 
     protected :
         void BuildBiDimensionalRiaFormosa();
@@ -722,22 +722,22 @@ class _export TBiDimensionalRiaFormosa : public TBiDimensionalDouro
 
 class _export TCarl2D : public TBiDimensionalDouro
 {
-	public :
+    public :
         // constructors used outside EcoDyn
-		TCarl2D(char* className, float timeStep, char* morphologyFilename,
-                            char* variablesFilename, char* parametersFilename);
+        TCarl2D(char* className, float timeStep, char* morphologyFilename,
+                char* variablesFilename, char* parametersFilename);
         TCarl2D(char* className,
-                   float timeStep, int nLines, int nColumns, double aDepth[],
-                   double aLength[], double aWidth[], double aElevation[], int aType[],
-                   int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[],
-                   int nVars, VNA aVarsNames[], double aSalt[], double aDynamicHeight[],
-                   double aWaterDensity[], double aUVelocity[], double aVVelocity[],
-                   double aFlow[], double aVFlow[],
-                   int nParams, double latitude, double aCoefManning[],
-                   double gravity, double horizontalDiffCoef, double startYear,
-                   double criticalDepthForLandBoundary);
+                float timeStep, int nLines, int nColumns, double aDepth[],
+                double aLength[], double aWidth[], double aElevation[], int aType[],
+                int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[],
+                int nVars, VNA aVarsNames[], double aSalt[], double aDynamicHeight[],
+                double aWaterDensity[], double aUVelocity[], double aVVelocity[],
+                double aFlow[], double aVFlow[],
+                int nParams, double latitude, double aCoefManning[],
+                double gravity, double horizontalDiffCoef, double startYear,
+                double criticalDepthForLandBoundary);
 
-		TCarl2D(TEcoDynClass* PEcoDynClass, char* className);
+        TCarl2D(TEcoDynClass* PEcoDynClass, char* className);
 
     protected :
         void BuildBiDimensionalCarl();
@@ -747,8 +747,8 @@ class _export TCarl2D : public TBiDimensionalDouro
 
 class _export TBiDimensionalIntertidalTransportImplicit : public TBiDimensionalRiaFormosa
 {
-	public :
-		TBiDimensionalIntertidalTransportImplicit(TEcoDynClass* PEcoDynClass, char* className);
+    public :
+        TBiDimensionalIntertidalTransportImplicit(TEcoDynClass* PEcoDynClass, char* className);
     protected :
         virtual void AdvectDiffuse(double* Generic);
         virtual double a1Calculation(int i, int j, int index1);
@@ -758,83 +758,83 @@ class _export TBiDimensionalIntertidalTransportImplicit : public TBiDimensionalR
         virtual double b2Calculation(int i, int j, int index1);
         virtual double c2Calculation(int i, int j, int index1);
         virtual double r1Calculation(int index, double MyWestUFlow, double MyEastUFlow, double MyNorthVFlow, double MySouthVFlow,
-                                                double MyNorthDiffusion, double MySouthDiffusion, double* PastGeneric);
+                double MyNorthDiffusion, double MySouthDiffusion, double* PastGeneric);
         virtual double r2Calculation(int index, double MyWestUFlow, double MyEastUFlow, double MyNorthVFlow, double MySouthVFlow,
-                                                double MyWestDiffusion, double MyEastDiffusion, double* PastGeneric);
+                double MyWestDiffusion, double MyEastDiffusion, double* PastGeneric);
         virtual void CorrectRForRiverAndOceanBoundaries(int index1, double Correction);
 };
 
 class _export TBiDimensionalTidalTestIntertidal : public TBiDimensionalIntertidal
 {
-	public :
-		TBiDimensionalTidalTestIntertidal(TEcoDynClass* PEcoDynClass, char* className);
-      ~TBiDimensionalTidalTestIntertidal();
-      virtual void TideForcing();
-      virtual void RiverForcing();
-      virtual double GetParameterValue(char* parmName);
-      virtual bool SetParameterValue(char* parmName, double value);
-      double caudal;
+    public :
+        TBiDimensionalTidalTestIntertidal(TEcoDynClass* PEcoDynClass, char* className);
+        ~TBiDimensionalTidalTestIntertidal();
+        virtual void TideForcing();
+        virtual void RiverForcing();
+        virtual double GetParameterValue(char* parmName);
+        virtual bool SetParameterValue(char* parmName, double value);
+        double caudal;
 };
 
 class _export TBiDimensionalTimeSeries : public TBiDimensionalRiaFormosa
 {
-	public :
+    public :
         // constructors used outside EcoDyn
-		/*TBiDimensionalTimeSeries(char* className, float timeStep, char* morphologyFilename);
-        TBiDimensionalTimeSeries(char* className,
-                   float timeStep, int nLines, int nColumns, double aDepth[],
-                   double aLength[], double aWidth[], double aElevation[], int aType[],
-                   int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[]);  */
+        /*TBiDimensionalTimeSeries(char* className, float timeStep, char* morphologyFilename);
+          TBiDimensionalTimeSeries(char* className,
+          float timeStep, int nLines, int nColumns, double aDepth[],
+          double aLength[], double aWidth[], double aElevation[], int aType[],
+          int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[]);  */
 
-		TBiDimensionalTimeSeries(TEcoDynClass* PEcoDynClass, char* className,
-        		bool readValues, bool cyclic, int nrOfPeriods, SimulationPeriod* sPeriods);
-		~TBiDimensionalTimeSeries();
+        TBiDimensionalTimeSeries(TEcoDynClass* PEcoDynClass, char* className,
+                bool readValues, bool cyclic, int nrOfPeriods, SimulationPeriod* sPeriods);
+        ~TBiDimensionalTimeSeries();
         virtual void freeMemory();
 
         virtual void Go();
         // AP, 2006.01.17
-		virtual void Go(double* AGeneric,
+        virtual void Go(double* AGeneric,
                 double* AGenericLoad,
                 double ARiver,
                 double AOcean);
         // AP, 2005.05.17
         virtual void Go(double *A, double *ALoad,
-                        double *B, double *BLoad,
-                        double *C, double *CLoad,
-                        double *D, double *DLoad,
-                        double *E, double *ELoad,
-                        double ARiver, double AOcean);
+                double *B, double *BLoad,
+                double *C, double *CLoad,
+                double *D, double *DLoad,
+                double *E, double *ELoad,
+                double ARiver, double AOcean);
         //Pedro Duarte, 2005.07.07
         virtual void Go(double *A, double *ALoad, double *ARiverLoad,
-                        double *B, double *BLoad, double *BRiverLoad,
-                        double *C, double *CLoad, double *CRiverLoad,
-                        double *D, double *DLoad, double *DRiverLoad,
-                        double *E, double *ELoad, double *ERiverLoad,
-                        double ARiver, double AOcean);
+                double *B, double *BLoad, double *BRiverLoad,
+                double *C, double *CLoad, double *CRiverLoad,
+                double *D, double *DLoad, double *DRiverLoad,
+                double *E, double *ELoad, double *ERiverLoad,
+                double ARiver, double AOcean);
         //Pedro Duarte, 2005.06.20
         virtual void Go(double *A, double *ALoad,
-                        double *B, double *BLoad,
-                        double *C, double *CLoad,
-                        double *D, double *DLoad,
-                        double *E, double *ELoad,
-                        double *F, double *FLoad,
-                        double *G, double *GLoad,
-                        double *H, double *HLoad,
-                        double ARiver, double AOcean);
+                double *B, double *BLoad,
+                double *C, double *CLoad,
+                double *D, double *DLoad,
+                double *E, double *ELoad,
+                double *F, double *FLoad,
+                double *G, double *GLoad,
+                double *H, double *HLoad,
+                double ARiver, double AOcean);
 
 
         virtual void Inquiry(char* srcName,
-        			 double &Value,
-                     int BoxNumber,
-                     char* ParameterName,
-                     int AnObjectCode);
+                double &Value,
+                int BoxNumber,
+                char* ParameterName,
+                int AnObjectCode);
         virtual void Reinitialize();
         virtual void ResetValues();
         // AP, 2007.05.28
         virtual bool SetVariableValue(char* srcName,
-                            double Value,
-                             int BoxNumber,
-                             char* VariableName);
+                double Value,
+                int BoxNumber,
+                char* VariableName);
 
         // AP, 2007.07.09
         virtual bool SaveVariables();
@@ -850,23 +850,23 @@ class _export TBiDimensionalTimeSeries : public TBiDimensionalRiaFormosa
         virtual void Continuity();
         virtual void AdvectDiffuse(double* Generic, double* GenericLoad);
         virtual void AdvectDiffuse(double *A, double *ALoad,
-                           double *B, double *BLoad,
-                           double *C, double *CLoad,
-                           double *D, double *DLoad,
-                           double *E, double *ELoad);
+                double *B, double *BLoad,
+                double *C, double *CLoad,
+                double *D, double *DLoad,
+                double *E, double *ELoad);
         virtual void AdvectDiffuse(double *A, double *ALoad, double *ARiverLoad,
-                           double *B, double *BLoad, double *BRiverLoad,
-                           double *C, double *CLoad, double *CRiverLoad,
-                           double *D, double *DLoad, double *DRiverLoad,
-                           double *E, double *ELoad, double *ERiverLoad);
+                double *B, double *BLoad, double *BRiverLoad,
+                double *C, double *CLoad, double *CRiverLoad,
+                double *D, double *DLoad, double *DRiverLoad,
+                double *E, double *ELoad, double *ERiverLoad);
         virtual void AdvectDiffuse(double *A, double *ALoad,
-                           double *B, double *BLoad,
-                           double *C, double *CLoad,
-                           double *D, double *DLoad,
-                           double *E, double *ELoad,
-                           double *F, double *FLoad,
-                           double *G, double *GLoad,
-                           double *H, double *HLoad);
+                double *B, double *BLoad,
+                double *C, double *CLoad,
+                double *D, double *DLoad,
+                double *E, double *ELoad,
+                double *F, double *FLoad,
+                double *G, double *GLoad,
+                double *H, double *HLoad);
         double WesternComponentOfContinuity(int i, int j);
         double EasternComponentOfContinuity(int i, int j);
         double NorthernComponentOfContinuity(int i, int j);
@@ -876,15 +876,15 @@ class _export TBiDimensionalTimeSeries : public TBiDimensionalRiaFormosa
         virtual double NorthernComponentOfAdvectionDiffusion(int i, int j, double* PastGeneric);
         virtual double SouthernComponentOfAdvectionDiffusion(int i, int j, double* PastGeneric);
         virtual bool CheckTemporalResolutionForAdvection(int ABoxNumber, double ABoxDepth,
-                                        double MyWestUFlow, double MyEastUFlow,
-                                        double MyNorthVFlow, double MySouthVFlow);
+                double MyWestUFlow, double MyEastUFlow,
+                double MyNorthVFlow, double MySouthVFlow);
         bool CheckTemporalResolutionForMassDiffusion(int ABoxNumber, double ABoxDepth,
-                                                     double MyWestDiffusion, double MyEastDiffusion,
-                                                     double MyNorthDiffusion, double MySouthDiffusion,double AGeneric);
+                double MyWestDiffusion, double MyEastDiffusion,
+                double MyNorthDiffusion, double MySouthDiffusion,double AGeneric);
 
         void CorrectElevation();
         double *mUVelocity,
-        	   *mVVelocity,
+               *mVVelocity,
                *mUFlow,
                *mVFlow;
 
@@ -895,7 +895,7 @@ class _export TBiDimensionalTimeSeries : public TBiDimensionalRiaFormosa
         long diffTime;
         double DefaultTimeStep;
         int *MyBoxNumber;
-//        double *PastGenericA, *PastGenericB, *PastGenericC, *PastGenericD, *PastGenericE, *PastGenericF, *PastGenericG, *PastGenericH;
+        //        double *PastGenericA, *PastGenericB, *PastGenericC, *PastGenericD, *PastGenericE, *PastGenericF, *PastGenericG, *PastGenericH;
 
         double *InitialBoxDepth, *InitialBoxElevation;
         bool cyclicRun;     // AP, 2005.07.15
@@ -925,105 +925,105 @@ class _export TBiDimensionalTimeSeries : public TBiDimensionalRiaFormosa
 
 class _export TBiDimensionalTimeSeriesVariableDT : public TBiDimensionalTimeSeries
 {
-	public :
-           TBiDimensionalTimeSeriesVariableDT(TEcoDynClass* PEcoDynClass, char* className,
-        		bool readValues, bool cyclic, int nrOfPeriods, SimulationPeriod* sPeriods);
-           ~TBiDimensionalTimeSeriesVariableDT();
-           virtual void freeMemory();
-           virtual void Reinitialize();
-           //virtual void Integrate();
-        protected:
+    public :
+        TBiDimensionalTimeSeriesVariableDT(TEcoDynClass* PEcoDynClass, char* className,
+                bool readValues, bool cyclic, int nrOfPeriods, SimulationPeriod* sPeriods);
+        ~TBiDimensionalTimeSeriesVariableDT();
+        virtual void freeMemory();
+        virtual void Reinitialize();
+        //virtual void Integrate();
+    protected:
 
-           typedef struct CriticalCells
-           {
-              bool Critical;
-              int ABoxNumber;
-              double CellTimeStep;
-              int NumberOfSteps;
-              double NorthFlow, SouthFlow, WestFlow, EastFlow;
-           }  CellRecord;
+        typedef struct CriticalCells
+        {
+            bool Critical;
+            int ABoxNumber;
+            double CellTimeStep;
+            int NumberOfSteps;
+            double NorthFlow, SouthFlow, WestFlow, EastFlow;
+        }  CellRecord;
 
-           typedef struct flow_critical_cells
-           {
-              double NorthAdvecFlow, SouthAdvecFlow, WestAdvecFlow, EastAdvecFlow,
-                     NorthDiffFlow, SouthDiffFlow, WestDiffFlow, EastDiffFlow;
-           }  FlowCriticalCells;
+        typedef struct flow_critical_cells
+        {
+            double NorthAdvecFlow, SouthAdvecFlow, WestAdvecFlow, EastAdvecFlow,
+                   NorthDiffFlow, SouthDiffFlow, WestDiffFlow, EastDiffFlow;
+        }  FlowCriticalCells;
 
-           virtual void Continuity();
-           void CheckTemporalResolution(int ABoxNumber, double ABoxDepth,
-                                        double MyWestUFlow, double MyEastUFlow,
-                                        double MyNorthVFlow, double MySouthVFlow);
-           virtual void AdvectDiffuse(double* Generic, double* GenericLoad);
-           virtual void AdvectDiffuseCriticalCells(
+        virtual void Continuity();
+        void CheckTemporalResolution(int ABoxNumber, double ABoxDepth,
+                double MyWestUFlow, double MyEastUFlow,
+                double MyNorthVFlow, double MySouthVFlow);
+        virtual void AdvectDiffuse(double* Generic, double* GenericLoad);
+        virtual void AdvectDiffuseCriticalCells(
                 double* Generic, double* PastGeneric, FlowCriticalCells* flowCC, double* GenericLoad);
-           virtual void AdvectDiffuseCriticalCells(
-               double* GenericA, double* PastGenericA, double *ALoad, FlowCriticalCells* flowCCA,
-               double* GenericB, double* PastGenericB, double *BLoad, FlowCriticalCells* flowCCB,
-               double* GenericC, double* PastGenericC, double *CLoad, FlowCriticalCells* flowCCC,
-               double* GenericD, double* PastGenericD, double *DLoad, FlowCriticalCells* flowCCD,
-               double* GenericE, double* PastGenericE, double *ELoad, FlowCriticalCells* flowCCE);
-           virtual void AdvectDiffuse(double *A, double *ALoad,
-                           double *B, double *BLoad,
-                           double *C, double *CLoad,
-                           double *D, double *DLoad,
-                           double *E, double *ELoad);
-           virtual void AdvectDiffuseCriticalCells(
-               double* GenericA, double* PastGenericA, double *ALoad, FlowCriticalCells* flowCCA,
-               double* GenericB, double* PastGenericB, double *BLoad, FlowCriticalCells* flowCCB,
-               double* GenericC, double* PastGenericC, double *CLoad, FlowCriticalCells* flowCCC,
-               double* GenericD, double* PastGenericD, double *DLoad, FlowCriticalCells* flowCCD,
-               double* GenericE, double* PastGenericE, double *ELoad, FlowCriticalCells* flowCCE,
-               double* GenericF, double* PastGenericF, double *FLoad, FlowCriticalCells* flowCCF,
-               double* GenericG, double* PastGenericG, double *GLoad, FlowCriticalCells* flowCCG,
-               double* GenericH, double* PastGenericH, double *HLoad, FlowCriticalCells* flowCCH);
-           virtual void AdvectDiffuse(double *A, double *ALoad,
-                           double *B, double *BLoad,
-                           double *C, double *CLoad,
-                           double *D, double *DLoad,
-                           double *E, double *ELoad,
-                           double *F, double *FLoad,
-                           double *G, double *GLoad,
-                           double *H, double *HLoad);
+        virtual void AdvectDiffuseCriticalCells(
+                double* GenericA, double* PastGenericA, double *ALoad, FlowCriticalCells* flowCCA,
+                double* GenericB, double* PastGenericB, double *BLoad, FlowCriticalCells* flowCCB,
+                double* GenericC, double* PastGenericC, double *CLoad, FlowCriticalCells* flowCCC,
+                double* GenericD, double* PastGenericD, double *DLoad, FlowCriticalCells* flowCCD,
+                double* GenericE, double* PastGenericE, double *ELoad, FlowCriticalCells* flowCCE);
+        virtual void AdvectDiffuse(double *A, double *ALoad,
+                double *B, double *BLoad,
+                double *C, double *CLoad,
+                double *D, double *DLoad,
+                double *E, double *ELoad);
+        virtual void AdvectDiffuseCriticalCells(
+                double* GenericA, double* PastGenericA, double *ALoad, FlowCriticalCells* flowCCA,
+                double* GenericB, double* PastGenericB, double *BLoad, FlowCriticalCells* flowCCB,
+                double* GenericC, double* PastGenericC, double *CLoad, FlowCriticalCells* flowCCC,
+                double* GenericD, double* PastGenericD, double *DLoad, FlowCriticalCells* flowCCD,
+                double* GenericE, double* PastGenericE, double *ELoad, FlowCriticalCells* flowCCE,
+                double* GenericF, double* PastGenericF, double *FLoad, FlowCriticalCells* flowCCF,
+                double* GenericG, double* PastGenericG, double *GLoad, FlowCriticalCells* flowCCG,
+                double* GenericH, double* PastGenericH, double *HLoad, FlowCriticalCells* flowCCH);
+        virtual void AdvectDiffuse(double *A, double *ALoad,
+                double *B, double *BLoad,
+                double *C, double *CLoad,
+                double *D, double *DLoad,
+                double *E, double *ELoad,
+                double *F, double *FLoad,
+                double *G, double *GLoad,
+                double *H, double *HLoad);
 
-           double WesternComponentOfContinuity(int i, int j);
-           double EasternComponentOfContinuity(int i, int j);
-           double NorthernComponentOfContinuity(int i, int j);
-           double SouthernComponentOfContinuity(int i, int j);
-           virtual double WesternComponentOfAdvectionDiffusion(int i, int j, double* PastGeneric);
-           virtual double EasternComponentOfAdvectionDiffusion(int i, int j, double* PastGeneric);
-           virtual double NorthernComponentOfAdvectionDiffusion(int i, int j, double* PastGeneric);
-           virtual double SouthernComponentOfAdvectionDiffusion(int i, int j, double* PastGeneric);
-           virtual double SaltWesternHorizontalDiffusion(int i, int j, double* PastGeneric);
-           virtual double SaltEasternHorizontalDiffusion(int i, int j, double* PastGeneric);
-           virtual double SaltNorthernVerticalDiffusion(int i, int j, double* PastGeneric);
-           virtual double SaltSouthernVerticalDiffusion(int i, int j, double* PastGeneric);
+        double WesternComponentOfContinuity(int i, int j);
+        double EasternComponentOfContinuity(int i, int j);
+        double NorthernComponentOfContinuity(int i, int j);
+        double SouthernComponentOfContinuity(int i, int j);
+        virtual double WesternComponentOfAdvectionDiffusion(int i, int j, double* PastGeneric);
+        virtual double EasternComponentOfAdvectionDiffusion(int i, int j, double* PastGeneric);
+        virtual double NorthernComponentOfAdvectionDiffusion(int i, int j, double* PastGeneric);
+        virtual double SouthernComponentOfAdvectionDiffusion(int i, int j, double* PastGeneric);
+        virtual double SaltWesternHorizontalDiffusion(int i, int j, double* PastGeneric);
+        virtual double SaltEasternHorizontalDiffusion(int i, int j, double* PastGeneric);
+        virtual double SaltNorthernVerticalDiffusion(int i, int j, double* PastGeneric);
+        virtual double SaltSouthernVerticalDiffusion(int i, int j, double* PastGeneric);
 
-           CellRecord* ACellRecord;
-           int *Cells;
-           int NumberOfCriticalCells, CriticalNumberOfSteps;
-           double CriticalTimeStep;
-           double *CriticalCellDepth, *CriticalCellHeight;
+        CellRecord* ACellRecord;
+        int *Cells;
+        int NumberOfCriticalCells, CriticalNumberOfSteps;
+        double CriticalTimeStep;
+        double *CriticalCellDepth, *CriticalCellHeight;
 };
 
 
 class _export TBiDimensionalTimeSeriesTransportImplicit : public TBiDimensionalTimeSeries
 {
-	public :
-           TBiDimensionalTimeSeriesTransportImplicit(TEcoDynClass* PEcoDynClass, char* className,
-        		bool readValues, bool cyclic, int nrOfPeriods, SimulationPeriod* sPeriods);
-           ~TBiDimensionalTimeSeriesTransportImplicit();
-           virtual void freeMemory();
-        protected:
-           virtual void AdvectDiffuse(double* Generic);
-           double ACalculation(int i, int j);
-           double BCalculation(int i, int j);
-           double CCalculation(int i, int j);
-           double DCalculation(int i, int j);
-           double ECalculation(int i, int j);
-           void FillMatrix(int n);
-           void CompactMatrix(int n);
-           void bandec(/*double a[][max],*/ int n, int m1, int m2/*, double *a1/*al[][max],int indx[], float dd*/);
-           void banbks(/*float a[][max], */int n, int m1, int m2/*, float al[][max], int indx[], float b[]*/);
+    public :
+        TBiDimensionalTimeSeriesTransportImplicit(TEcoDynClass* PEcoDynClass, char* className,
+                bool readValues, bool cyclic, int nrOfPeriods, SimulationPeriod* sPeriods);
+        ~TBiDimensionalTimeSeriesTransportImplicit();
+        virtual void freeMemory();
+    protected:
+        virtual void AdvectDiffuse(double* Generic);
+        double ACalculation(int i, int j);
+        double BCalculation(int i, int j);
+        double CCalculation(int i, int j);
+        double DCalculation(int i, int j);
+        double ECalculation(int i, int j);
+        void FillMatrix(int n);
+        void CompactMatrix(int n);
+        void bandec(/*double a[][max],*/ int n, int m1, int m2/*, double *a1/*al[][max],int indx[], float dd*/);
+        void banbks(/*float a[][max], */int n, int m1, int m2/*, float al[][max], int indx[], float b[]*/);
         double *DeltaX, *DeltaY, *d, *e, *M1, *M2, *M3, *CompactedMatrix, *UpperTriangularMatrix, *LowerTriangularMatrix;
         double dd;
         int *MyIndex;
@@ -1033,111 +1033,111 @@ class _export TBiDimensionalTimeSeriesTransportImplicit : public TBiDimensionalT
 
 class _export TBiDimensionalVertical : public TOneDimensionalDITransport
 {
-	public :
-		TBiDimensionalVertical(TEcoDynClass* PEcoDynClass , char* className);
-       ~TBiDimensionalVertical();
-       virtual void freeMemory();
-      virtual double GetParameterValue(char* parmName);
-      virtual bool SetParameterValue(char* parmName, double value);
+    public :
+        TBiDimensionalVertical(TEcoDynClass* PEcoDynClass , char* className);
+        ~TBiDimensionalVertical();
+        virtual void freeMemory();
+        virtual double GetParameterValue(char* parmName);
+        virtual bool SetParameterValue(char* parmName, double value);
 
-		virtual void Go();
+        virtual void Go();
 
-      virtual void Inquiry(char* srcName,double &Value,
-                                         int BoxNumber,
-                                         char* ParameterName,
-                                         int AnObjectCode);
+        virtual void Inquiry(char* srcName,double &Value,
+                int BoxNumber,
+                char* ParameterName,
+                int AnObjectCode);
 
         // AP, 2007.05.28
         virtual bool SetVariableValue(char* srcName,
-                            double Value,
-                             int BoxNumber,
-                             char* VariableName);
+                double Value,
+                int BoxNumber,
+                char* VariableName);
         // AP, 2007.07.09
         virtual bool SaveVariables();
         virtual bool SaveParameters();
 
-	protected :
-      void BuildBiDimensional();
-      virtual void EquationOfMotion();
-      virtual void Continuity();
-      virtual void VerticalVelocity();
-      virtual void SurfaceVolume();
-      virtual void AdvectDiffuse(double* Generic);
-      virtual void RiverForcing();
-      virtual double BarotropicPressureTerm(int Line, int Column);
-      virtual double BaroclinicPressureTerm(int Line, int Column);
-      virtual double ConvectiveTerm(int Line, int Column);
-      virtual double Diffusion(int TermOrder, int Line, int Column);
-      virtual double HorizontalDiffusion(int Line, int Column);
-      virtual double Drag(int i, int j);
-      virtual double WindStress(int ABoxNumber);
-      virtual double aUCalculation (int i, int j);
-      virtual double bUCalculation (int i, int j);
-      virtual double cUCalculation (int i, int j);
-      virtual double UPStreamUVelocity(int i, int j);
-      virtual double DOWNStreamUVelocity(int i, int j);
-      virtual double VerticalMomentumDiffusivity(int i, int j);
-      virtual double RichardsonNumber(int i, int j);
-      virtual double LengthScale(int i, int j);
-      virtual double Depth(int i, int j);
-      virtual double VerticalMassAndHeatDiffusivity(int i, int j);
-      virtual double CoefRugosidade(int i, int j);
-      virtual double ConvectiveTransport(int i, int j, double *PastGeneric);
-      virtual double DiffusiveTransport(int i, int j, double *PastGeneric);
-      virtual double aDiffusiveTransport (int i, int j);
-      virtual double bDiffusiveTransport (int i, int j);
-      virtual double cDiffusiveTransport (int i, int j);
-      virtual double aTransport (int i, int j);
-      virtual double bTransport (int i, int j);
-      virtual double cTransport (int i, int j);
-      virtual double HorizontalDiffusionCoefficient(int i, int j);
-      virtual void Reinitialize();
-      virtual double CalculateWidth(int i, int j);
-      virtual double CorrectionOfHorizontalDiffCoef(double ADepth, double AVelocityComponent);
-      double *UVelocityPast, *WVelocity, *WVelocityPast,
-             *UFlowBetweenBoxes,*WFlowBetweenBoxes,
-             *HorizontalDiffCoefU, *VerticalDiffCoefU,*VerticalMassAndHeatDiffCoef,
-             *VerticalDiffCoefW, *Rugosity, *TotalDepth, *TotalDepthPast, *BoxDepthPast,
-             *atemporary, *btemporary, *ctemporary, *rtemporary, *OldBoxDepth, *OldBoxWidth, *DepthVariation;
-      double *BaroclinicPressureValue, *BarotropicPressureValue, *ConvectionValue, *DiffusionValue, *MassDiffusion, *MassConvection;
-      double *UU1, *UU2, *UU3, *UW; // Apontadores para guardar as componentes da convecção
-      double *Soma0,*Soma1, *Soma2, *Soma3, *Soma4, *Soma5, *Soma6, *Soma7, *Soma8, *Soma9, *Soma10, *Soma11;  //Apontadores para guardar resultados temporários por coluna
-      double *aColumns, *bColumns, *cColumns, *rColumns;
-      double CriticalDepth, CriticalWidth, AUPStreamU,ADOWNStreamU, HMINC, WindStressCoef, MaxVertDiffusivity, TotalHours;
-      double *MeanColumnWidth, *MeanColumnLength;
-      int GridColumns, GridLines,UpstreamBoundaryNumber,
-          DownstreamBoundaryNumber, TopBoundary, BottomBoundary, SemiTimeStep;
-      int *SurfaceBox, *SurfaceLayer;
+    protected :
+        void BuildBiDimensional();
+        virtual void EquationOfMotion();
+        virtual void Continuity();
+        virtual void VerticalVelocity();
+        virtual void SurfaceVolume();
+        virtual void AdvectDiffuse(double* Generic);
+        virtual void RiverForcing();
+        virtual double BarotropicPressureTerm(int Line, int Column);
+        virtual double BaroclinicPressureTerm(int Line, int Column);
+        virtual double ConvectiveTerm(int Line, int Column);
+        virtual double Diffusion(int TermOrder, int Line, int Column);
+        virtual double HorizontalDiffusion(int Line, int Column);
+        virtual double Drag(int i, int j);
+        virtual double WindStress(int ABoxNumber);
+        virtual double aUCalculation (int i, int j);
+        virtual double bUCalculation (int i, int j);
+        virtual double cUCalculation (int i, int j);
+        virtual double UPStreamUVelocity(int i, int j);
+        virtual double DOWNStreamUVelocity(int i, int j);
+        virtual double VerticalMomentumDiffusivity(int i, int j);
+        virtual double RichardsonNumber(int i, int j);
+        virtual double LengthScale(int i, int j);
+        virtual double Depth(int i, int j);
+        virtual double VerticalMassAndHeatDiffusivity(int i, int j);
+        virtual double CoefRugosidade(int i, int j);
+        virtual double ConvectiveTransport(int i, int j, double *PastGeneric);
+        virtual double DiffusiveTransport(int i, int j, double *PastGeneric);
+        virtual double aDiffusiveTransport (int i, int j);
+        virtual double bDiffusiveTransport (int i, int j);
+        virtual double cDiffusiveTransport (int i, int j);
+        virtual double aTransport (int i, int j);
+        virtual double bTransport (int i, int j);
+        virtual double cTransport (int i, int j);
+        virtual double HorizontalDiffusionCoefficient(int i, int j);
+        virtual void Reinitialize();
+        virtual double CalculateWidth(int i, int j);
+        virtual double CorrectionOfHorizontalDiffCoef(double ADepth, double AVelocityComponent);
+        double *UVelocityPast, *WVelocity, *WVelocityPast,
+               *UFlowBetweenBoxes,*WFlowBetweenBoxes,
+               *HorizontalDiffCoefU, *VerticalDiffCoefU,*VerticalMassAndHeatDiffCoef,
+               *VerticalDiffCoefW, *Rugosity, *TotalDepth, *TotalDepthPast, *BoxDepthPast,
+               *atemporary, *btemporary, *ctemporary, *rtemporary, *OldBoxDepth, *OldBoxWidth, *DepthVariation;
+        double *BaroclinicPressureValue, *BarotropicPressureValue, *ConvectionValue, *DiffusionValue, *MassDiffusion, *MassConvection;
+        double *UU1, *UU2, *UU3, *UW; // Apontadores para guardar as componentes da convecção
+        double *Soma0,*Soma1, *Soma2, *Soma3, *Soma4, *Soma5, *Soma6, *Soma7, *Soma8, *Soma9, *Soma10, *Soma11;  //Apontadores para guardar resultados temporários por coluna
+        double *aColumns, *bColumns, *cColumns, *rColumns;
+        double CriticalDepth, CriticalWidth, AUPStreamU,ADOWNStreamU, HMINC, WindStressCoef, MaxVertDiffusivity, TotalHours;
+        double *MeanColumnWidth, *MeanColumnLength;
+        int GridColumns, GridLines,UpstreamBoundaryNumber,
+            DownstreamBoundaryNumber, TopBoundary, BottomBoundary, SemiTimeStep;
+        int *SurfaceBox, *SurfaceLayer;
 
-      //double *CaudalPorColunaPassado,*CaudalPorColunaActual, *AlturaEstimada;
+        //double *CaudalPorColunaPassado,*CaudalPorColunaActual, *AlturaEstimada;
 };
 
 class _export TTriDimensional : public TBiDimensionalIntertidal
 {
-	public :
-		TTriDimensional(TEcoDynClass* PEcoDynClass, char* className);
+    public :
+        TTriDimensional(TEcoDynClass* PEcoDynClass, char* className);
         ~TTriDimensional();
         virtual void freeMemory();
-      virtual double GetParameterValue(char* parmName);
-      virtual bool SetParameterValue(char* parmName, double value);
+        virtual double GetParameterValue(char* parmName);
+        virtual bool SetParameterValue(char* parmName, double value);
         virtual void Go();
         virtual void Inquiry(char* srcName,
-        			 double &Value,
-                     int BoxNumber,
-                     char* ParameterName,
-                     int AnObjectCode);
+                double &Value,
+                int BoxNumber,
+                char* ParameterName,
+                int AnObjectCode);
         virtual void Reinitialize();
         // AP, 2007.05.28
         virtual bool SetVariableValue(char* srcName,
-                            double Value,
-                             int BoxNumber,
-                             char* VariableName);
+                double Value,
+                int BoxNumber,
+                char* VariableName);
 
         // AP, 2007.07.09
         virtual bool SaveVariables();
         virtual bool SaveParameters();
 
-	protected :
+    protected :
         void BuildTriDimensionalIntertidal();
         virtual void Continuity();
         virtual void EquationOfMotionUImplicit();
@@ -1251,8 +1251,8 @@ class _export TTriDimensional : public TBiDimensionalIntertidal
 
 class _export TTriDimensional2 : public TTriDimensional
 {
-	public :
-		TTriDimensional2(TEcoDynClass* PEcoDynClass, char* className);
+    public :
+        TTriDimensional2(TEcoDynClass* PEcoDynClass, char* className);
         ~TTriDimensional2();
         virtual void Inquiry(char* srcName, double &Value,int BoxNumber,char* ParameterName,int AnObjectCode);
         virtual void Reinitialize();
@@ -1281,8 +1281,8 @@ class _export TTriDimensional2 : public TTriDimensional
 
 class _export TTriDimensionalDynamicSurfaceLayer : public TTriDimensional
 {
-	public :
-		TTriDimensionalDynamicSurfaceLayer(TEcoDynClass* PEcoDynClass, char* className);
+    public :
+        TTriDimensionalDynamicSurfaceLayer(TEcoDynClass* PEcoDynClass, char* className);
         ~TTriDimensionalDynamicSurfaceLayer();
         virtual void Inquiry(char* srcName, double &Value,int BoxNumber,char* ParameterName,int AnObjectCode);
         virtual void Reinitialize();
@@ -1305,8 +1305,8 @@ class _export TTriDimensionalDynamicSurfaceLayer : public TTriDimensional
 
 class _export TTriDimensionalWithBodyDrag : public TTriDimensionalDynamicSurfaceLayer
 {
-	public :
-		TTriDimensionalWithBodyDrag(TEcoDynClass* PEcoDynClass, char* className);
+    public :
+        TTriDimensionalWithBodyDrag(TEcoDynClass* PEcoDynClass, char* className);
         ~TTriDimensionalWithBodyDrag();
     protected :
         virtual void Continuity();
@@ -1350,13 +1350,13 @@ class _export TTriDimensionalSymbioses : public TTriDimensionalWithBodyDrag2
         void ReadVariablesFromSymbioses();
         double *Tilt;
     private:
-	/* HydrodynamicModel *ocean;
-        AtmosphericModel *atmo;
-        void ReadVariablesFromSymbioses();
-        double *Tilt;*/
+        /* HydrodynamicModel *ocean;
+           AtmosphericModel *atmo;
+           void ReadVariablesFromSymbioses();
+           double *Tilt;*/
 };
 
-//This object uses velocities calculated originally with SinMod but that were interpolated and oriented to lats/longs by Symbioses 
+//This object uses velocities calculated originally with SinMod but that were interpolated and oriented to lats/longs by Symbioses
 class _export TTriDimensionalSymbiosesV1 : public TTriDimensionalSymbioses
 {
     public :
@@ -1368,8 +1368,8 @@ class _export TTriDimensionalSymbiosesV1 : public TTriDimensionalSymbioses
         int *griddims;
         float *gridlats;
         float *gridlons;
-	/* HydrodynamicModel *ocean;
-	   AtmosphericModel *atmo;*/
+        /* HydrodynamicModel *ocean;
+           AtmosphericModel *atmo;*/
         void ReadVariablesFromSymbioses();
         void CorrectVelocities();
         double *Tilt;
@@ -1385,9 +1385,9 @@ class _export TTriDimensionalSymbiosesV2 : public TTriDimensionalSymbioses
         virtual void Continuity();
         virtual void AdvectDiffuse(double* Generic);
         /*HydrodynamicModel *ocean;
-        AtmosphericModel *atmo;
-        void ReadVariablesFromSymbioses();*/
-	int Step;
+          AtmosphericModel *atmo;
+          void ReadVariablesFromSymbioses();*/
+        int Step;
 };
 
 class _export TTriDimensionalSymbiosesV3 : public TTriDimensionalSymbioses
@@ -1399,10 +1399,11 @@ class _export TTriDimensionalSymbiosesV3 : public TTriDimensionalSymbioses
         virtual void Go();
     protected:
         int MyDimensions;
-	float *field,*MySalt;
+        float *field,*MySalt;
         virtual void AdvectDiffuse(double* Generic, float *GenericWithBoundaries);
         int Get3DIndexWithBoundaries(int LineNr,int ColumnNr,int LayerNr)
-	{return (LineNr * (NumberOfColumns + 2) + ColumnNr) + LayerNr * ((NumberOfLines + 2) * (NumberOfColumns + 2));}
+        {return (LineNr * (NumberOfColumns + 2) + ColumnNr) + LayerNr * ((NumberOfLines + 2) * (NumberOfColumns + 2));}
+        void saveField(const char *fname, float *fld, int dim);
 };
 
 

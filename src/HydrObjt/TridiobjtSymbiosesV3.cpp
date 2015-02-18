@@ -2,6 +2,7 @@
 #include <math.h>
 #else  // __BORLANDC__
 #include <iostream>
+#include <fstream>
 #include <cmath>
 
 using namespace std;
@@ -127,6 +128,7 @@ void TTriDimensionalSymbiosesV3::AdvectDiffuse(double* Generic,float *GenericWit
             }
         }
     }
+    /* saveField("c2f.dat", GenericWithBoundaries, MyDimensions); */
 
     ocean->advectUVW(field);
 
@@ -139,18 +141,27 @@ void TTriDimensionalSymbiosesV3::AdvectDiffuse(double* Generic,float *GenericWit
             MyColumn = j - 1;
             for (int i = GridLines + 1; i >= 0; i--)//Column major order for Fortran
             {
-                if ((j < GridColumns + 1) && (j > 0) && (i < GridLines + 1) && (i > 0))
-                {
+                if ((j < GridColumns + 1)
+                        && (j > 0) && (i < GridLines + 1) && (i > 0)) {
                     MyLine = i - 1;
-                    Generic[Get3DIndex(MyLine,MyColumn,k)] =  field[index3D];
-                    GenericWithBoundaries[Get3DIndexWithBoundaries(i,j,k)] =  field[index3D];
-                    index3D++;
                 }
+                Generic[Get3DIndex(MyLine,MyColumn,k)] =  field[index3D];
+                GenericWithBoundaries[Get3DIndexWithBoundaries(i,j,k)] =  field[index3D];
+                index3D++;
             }
         }
     }
+    /* saveField("f2c.dat", GenericWithBoundaries, MyDimensions); */
 }
 
+void TTriDimensionalSymbiosesV3::saveField(const char *fname, float *fld, int dim) {
+    ofstream f;
+    f.open(fname);
+    for (int i=0; i < dim; i++) {
+        f << fld[i] << endl;
+    }
+    f.close();
+}
 
 
 
