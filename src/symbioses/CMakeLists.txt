@@ -59,7 +59,6 @@ target_link_libraries(EcoDynamo
     )
 
 add_dependencies(EcoDynamo EcoDynamoMain)
-add_dependencies(EcoDynamo track)
 
 install(TARGETS symbioses-ecodynamo
     DESTINATION lib
