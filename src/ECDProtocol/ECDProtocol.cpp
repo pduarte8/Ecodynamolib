@@ -15,7 +15,7 @@
 	#include <cstring>
 	#include <cstdlib>
 	#include <cstdio>
-	
+
 	using namespace std;
 #endif  // __BORLANDC__
 #include "EcoDynProtocol.h"
@@ -44,9 +44,12 @@ EcoDynProtocol::EcoDynProtocol()
     pTxCriticalSection = new TCriticalSection();
     pAgentsCriticalSection = new TCriticalSection();
 #else  // __BORLANDC__
-    RxCriticalSection = PTHREAD_MUTEX_INITIALIZER;
-    TxCriticalSection = PTHREAD_MUTEX_INITIALIZER;
-    AgentsCriticalSection = PTHREAD_MUTEX_INITIALIZER;
+    /* RxCriticalSection = PTHREAD_MUTEX_INITIALIZER; */
+    /* TxCriticalSection = PTHREAD_MUTEX_INITIALIZER; */
+    /* AgentsCriticalSection = PTHREAD_MUTEX_INITIALIZER; */
+    pthread_mutex_init(&RxCriticalSection, NULL);
+    pthread_mutex_init(&TxCriticalSection, NULL);
+    pthread_mutex_init(&AgentsCriticalSection, NULL);
 #endif  // __BORLANDC__
     contentString = new char[ECDP_MSG_LENGTH];
 };
@@ -78,9 +81,12 @@ EcoDynProtocol::EcoDynProtocol(TObject* Server, char* agentName, char* hostname,
     pTxCriticalSection = new TCriticalSection();
     pAgentsCriticalSection = new TCriticalSection();
 #else  // __BORLANDC__
-    RxCriticalSection = PTHREAD_MUTEX_INITIALIZER;
-    TxCriticalSection = PTHREAD_MUTEX_INITIALIZER;
-    AgentsCriticalSection = PTHREAD_MUTEX_INITIALIZER;
+    /* RxCriticalSection = PTHREAD_MUTEX_INITIALIZER; */
+    /* TxCriticalSection = PTHREAD_MUTEX_INITIALIZER; */
+    /* AgentsCriticalSection = PTHREAD_MUTEX_INITIALIZER; */
+    pthread_mutex_init(&RxCriticalSection, NULL);
+    pthread_mutex_init(&TxCriticalSection, NULL);
+    pthread_mutex_init(&AgentsCriticalSection, NULL);
 #endif  // __BORLANDC__
     contentString = new char[ECDP_MSG_LENGTH];
 
