@@ -209,7 +209,6 @@ extern "C" {
 
 /* till here -remove (_new) */
 
-
 /*
  * The following are the real functions to include
  */
