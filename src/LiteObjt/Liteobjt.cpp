@@ -562,6 +562,37 @@ void TLight::PreBuildLight(char* className)
 
    DoubleRandomCloud = rand()*RandomCloud/100.00;
 }
+
+void TLight::light_new__(int* PLight)
+{
+   MyPEcoDynClass = (TEcoDynClass*)this;
+   TLight* ptr;
+   ptr = TLight::getLight();
+   *PLight = (int)ptr;
+   NumberOfSubDomains = 1;
+   subDomain = new SubDomain[NumberOfSubDomains];
+   for (int j = 0; j < NumberOfSubDomains; j++)
+   {
+      subDomain[j].FirstLine = 0;     //Southern limit
+      subDomain[j].LastLine =  0;     //Northern limit
+      subDomain[j].FirstColumn = 0;   //Western limit
+      subDomain[j].LastColumn = 0;    //Eastern limit
+      subDomain[j].NumberOfBoxes = 1;  
+   }
+   
+}
+
+void TLight::light_new_go__(int* plight, float* curtime, float* julianday, float* latitude, float* cloudcover, float* seaalbedo, float* light);
+{
+    CurrentTime = curtime;
+    JulianDay = julianday;
+    CloudCover = cloudcove;
+    SeaAlbedo = seaalbedo;
+    NumberOfMomentsForTimeSeries = 0;
+    GetLightAtSurface();
+    light = TotalSurfaceLight[0];
+}
+
 //-----------------------------------------------
 
 #else
@@ -1384,35 +1415,16 @@ SubDomain *pSubDomain = MyPEcoDynClass->GetSubDomain();
       for (nbox = 0; nbox < pSubDomain->NumberOfBoxes; nbox++)
       {
           i = pSubDomain->BoxNumber[nbox];
-          /*if (
-               (CurrentTime < Sunrise[i]) ||
-               (CurrentTime > Sunset[i])
-              )
-          {
-              TotalSurfaceLight[i] = 0.0;
-              ParSurfaceLight[i] = 0.0;
-          }
-          else
-          {   */
-              SolarAltitude = GetSolarAltitude(Latitude[i],
+          SolarAltitude = GetSolarAltitude(Latitude[i],
                                                DeclinationAngle,
                                                HourAngle);
-              AtmosphericTransmission = GetAtmosphericTransmission(SolarAltitude);
-              RadiationAtTop = GetRadiationAtTopOfAtmosphere(SolarAltitude,
+          AtmosphericTransmission = GetAtmosphericTransmission(SolarAltitude);
+          RadiationAtTop = GetRadiationAtTopOfAtmosphere(SolarAltitude,
                                                              RadiusVector); // W/m2
-              TotalSurfaceLight[i] = GetRadiationAtSeaLevel(RadiationAtTop,
+          TotalSurfaceLight[i] = GetRadiationAtSeaLevel(RadiationAtTop,
                                                             AtmosphericTransmission);
-              ParSurfaceLight[i] = TotalSurfaceLight[i] * LightToPAR; // W/m2
-              /*if ((MyPEcoDynClass->GetJulianDay() > 110) && (nbox == 0))
-              {
-                 Debugger(AnyPar[i]);
-                 Debugger(RadiationAtTop);
-                 Debugger(AtmosphericTransmission);
-                 Debugger(SolarAltitude);
-
-              } */
-
-          //}
+          ParSurfaceLight[i] = TotalSurfaceLight[i] * LightToPAR; // W/m2
+             
       }
     }
     else
@@ -1815,10 +1827,8 @@ double TLight::GetAtmosphericTransmission(double ASolarAltitude)
 															// See Portela & Neves (1994)
 															// Advances in water resources
 															//	technology and management
-	double RelativeAirMass,
-			 DirectBeamFraction,
-			 DiffuseBeamFraction,
-			 MySolarAltitude = ASolarAltitude;
+	double RelativeAirMass, DirectBeamFraction,DiffuseBeamFraction,
+	MySolarAltitude = ASolarAltitude;
 
 	if (
 		 ( MySolarAltitude >= 0.0 ) &&
@@ -1830,19 +1840,16 @@ double TLight::GetAtmosphericTransmission(double ASolarAltitude)
 			if ( RelativeAirMass * log ( ClearSkyTransmission ) < -20.0 )  // Para evitar exponenciais
 				DirectBeamFraction = 0.0;	       									 // demasiado pequenos
 			else
-				DirectBeamFraction = exp(RelativeAirMass
-											* log(ClearSkyTransmission));
+				DirectBeamFraction = exp(RelativeAirMass * log(ClearSkyTransmission));
 
 			DiffuseBeamFraction = (1.0-WaterOzoneAbsorption-DirectBeamFraction)/2.0;
-			return DirectBeamFraction
-					 + DiffuseBeamFraction;
+			return DirectBeamFraction + DiffuseBeamFraction;
 		}
 	else
 		return 0.0;
 }
 
-double TLight::GetRadiationAtSeaLevel( double ARadiationAtTopOfAtmosphere,
-													double AnAtmosphericTransmission)
+double TLight::GetRadiationAtSeaLevel( double ARadiationAtTopOfAtmosphere,double AnAtmosphericTransmission)
 {
 	return ARadiationAtTopOfAtmosphere
 			 * AnAtmosphericTransmission
