@@ -570,6 +570,7 @@ void TLight::light_new__(int* PLight)
    ptr = TLight::getLight();
    *PLight = (int)ptr;
    NumberOfSubDomains = 1;
+   NumberOfBoxes = 1;
    subDomain = new SubDomain[NumberOfSubDomains];
    for (int j = 0; j < NumberOfSubDomains; j++)
    {
@@ -579,7 +580,8 @@ void TLight::light_new__(int* PLight)
       subDomain[j].LastColumn = 0;    //Eastern limit
       subDomain[j].NumberOfBoxes = 1;  
    }
-   
+   TotalSurfaceLight = new double[NumberOfBoxes];
+   TotalSurfaceLight[0] = 0.0;
 }
 
 void TLight::light_new_go__(int* plight, float* curtime, float* julianday, float* latitude, float* cloudcover, float* seaalbedo, float* light);
