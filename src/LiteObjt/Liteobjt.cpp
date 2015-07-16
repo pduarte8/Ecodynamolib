@@ -561,38 +561,66 @@ void TLight::PreBuildLight(char* className)
    CloudSpecificTime = 0.0;   //NG : for random cloud parameter;
 
    DoubleRandomCloud = rand()*RandomCloud/100.00;
-}
 
-void TLight::light_new__(int* PLight)
-{
-   MyPEcoDynClass = (TEcoDynClass*)this;
-   TLight* ptr;
-   ptr = TLight::getLight();
-   *PLight = (int)ptr;
-   NumberOfSubDomains = 1;
-   NumberOfBoxes = 1;
+   int NumberOfSubDomains = 1;
    subDomain = new SubDomain[NumberOfSubDomains];
    for (int j = 0; j < NumberOfSubDomains; j++)
    {
+      subDomain[j].NumberOfBoxes = 1; 
       subDomain[j].FirstLine = 0;     //Southern limit
       subDomain[j].LastLine =  0;     //Northern limit
       subDomain[j].FirstColumn = 0;   //Western limit
       subDomain[j].LastColumn = 0;    //Eastern limit
-      subDomain[j].NumberOfBoxes = 1;  
+      subDomain[j].AnIndex = new int[NumberOfBoxes]; 
+      subDomain[j].ILine = new int[NumberOfColumns];
+      subDomain[j].FLine = new int[NumberOfColumns]; 
+      subDomain[j].IColumn = new int[NumberOfLines];
+      subDomain[j].FColumn = new int[NumberOfLines];
+      subDomain[j].BoxNumber = new int[NumberOfBoxes]; 
+      for (int i = 0; i < NumberOfColumns; i++)
+      { 
+	subDomain[j].ILine[i] = 0;
+        subDomain[j].FLine[i] = 0;
+      }
+      for (int i = 0; i < NumberOfLines; i++)
+      { 
+	subDomain[j].IColumn[i] = 0;
+        subDomain[j].FColumn[i] = 0;
+      }
+      for (int i = 0; i < NumberOfBoxes; i++)
+      { 
+	subDomain[j].AnIndex[i] = i;
+        subDomain[j].BoxNumber[i] = i;
+      }
    }
-   TotalSurfaceLight = new double[NumberOfBoxes];
-   TotalSurfaceLight[0] = 0.0;
+   NumberOfMomentsForTimeSeries = 0;
 }
 
-void TLight::light_new_go__(int* plight, float* curtime, float* julianday, float* latitude, float* cloudcover, float* seaalbedo, float* light);
+void light_new__(int* PLight)
 {
-    CurrentTime = curtime;
-    JulianDay = julianday;
-    CloudCover = cloudcove;
-    SeaAlbedo = seaalbedo;
-    NumberOfMomentsForTimeSeries = 0;
-    GetLightAtSurface();
-    light = TotalSurfaceLight[0];
+  //MyPEcoDynClass = (TEcoDynClass*)this;
+   TLight* ptr;
+   ptr = TLight::getLight();
+   *PLight = (int)ptr;
+   ptr->PreBuildLight("TLight"); 
+}
+
+void light_new_go__(int* plight, float* curtime, float* julianday, float* latitude, float* cloudcover, float* seaalbedo, float* light)
+{
+    TLight* ptr = (TLight*) *plight;
+    char* classname;
+    char MyParameter[65];
+    double Value;
+    classname = ptr->GetEcoDynClassName();
+    strcpy(MyParameter,"Total surface irradiance");
+    ptr->SetCurrentTime(*curtime);
+    ptr->SetJulianDay(*julianday);
+    ptr->SetLatitude(0,*latitude);
+    ptr->SetCloudCover(*cloudcover);
+    ptr->SetSeaAlbedo(*seaalbedo);   
+    ptr->GetLightAtSurface();
+    ptr->Inquiry(classname, Value,0,MyParameter,0);
+    *plight = Value;
 }
 
 //-----------------------------------------------
