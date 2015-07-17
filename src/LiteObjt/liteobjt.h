@@ -48,8 +48,9 @@ class _export TLight : public TEcoDynClass
         void SetKValue(double kvalue) {KValue = kvalue;}
         void SetCloudCover(double cloudcover) {CloudCover = cloudcover;}
         void SetAirTemperature(double airtemperature) {AirTemperature = airtemperature;}
-
+        void SetSeaAlbedo(double seaalbedo) {SeaAlbedo = seaalbedo;}
         char debug;
+        SubDomain *subDomain;
 #endif  // _PORT_FORTRAN_
 		~TLight();
         virtual void freeMemory();
@@ -111,7 +112,7 @@ class _export TLight : public TEcoDynClass
                  SubDomain *MyLightSubDomains;
 
         int NumberOfMomentsForTimeSeries, NumberOfDaysForTimeSeries, NumberOfHoursForTimeSeries, NumberOfSubDomains;
-
+        public:
         void PreBuildLight(char* className);
         void BuildLight(char* className);
         virtual void GetLightAtSurface();
@@ -193,11 +194,11 @@ extern "C" {
 /*
  * This constructor calls Go() after initialisation
  */
-    void light1_(int* PLight, int* nc, int* nr, int* nz, float* pcb);
-    void light_(int* box, float* latitude,
+        void light1_(int* PLight, int* nc, int* nr, int* nz, float* pcb);
+        void light_(int* box, float* latitude,
                 float* currenttime, float* julianday, float* kvalue,
                 float* depth, float* cloudcover, float* airTemperature);
-    void light_setdebug__(char* Debug);
+        void light_setdebug__(char* Debug);
 	void light_setlatitude__(int* box, float* latitude);
 	void light_setdepth__(int* box, float* depth);
 	void light_setjulianday__(float* julianday);
@@ -212,16 +213,16 @@ extern "C" {
 /*
  * The following are the real functions to include
  */
-    void light_new__(int* plight, int* nc, int* nr, int* nz,
-                float* latitude, float* kvalue, float* depth,
-                float* sigma, float* cloudcover, float* airtemperat);
-    void light_new_go__(int* plight, float* curtime, float* julianday, float* latitude, float* cloudcover, float* seaalbedo);
-    void light_new_getvalues__(int* plight, int* ic, int* ir, int* iz,
+    
+ 
+    void light_new__(int* PLight);
+    void light_new_go__(int* PLight, float* curtime, float* julianday, float* latitude, float* cloudcover, float* seaalbedo, float* light);
+  /* void light_new_getvalues__(int* plight, int* ic, int* ir, int* iz,
                 float* totallight, float* parlight,
                 float* parhorizontallight, float* hoursofsun,
                 float* horizontallight, float* noonpar,
                 float* photicdepth, float* subsurfacelight,
-                float* parsubsurfacelight, float* atmosphericir);
+                float* parsubsurfacelight, float* atmosphericir);*/
 }
 #endif  // _PORT_FORTRAN_
 

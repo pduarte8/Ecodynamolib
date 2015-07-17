@@ -607,7 +607,15 @@ void light_new__(int* PLight)
 
 void light_new_go__(int* plight, float* curtime, float* julianday, float* latitude, float* cloudcover, float* seaalbedo, float* light)
 {
+    cout << "Starting light_new_go__ ";
+    cout<<"plight"<<plight;
+    cout<<"curtime"<<curtime;
+    cout<<"julianday"<<julianday;
+    cout<<"latitude"<<latitude;
+    cout<<"cloudcover"<<cloudcover;
+    cout<<"seaalbedo"<<seaalbedo<<endl;
     TLight* ptr = (TLight*) *plight;
+    cout << "ptr initialized"<< endl;
     char* classname;
     char MyParameter[65];
     double Value;
@@ -620,6 +628,7 @@ void light_new_go__(int* plight, float* curtime, float* julianday, float* latitu
     ptr->SetSeaAlbedo(*seaalbedo);   
     ptr->GetLightAtSurface();
     ptr->Inquiry(classname, Value,0,MyParameter,0);
+    cout << "Light is going to be calculated"<< endl;
     *plight = Value;
 }
 
