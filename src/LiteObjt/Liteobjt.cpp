@@ -608,14 +608,14 @@ void light_new__(int* PLight)
 void light_new_go__(int* plight, float* curtime, float* julianday, float* latitude, float* cloudcover, float* seaalbedo, float* light)
 {
     cout << "Starting light_new_go__ ";
-    cout<<"plight"<<plight;
-    cout<<"curtime"<<curtime;
-    cout<<"julianday"<<julianday;
-    cout<<"latitude"<<latitude;
-    cout<<"cloudcover"<<cloudcover;
-    cout<<"seaalbedo"<<seaalbedo<<endl;
+    cout<<"plight = "<<*plight;
+    cout<<"curtime = "<<*curtime;
+    cout<<"julianday = "<<*julianday;
+    cout<<"latitude = "<<*latitude;
+    cout<<"cloudcover = "<<*cloudcover;
+    cout<<"seaalbedo = "<<*seaalbedo<<endl;
     TLight* ptr = (TLight*) *plight;
-    cout << "ptr initialized"<< endl;
+    cout << " ptr initialized"<< endl;
     char* classname;
     char MyParameter[65];
     double Value;
@@ -1443,26 +1443,37 @@ double HourAngle,
        RadiusVector,
        DeclinationAngle,
        RadiationAtTop;
-int nbox, i;
-SubDomain *pSubDomain = MyPEcoDynClass->GetSubDomain();
-
+    int nbox, i;
+    cout<<"GetLightAtSurface - initialzing pSubDomain"<<endl;
+    SubDomain *pSubDomain = MyPEcoDynClass->GetSubDomain();
+    cout<<"GetLightAtSurface - pSubDomain initialized"<<endl; 
     HourAngle = GetHourAngle(CurrentTime);
+    cout<<" HourAngle = "<< HourAngle<<endl;
     DeclinationAngle = GetDeclination(JulianDay);
+    cout<<" DeclinationAngle = "<< DeclinationAngle<<endl;
     RadiusVector = GetRadiusVector(JulianDay);
-
+    cout<<" RadiusVector = "<< RadiusVector<<endl;
     if (NumberOfMomentsForTimeSeries <= 1) {
       for (nbox = 0; nbox < pSubDomain->NumberOfBoxes; nbox++)
       {
           i = pSubDomain->BoxNumber[nbox];
+          cout<<" nbox = "<< nbox<<endl; 
+          cout<<" i = "<< i<<endl; 
+          cout<<" NumberOfBoxes = "<< NumberOfBoxes<<endl;
           SolarAltitude = GetSolarAltitude(Latitude[i],
                                                DeclinationAngle,
                                                HourAngle);
+          cout<<" SolarAltitude = "<< SolarAltitude<<endl;  
           AtmosphericTransmission = GetAtmosphericTransmission(SolarAltitude);
+          cout<<" AtmosphericTransmission = "<< AtmosphericTransmission<<endl;  
           RadiationAtTop = GetRadiationAtTopOfAtmosphere(SolarAltitude,
                                                              RadiusVector); // W/m2
+          cout<<" RadiationAtTop = "<< RadiationAtTop<<endl;  
           TotalSurfaceLight[i] = GetRadiationAtSeaLevel(RadiationAtTop,
                                                             AtmosphericTransmission);
+          cout<<" TotalSurfaceLight = "<< TotalSurfaceLight[i]<<endl; 
           ParSurfaceLight[i] = TotalSurfaceLight[i] * LightToPAR; // W/m2
+          cout<<" ParSurfaceLight = "<< ParSurfaceLight[i]<<endl; 
              
       }
     }
