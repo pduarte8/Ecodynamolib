@@ -116,11 +116,11 @@ class _export TLight : public TEcoDynClass
         public:
         void PreBuildLight(char* className);
         void BuildLight(char* className);
-        #ifndef _PORT_FORTRAN_
+#ifndef _PORT_FORTRAN_
         virtual void GetLightAtSurface();
-        #else
+#else
         virtual void GetLightAtSurface(TLight* ptr);
-        #endif
+#endif
         virtual void GetLightAtSurface(double CurrentHour);
         //virtual void GetMeanWaterColumnRadiation(int ABoxNumber);
         virtual void GetHorizontalMeanWaterColumnRadiation();

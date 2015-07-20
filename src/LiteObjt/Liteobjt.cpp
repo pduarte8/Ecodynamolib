@@ -628,7 +628,7 @@ void light_new_go__(int* plight, double* curtime, double* julianday, double* lat
     ptr->SetCloudCover(*cloudcover);
     ptr->SetSeaAlbedo(*seaalbedo); 
     ptr->SetNumberOfMomentsForTimeSeries(numberOfMomentsForTimeSeries);
-#ifndef _PORT_FORTRAN_   
+#ifdef _PORT_FORTRAN_   
     ptr->GetLightAtSurface(ptr);
 #endif
     ptr->Inquiry(classname, Value,0,MyParameter,0);
