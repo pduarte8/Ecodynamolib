@@ -563,7 +563,7 @@ void TLight::PreBuildLight(char* className)
    DoubleRandomCloud = rand()*RandomCloud/100.00;
 
    int NumberOfSubDomains = 1;
-   subDomain = new SubDomain[NumberOfSubDomains];
+   /*subDomain = new SubDomain[NumberOfSubDomains];
    for (int j = 0; j < NumberOfSubDomains; j++)
    {
       subDomain[j].NumberOfBoxes = 1; 
@@ -592,6 +592,32 @@ void TLight::PreBuildLight(char* className)
 	subDomain[j].AnIndex[i] = i;
         subDomain[j].BoxNumber[i] = i;
       }
+   }*/
+   SubDomain subDomain;
+   subDomain.NumberOfBoxes = 1; 
+   subDomain.FirstLine = 0;     //Southern limit
+   subDomain.LastLine =  0;     //Northern limit
+   subDomain.FirstColumn = 0;   //Western limit
+   subDomain.LastColumn = 0;    //Eastern limit
+   subDomain.AnIndex = new int[NumberOfBoxes]; 
+   subDomain.ILine = new int[NumberOfColumns];
+   subDomain.FLine = new int[NumberOfColumns]; 
+   subDomain.IColumn = new int[NumberOfLines];
+   subDomain.FColumn = new int[NumberOfLines];
+   subDomain.BoxNumber = new int[NumberOfBoxes]; 
+   for (int i = 0; i < NumberOfColumns; i++)
+   { 
+      subDomain.ILine[i] = 0;
+      subDomain.FLine[i] = 0;
+   }
+   for (int i = 0; i < NumberOfLines; i++)
+   { 
+      subDomain.IColumn[i] = 0;
+      subDomain.FColumn[i] = 0;
+   }   for (int i = 0; i < NumberOfBoxes; i++)
+   { 
+      subDomain.AnIndex[i] = i;
+      subDomain.BoxNumber[i] = i;
    }
    NumberOfMomentsForTimeSeries = 0;
 }
