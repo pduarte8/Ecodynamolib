@@ -627,8 +627,10 @@ void light_new_go__(int* plight, double* curtime, double* julianday, double* lat
     ptr->SetLatitude(0,*latitude);
     ptr->SetCloudCover(*cloudcover);
     ptr->SetSeaAlbedo(*seaalbedo); 
-    ptr->SetNumberOfMomentsForTimeSeries(numberOfMomentsForTimeSeries);   
-    ptr->GetLightAtSurface();
+    ptr->SetNumberOfMomentsForTimeSeries(numberOfMomentsForTimeSeries);
+#ifndef _PORT_FORTRAN_   
+    ptr->GetLightAtSurface(ptr);
+#endif
     ptr->Inquiry(classname, Value,0,MyParameter,0);
     cout << "Light is going to be calculated"<< endl;
     *plight = Value;
@@ -1237,7 +1239,9 @@ void TLight::Integrate()
     // Active methods
     GetDaylightHours();
     GetLightAtSurface (12.0);
+#ifndef _PORT_FORTRAN_
     GetLightAtSurface();
+#endif
     GetPhoticDepth();
     GetHorizontalMeanWaterColumnRadiation();
     //GetAtmosphericInfraRed();
@@ -1378,7 +1382,9 @@ void TLight::Inquiry(char* srcName, double &Value,
 	}
     else if (strcmp(MyParameter, "Total surface irradiance") == 0)
 	{
+#ifndef _PORT_FORTRAN_
 		GetLightAtSurface();
+#endif
 		Value = TotalSurfaceLight[MyBoxNumber];
 	}
 
@@ -1436,8 +1442,11 @@ void TLight::Inquiry(char* srcName, double &Value,
 
 
 // Protected methods
-
+#ifndef _PORT_FORTRAN_
 void TLight::GetLightAtSurface()
+#else
+void TLight::GetLightAtSurface(TLight* ptr)
+#endif
 {
 double HourAngle,
        SolarAltitude,
@@ -1447,7 +1456,11 @@ double HourAngle,
        RadiationAtTop;
     int nbox, i;
     cout<<"GetLightAtSurface - initialzing pSubDomain"<<endl;
+#ifndef _PORT_FORTRAN_
     SubDomain *pSubDomain = MyPEcoDynClass->GetSubDomain();
+#else
+    SubDomain *pSubDomain = ptr->GetSubDomain();
+#endif
     cout<<"GetLightAtSurface - pSubDomain initialized"<<endl; 
     HourAngle = GetHourAngle(CurrentTime);
     cout<<" HourAngle = "<< HourAngle<<endl;
