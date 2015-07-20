@@ -563,36 +563,7 @@ void TLight::PreBuildLight(char* className)
    DoubleRandomCloud = rand()*RandomCloud/100.00;
 
    int NumberOfSubDomains = 1;
-   /*subDomain = new SubDomain[NumberOfSubDomains];
-   for (int j = 0; j < NumberOfSubDomains; j++)
-   {
-      subDomain[j].NumberOfBoxes = 1; 
-      subDomain[j].FirstLine = 0;     //Southern limit
-      subDomain[j].LastLine =  0;     //Northern limit
-      subDomain[j].FirstColumn = 0;   //Western limit
-      subDomain[j].LastColumn = 0;    //Eastern limit
-      subDomain[j].AnIndex = new int[NumberOfBoxes]; 
-      subDomain[j].ILine = new int[NumberOfColumns];
-      subDomain[j].FLine = new int[NumberOfColumns]; 
-      subDomain[j].IColumn = new int[NumberOfLines];
-      subDomain[j].FColumn = new int[NumberOfLines];
-      subDomain[j].BoxNumber = new int[NumberOfBoxes]; 
-      for (int i = 0; i < NumberOfColumns; i++)
-      { 
-	subDomain[j].ILine[i] = 0;
-        subDomain[j].FLine[i] = 0;
-      }
-      for (int i = 0; i < NumberOfLines; i++)
-      { 
-	subDomain[j].IColumn[i] = 0;
-        subDomain[j].FColumn[i] = 0;
-      }
-      for (int i = 0; i < NumberOfBoxes; i++)
-      { 
-	subDomain[j].AnIndex[i] = i;
-        subDomain[j].BoxNumber[i] = i;
-      }
-   }*/
+
  
    subDomain.NumberOfBoxes = 1; 
    subDomain.FirstLine = 0;     //Southern limit
@@ -619,6 +590,7 @@ void TLight::PreBuildLight(char* className)
       subDomain.AnIndex[i] = i;
       subDomain.BoxNumber[i] = i;
    }
+   SetSubDomain(&subDomain);
    NumberOfMomentsForTimeSeries = 0;
 }
 
@@ -634,15 +606,15 @@ void light_new__(int* PLight)
 void light_new_go__(int* plight, double* curtime, double* julianday, double* latitude, double* cloudcover, double* seaalbedo, double* light)
 {
     int numberOfMomentsForTimeSeries = 0;
-    cout << "Starting light_new_go__ ";
+    /*cout << "Starting light_new_go__ ";
     cout<<"plight = "<<*plight;
     cout<<"curtime = "<<*curtime;
     cout<<"julianday = "<<*julianday;
     cout<<"latitude = "<<*latitude;
     cout<<"cloudcover = "<<*cloudcover;
-    cout<<"seaalbedo = "<<*seaalbedo<<endl;
+    cout<<"seaalbedo = "<<*seaalbedo<<endl;*/
     TLight* ptr = (TLight*) *plight;
-    cout << " ptr initialized"<< endl;
+    //cout << " ptr initialized"<< endl;
     char* classname;
     char MyParameter[65];
     double Value;
@@ -658,7 +630,7 @@ void light_new_go__(int* plight, double* curtime, double* julianday, double* lat
     ptr->GetLightAtSurface(ptr);
 #endif
     ptr->Inquiry(classname, Value,0,MyParameter,0);
-    cout << "Light was calculated"<< endl;
+    //cout << "Light was calculated"<< endl;
     *light = Value;
 }
 
@@ -1481,43 +1453,43 @@ double HourAngle,
        DeclinationAngle,
        RadiationAtTop;
     int nbox, i;
-    cout<<"GetLightAtSurface - initialzing pSubDomain"<<endl;
+    //cout<<"GetLightAtSurface - initialzing pSubDomain"<<endl;
 #ifndef _PORT_FORTRAN_
     SubDomain *pSubDomain = MyPEcoDynClass->GetSubDomain();
 #else
     SubDomain *pSubDomain = ptr->GetSubDomain();
 #endif
-    cout<<"GetLightAtSurface - pSubDomain initialized"<<endl; 
+    //cout<<"GetLightAtSurface - pSubDomain initialized"<<endl; 
     HourAngle = GetHourAngle(CurrentTime);
-    cout<<" HourAngle = "<< HourAngle<<endl;
+    //cout<<" HourAngle = "<< HourAngle<<endl;
     DeclinationAngle = GetDeclination(JulianDay);
-    cout<<" DeclinationAngle = "<< DeclinationAngle<<endl;
+    //cout<<" DeclinationAngle = "<< DeclinationAngle<<endl;
     RadiusVector = GetRadiusVector(JulianDay);
-    cout<<" RadiusVector = "<< RadiusVector<<endl;
+    /*cout<<" RadiusVector = "<< RadiusVector<<endl;
     cout<<" NumberOfMomentsForTimeSeries = "<< NumberOfMomentsForTimeSeries<<endl;
     cout<<" pSubDomain->NumberOfBoxes = "<< pSubDomain->NumberOfBoxes<<endl;
-    cout<<" ptr->NumberOfBoxes = "<< ptr->NumberOfBoxes<<endl;
+    cout<<" ptr->NumberOfBoxes = "<< ptr->NumberOfBoxes<<endl;*/
     if (NumberOfMomentsForTimeSeries <= 1) {
       for (nbox = 0; nbox < pSubDomain->NumberOfBoxes; nbox++)
       {
           i = pSubDomain->BoxNumber[nbox];
-          cout<<" nbox = "<< nbox<<endl; 
+          /*cout<<" nbox = "<< nbox<<endl; 
           cout<<" i = "<< i<<endl; 
-          cout<<" NumberOfBoxes = "<< NumberOfBoxes<<endl;
+          cout<<" NumberOfBoxes = "<< NumberOfBoxes<<endl;*/
           SolarAltitude = GetSolarAltitude(Latitude[i],
                                                DeclinationAngle,
                                                HourAngle);
-          cout<<" SolarAltitude = "<< SolarAltitude<<endl;  
+          //cout<<" SolarAltitude = "<< SolarAltitude<<endl;  
           AtmosphericTransmission = GetAtmosphericTransmission(SolarAltitude);
-          cout<<" AtmosphericTransmission = "<< AtmosphericTransmission<<endl;  
+          //cout<<" AtmosphericTransmission = "<< AtmosphericTransmission<<endl;  
           RadiationAtTop = GetRadiationAtTopOfAtmosphere(SolarAltitude,
                                                              RadiusVector); // W/m2
-          cout<<" RadiationAtTop = "<< RadiationAtTop<<endl;  
+          //cout<<" RadiationAtTop = "<< RadiationAtTop<<endl;  
           TotalSurfaceLight[i] = GetRadiationAtSeaLevel(RadiationAtTop,
                                                             AtmosphericTransmission);
-          cout<<" TotalSurfaceLight = "<< TotalSurfaceLight[i]<<endl; 
+          //cout<<" TotalSurfaceLight = "<< TotalSurfaceLight[i]<<endl; 
           ParSurfaceLight[i] = TotalSurfaceLight[i] * LightToPAR; // W/m2
-          cout<<" ParSurfaceLight = "<< ParSurfaceLight[i]<<endl; 
+          //cout<<" ParSurfaceLight = "<< ParSurfaceLight[i]<<endl; 
              
       }
     }
