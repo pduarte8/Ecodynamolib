@@ -216,7 +216,7 @@ extern "C" {
     
  
     void light_new__(int* PLight);
-    void light_new_go__(int* PLight, float* curtime, float* julianday, float* latitude, float* cloudcover, float* seaalbedo, float* light);
+    void light_new_go__(int* PLight, double* curtime, double* julianday, double* latitude, double* cloudcover, double* seaalbedo, double* light);
   /* void light_new_getvalues__(int* plight, int* ic, int* ir, int* iz,
                 float* totallight, float* parlight,
                 float* parhorizontallight, float* hoursofsun,

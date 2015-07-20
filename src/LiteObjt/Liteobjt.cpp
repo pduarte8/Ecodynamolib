@@ -605,7 +605,7 @@ void light_new__(int* PLight)
    ptr->PreBuildLight("TLight"); 
 }
 
-void light_new_go__(int* plight, float* curtime, float* julianday, float* latitude, float* cloudcover, float* seaalbedo, float* light)
+void light_new_go__(int* plight, double* curtime, double* julianday, double* latitude, double* cloudcover, double* seaalbedo, double* light)
 {
     cout << "Starting light_new_go__ ";
     cout<<"plight = "<<*plight;
