@@ -607,6 +607,7 @@ void light_new__(int* PLight)
 
 void light_new_go__(int* plight, double* curtime, double* julianday, double* latitude, double* cloudcover, double* seaalbedo, double* light)
 {
+    int numberOfMomentsForTimeSeries = 0;
     cout << "Starting light_new_go__ ";
     cout<<"plight = "<<*plight;
     cout<<"curtime = "<<*curtime;
@@ -625,7 +626,8 @@ void light_new_go__(int* plight, double* curtime, double* julianday, double* lat
     ptr->SetJulianDay(*julianday);
     ptr->SetLatitude(0,*latitude);
     ptr->SetCloudCover(*cloudcover);
-    ptr->SetSeaAlbedo(*seaalbedo);   
+    ptr->SetSeaAlbedo(*seaalbedo); 
+    ptr->SetNumberOfMomentsForTimeSeries(numberOfMomentsForTimeSeries);   
     ptr->GetLightAtSurface();
     ptr->Inquiry(classname, Value,0,MyParameter,0);
     cout << "Light is going to be calculated"<< endl;
@@ -1453,6 +1455,7 @@ double HourAngle,
     cout<<" DeclinationAngle = "<< DeclinationAngle<<endl;
     RadiusVector = GetRadiusVector(JulianDay);
     cout<<" RadiusVector = "<< RadiusVector<<endl;
+    cout<<" NumberOfMomentsForTimeSeries = "<< NumberOfMomentsForTimeSeries<<endl;
     if (NumberOfMomentsForTimeSeries <= 1) {
       for (nbox = 0; nbox < pSubDomain->NumberOfBoxes; nbox++)
       {

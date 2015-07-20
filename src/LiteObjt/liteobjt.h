@@ -49,6 +49,7 @@ class _export TLight : public TEcoDynClass
         void SetCloudCover(double cloudcover) {CloudCover = cloudcover;}
         void SetAirTemperature(double airtemperature) {AirTemperature = airtemperature;}
         void SetSeaAlbedo(double seaalbedo) {SeaAlbedo = seaalbedo;}
+        void SetNumberOfMomentsForTimeSeries(int numberOfMomentsForTimeSeries) {NumberOfMomentsForTimeSeries = numberOfMomentsForTimeSeries;}
         char debug;
         SubDomain *subDomain;
 #endif  // _PORT_FORTRAN_
