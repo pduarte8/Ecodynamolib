@@ -632,7 +632,7 @@ void light_new_go__(int* plight, double* curtime, double* julianday, double* lat
     ptr->GetLightAtSurface(ptr);
 #endif
     ptr->Inquiry(classname, Value,0,MyParameter,0);
-    cout << "Light is going to be calculated"<< endl;
+    cout << "Light was calculated"<< endl;
     *plight = Value;
 }
 
@@ -1469,6 +1469,8 @@ double HourAngle,
     RadiusVector = GetRadiusVector(JulianDay);
     cout<<" RadiusVector = "<< RadiusVector<<endl;
     cout<<" NumberOfMomentsForTimeSeries = "<< NumberOfMomentsForTimeSeries<<endl;
+    cout<<" pSubDomain->NumberOfBoxes = "<< pSubDomain->NumberOfBoxes<<endl;
+    cout<<" ptr->NumberOfBoxes = "<< ptr->NumberOfBoxes<<endl;
     if (NumberOfMomentsForTimeSeries <= 1) {
       for (nbox = 0; nbox < pSubDomain->NumberOfBoxes; nbox++)
       {
