@@ -902,6 +902,7 @@ void TCrestumaLeverPhytoplankton2DVIntLim::Inquiry(char* srcName, double &Value,
     LogMessage("Inquiry", srcName, MyParameter, Value, MyBoxNumber);
 }
 
+#ifndef _PORT_FORTRAN_ 
 // AP, 2007.07.12
 bool TCrestumaLeverPhytoplankton2DVIntLim::SaveParameters()
 {
@@ -1118,6 +1119,7 @@ bool TCrestumaLeverPhytoplankton2DVIntLim::SaveParameters()
     return true;
 }
 
+
 bool TCrestumaLeverPhytoplankton2DVIntLim::SaveVariables()
 {
 	TReadWrite* PReadWrite = (TReadWrite*)SaveVariablesFile("Phytoplankton");
@@ -1239,6 +1241,7 @@ bool TCrestumaLeverPhytoplankton2DVIntLim::SaveVariables()
     CloseDataFile((void*)PReadWrite);
     return true;
 }
+#endif //_PORT_FORTRAN_
 
 void TCrestumaLeverPhytoplankton2DVIntLim::Go()
 {

@@ -80,14 +80,14 @@ TPhytoplankton::TPhytoplankton(char* className) :TProdutor(className)
 }
 #endif  // !(_PORT_FORTRAN_)
 
-void TPhytoplankton::SetPhytoParams(float pmax, float iopt,
-        float slope, float aEiler, float bEiler, float cEiler,
-        float kValue, float ks, float kAmmonia,
-        float kNitrate, float pHi, float maintenanceRespiration,
-        float respirationCoefficient, float docLoss, float docStressLoss,
-        float deathLoss, float redfieldCFactor, float redfieldNFactor,
-        float redfieldPFactor, float temperatureAugmentationRate,
-        float fallingSpeed, float ratioLightDarkRespiration)
+void TPhytoplankton::SetPhytoParams(double pmax, double iopt,
+        double slope, double aEiler, double bEiler, double cEiler,
+        double kValue, double ks, double kAmmonia,
+        double kNitrate, double pHi, double maintenanceRespiration,
+        double respirationCoefficient, double docLoss, double docStressLoss,
+        double deathLoss, double redfieldCFactor, double redfieldNFactor,
+        double redfieldPFactor, double temperatureAugmentationRate,
+        double fallingSpeed, double ratioLightDarkRespiration)
 {
 	for (int j = 0; j < NumberOfBoxes; j++)
 	{
@@ -118,16 +118,16 @@ void TPhytoplankton::SetPhytoParams(float pmax, float iopt,
 
 void TPhytoplankton::PreBuildPhytoplankton()
 {
-	NCounter = 0;
+    NCounter = 0;
     PCounter = 0;
-	VariableCount = 0;
+    VariableCount = 0;
     NumberOfLoads = 0;
     NumberOfDaysForLoads = 0;
     NumberOfRiverLoads = 0;
 
 	// Get box array
     BoxArray = MyPEcoDynClass->BoxArray;
-	ObjectCode = PHYTOBJECTCODE;
+    ObjectCode = PHYTOBJECTCODE;
 
 	// Initialise pointers
     for (int i = 0; i < NumberOfBoxes; i++)
@@ -156,7 +156,7 @@ void TPhytoplankton::PreBuildPhytoplankton()
 
 	KValue = 0.4;//0.1;
 
-    RTPH = 1; // what the hell are these three doing? 97.06.17
+        RTPH = 1; // what the hell are these three doing? 97.06.17
 	RTMPH =  5;
 	q10PH = 0.15;
 }
@@ -680,7 +680,7 @@ bool TPhytoplankton::SetParameterValue(char* MyParameter, double value)
     return rc;
 }
 
-
+#ifndef _PORT_FORTRAN_
 // AP, 2007.07.12
 bool TPhytoplankton::SaveParameters()
 {
@@ -814,6 +814,7 @@ bool TPhytoplankton::SaveParameters()
     CloseDataFile((void*)PReadWrite);
     return true;
 }
+#endif
 
 void TPhytoplankton::Go ()
 {

@@ -66,7 +66,7 @@ class _export TProdutor : public TEcoDynClass
         }
 #endif
 
-		~TProdutor()
+	~TProdutor()
         {
               if (NumberOfBoxes > 0)
         	{
@@ -177,8 +177,7 @@ class _export TProdutor : public TEcoDynClass
 	#endif  // __BORLANDC__
 #endif  //_PORT_FORTRAN_
         };
-		virtual void Update(double &Value,
-										 int BoxNumber,
+		virtual void Update(double &Value, int BoxNumber,
 					 char* ParameterName){
 #ifndef _PORT_FORTRAN_
 	#ifdef __BORLANDC__
@@ -188,20 +187,22 @@ class _export TProdutor : public TEcoDynClass
 	#endif  // __BORLANDC__
 #endif  // _PORT_FORTRAN_
         };
-		virtual void Integrate(){};
-	protected :
+	virtual void Integrate(){};
+	//protected :
+        public:
         void BuildProdutor(char* className)
         {
-            strcpy(EcoDynClassName, className);
-            NumberOfLines = MyPEcoDynClass->GetNumberOfLines();
-            NumberOfColumns = MyPEcoDynClass->GetNumberOfColumns();
-            NumberOfLayers =  MyPEcoDynClass->GetNumberOfLayers();
+#ifndef _PORT_FORTRAN_
+                 strcpy(EcoDynClassName, className);
+                 NumberOfLines = MyPEcoDynClass->GetNumberOfLines();
+                 NumberOfColumns = MyPEcoDynClass->GetNumberOfColumns();
+                 NumberOfLayers =  MyPEcoDynClass->GetNumberOfLayers();
         	// Get array size
         	NumberOfBoxes = MyPEcoDynClass->GetGridSize(); // Size of array - i.e. number of model boxes
         	VariableCount = 0;
         	TimeStep = MyPEcoDynClass->GetTimeStep();
         	ObjectCode = PRODOBJECTCODE;
-
+#endif  // _PORT_FORTRAN_
         	// Initialise pointers
         	if (NumberOfBoxes > 0)                       // Initialise arrays for variable pairs - one
         	{                                            // for boxes and one for loads into boxes
@@ -234,8 +235,8 @@ class _export TProdutor : public TEcoDynClass
 		        Iopt 					= (double*) calloc (NumberOfBoxes, sizeof(double));
         		CriticalLight = (double*) calloc (NumberOfBoxes, sizeof(double));
 		        Ks 						= (double*) calloc (NumberOfBoxes, sizeof(double));
-            KNitrate 			= (double*) calloc (NumberOfBoxes, sizeof(double));
-            KAmmonia 			= (double*) calloc (NumberOfBoxes, sizeof(double));
+                        KNitrate 			= (double*) calloc (NumberOfBoxes, sizeof(double));
+                        KAmmonia 			= (double*) calloc (NumberOfBoxes, sizeof(double));
         		beta 					= (double*) calloc (NumberOfBoxes, sizeof(double));
 		        ResponseTime 	= (double*) calloc (NumberOfBoxes, sizeof(double));
         		InhibitionTime = (double*) calloc (NumberOfBoxes, sizeof(double));
@@ -297,8 +298,8 @@ class _export TProdutor : public TEcoDynClass
 							*Iopt,
 							*CriticalLight,
 							*Ks,
-                            *KNitrate,
-                            *KAmmonia,
+                                                        *KNitrate,
+                                                        *KAmmonia,
 							*beta,
 							*ResponseTime,
 							*InhibitionTime,

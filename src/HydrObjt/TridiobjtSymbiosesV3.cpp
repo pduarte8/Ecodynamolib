@@ -149,6 +149,7 @@ void TTriDimensionalSymbiosesV3::AdvectDiffuse(double* Generic,float *GenericWit
                 GenericWithBoundaries[Get3DIndexWithBoundaries(i,j,k)] =  field[index3D];
                 index3D++;
             }
+            //index3D++;
         }
     }
     /* saveField("f2c.dat", GenericWithBoundaries, MyDimensions); */
