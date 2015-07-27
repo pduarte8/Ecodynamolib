@@ -126,13 +126,14 @@ void TPhytoplankton::PreBuildPhytoplankton()
     NumberOfRiverLoads = 0;
 
 	// Get box array
+#ifndef _PORT_FORTRAN_    
     BoxArray = MyPEcoDynClass->BoxArray;
     ObjectCode = PHYTOBJECTCODE;
-
+#endif
 	// Initialise pointers
     for (int i = 0; i < NumberOfBoxes; i++)
     {
-   	    ChlToCarbon[i] = 35;
+   	ChlToCarbon[i] = 35;
         ChlCarbonRatio[i] = 0.04;
         PhytoProd[i] = 0;
         Pmax[i] = 0.2; //ugC /ug C/ h

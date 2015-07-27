@@ -384,9 +384,9 @@ bool TCrestumaLeverPhytoplankton2DVIntLim::SetVariableValue(char* srcName, doubl
 									  char* VariableName)
 {
   bool rc = true;
-
+#ifndef _PORT_FORTRAN_
     LogMessage("SetVariableValue", srcName, VariableName, Value, BoxNumber);
-
+#endif
     if (strcmp(VariableName, "Phytoplankton biomass") == 0)
         PhytoBiomass[BoxNumber] = Value;
     else if (strcmp(VariableName, "Chlorophyll to Carbon") == 0)
@@ -599,6 +599,10 @@ double TCrestumaLeverPhytoplankton2DVIntLim::GetParameterValue(char* MyParameter
     {
         value = PhosphorusLimitation;
     }
+    else if (strcmp(MyParameter, "Productivity") == 0)
+    {
+        value = Productivity;
+    }
     else
         value = 0.0;
     return value;
@@ -801,6 +805,10 @@ bool TCrestumaLeverPhytoplankton2DVIntLim::SetParameterValue(char* MyParameter, 
     else if (strcmp(MyParameter, "Phosphorus limitation") == 0)
     {
         PhosphorusLimitation = value;
+    }
+    else if (strcmp(MyParameter, "Productivity") == 0)
+    {
+        Productivity = value;
     }
     else
         rc = false;
@@ -1336,22 +1344,25 @@ void TCrestumaLeverPhytoplankton2DVIntLim::Go()
 void TCrestumaLeverPhytoplankton2DVIntLim::Integrate()
 {
 	// Integrate phytoplankton biomass within the box
+#ifndef _PORT_FORTRAN_
    TEcoDynClass* MyTransportPointer = MyPEcoDynClass->GetTransportPointer();
-
+#endif
    for (int i = 0; i < NumberOfBoxes; i++)
    	GenericProduct1[i] = PhytoBiomass[i] * DailyMeanGPP[i];
+#ifndef _PORT_FORTRAN_
    if (MyTransportPointer != NULL)
    	MyTransportPointer->Go(GenericProduct1, GenericProduct2, 0, 0);
+#endif
 ///	Generic = PhytoBiomass; GenericFlux = PhytoFlux;
 	Integration(PhytoBiomass, PhytoFlux);
 //	PhytoBiomass = Generic; PhytoFlux = GenericFlux;
 
    for (int i = 0; i < NumberOfBoxes; i++)
    	if (PhytoBiomass[i] < 0.0) PhytoBiomass[i] = 0.0;
-
+#ifndef _PORT_FORTRAN_
 	if (MyTransportPointer != NULL)
 		MyTransportPointer->Go(PhytoBiomass, PhytoLoad, RiverPhyto, OceanPhyto);
-
+#endif
    for (int i = 0; i < NumberOfBoxes; i++)
    {
    	if (PhytoBiomass[i] > 0)
@@ -1363,23 +1374,23 @@ void TCrestumaLeverPhytoplankton2DVIntLim::Integrate()
 //   Generic = NPhyto; GenericFlux = NCellFlux;
 	Integration(NPhyto, NCellFlux);
 //	NPhyto = Generic; NCellFlux = GenericFlux;
+#ifndef _PORT_FORTRAN_
    if (MyTransportPointer != NULL)
 		MyTransportPointer->Go(NPhyto, GenericProduct2,   //zeros
                              RiverPhyto * RedfieldNFactor/ RedfieldCFactor,
                              OceanPhyto* RedfieldNFactor/ RedfieldCFactor);
-
+#endif
 //   Generic = PPhyto; GenericFlux = PCellFlux;
 	Integration(PPhyto, PCellFlux);
 //	PPhyto = Generic; PCellFlux = GenericFlux;
+#ifndef _PORT_FORTRAN_
    if (MyTransportPointer != NULL)
    {
 		MyTransportPointer->Go(PPhyto, GenericProduct2, //zeros
                              RiverPhyto * RedfieldPFactor/ RedfieldCFactor,
                              OceanPhyto * RedfieldPFactor/ RedfieldCFactor);
    }
-
-
-
+#endif
 
    for (int i = 0; i < NumberOfBoxes; i++)
    {
@@ -1390,7 +1401,9 @@ void TCrestumaLeverPhytoplankton2DVIntLim::Integrate()
       	PCellQuota[i] = PPhyto[i] / PhytoBiomass[i];
    	}
    }
+#ifndef _PORT_FORTRAN_
    Loads();
+#endif
 }
 
 
@@ -1629,10 +1642,12 @@ void TCrestumaLeverPhytoplankton2DVIntLim::PhosphorusUptake(int ABoxNumber)
 void TCrestumaLeverPhytoplankton2DVIntLim::NutrientLimitation(int ABoxNumber)
 {
    //No caso de a classe ser invocada a partir do EcoDynamo...
+#ifndef _PORT_FORTRAN_
    TEcoDynClass* MyNutrientPointer = MyPEcoDynClass->GetNutrientPointer();
    //...
    if (MyNutrientPointer != NULL)
    {
+#endif
 	int i = ABoxNumber;  double NLimitation, PLimitation;
 
    if (NitrogenLimitation == 1) {
@@ -1656,8 +1671,9 @@ void TCrestumaLeverPhytoplankton2DVIntLim::NutrientLimitation(int ABoxNumber)
    	Productivity = 0.0;
    else
    	Productivity = Productivity * MIN(PLimitation,NLimitation);
+#ifndef _PORT_FORTRAN_
    }
-
+#endif
 }
 
 
@@ -1779,6 +1795,7 @@ void TCrestumaLeverPhytoplankton2DVIntLim::Exudation(int ABoxNumber)
       else Exudate = 0.0;
          PhytoProd[MyBoxNumber] = PhytoProd[MyBoxNumber] - Exudate;
       //No caso de a classe ser invocada a partir do EcoDynamo...
+#ifndef _PORT_FORTRAN_
       if (MyNutrientPointer != NULL)
       {
           MyNutrientPointer->Update(GetEcoDynClassName(), Exudate * CUBIC /
@@ -1786,15 +1803,19 @@ void TCrestumaLeverPhytoplankton2DVIntLim::Exudation(int ABoxNumber)
 												MyBoxNumber,
 												"Ammonia",
 												ObjectCode);      //Return as umol N / m3
+#endif
           NCellFlux[MyBoxNumber] = NCellFlux[MyBoxNumber] - Exudate * NCellQuota[MyBoxNumber];
-
+#ifndef _PORT_FORTRAN_
           MyNutrientPointer->Update(GetEcoDynClassName(), Exudate * CUBIC /
                                    (PHOSPHORUSATOMICWEIGHT / PCellQuota[MyBoxNumber]),
 												MyBoxNumber,
 												"Phosphate",
 												ObjectCode);      //Return as umol P / m3
+#endif
           PCellFlux[MyBoxNumber] = PCellFlux[MyBoxNumber] - Exudate * PCellQuota[MyBoxNumber];
+#ifndef _PORT_FORTRAN_
       }
+#endif
       //...
    }
 }
@@ -1814,6 +1835,7 @@ void TCrestumaLeverPhytoplankton2DVIntLim::Mortality(int ABoxNumber)
       PhytoFlux[MyBoxNumber] = PhytoFlux[MyBoxNumber] - Release;
       PhytoMortality[MyBoxNumber] = Release; // flux per second for mass balance
       //No caso de a classe ser invocada a partir do EcoDynamo...
+#ifdef _PORT_FORTRAN_
       if (MyNutrientPointer != NULL)
       {
          MyNutrientPointer->Update(GetEcoDynClassName(), Release * CUBIC / /*(RedfieldCFactor*NITROGENATOMICWEIGHT/RedfieldNFactor)*/
@@ -1821,16 +1843,20 @@ void TCrestumaLeverPhytoplankton2DVIntLim::Mortality(int ABoxNumber)
 												 MyBoxNumber,
 												 "Ammonia",
 												 ObjectCode);
+#endif
          NCellFlux[MyBoxNumber] = NCellFlux[MyBoxNumber] - Release * NCellQuota[MyBoxNumber];
-
+#ifdef _PORT_FORTRAN_
          MyNutrientPointer->Update(GetEcoDynClassName(), Release * CUBIC /
                                    /*(RedfieldCFactor * PHOSPHORUSATOMICWEIGHT/RedfieldPFactor)*/
                                    (PHOSPHORUSATOMICWEIGHT / PCellQuota[MyBoxNumber]),
 												MyBoxNumber,
 												"Phosphate",
 												ObjectCode);      //Return as umol P / m3
+#endif
          PCellFlux[MyBoxNumber] = PCellFlux[MyBoxNumber] - Release * PCellQuota[MyBoxNumber];
+#ifdef _PORT_FORTRAN_
       }
+#endif
       //...
    }
 }
