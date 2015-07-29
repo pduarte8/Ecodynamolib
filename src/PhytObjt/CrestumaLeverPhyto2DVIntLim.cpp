@@ -98,7 +98,7 @@ void TCrestumaLeverPhytoplankton2DVIntLim::BuildCrestumaLeverPhyto2DVIntLim()
     PreBuildCrestumaLeverPhyto2DVIntLim();
     NitrogenLimitation	= 1;
     PhosphorusLimitation = 1;
-
+    AmmoniaUpTake = 0.0; NitrateAndNitriteUptake = 0.0;
     int X, Y;
 //	TReadWrite* PReadWrite = (TReadWrite*)MyPEcoDynClass->GetParmsFileHandle();
 	TReadWrite* PReadWrite = (TReadWrite*)MyPEcoDynClass->OpenParametersFile("Phytoplankton");
@@ -405,6 +405,10 @@ bool TCrestumaLeverPhytoplankton2DVIntLim::SetVariableValue(char* srcName, doubl
         NCellQuota[BoxNumber] = Value;
     else if (strcmp(VariableName, "PCellQuota") == 0)
         PCellQuota[BoxNumber] = Value;
+    else if (strcmp(VariableName, "NPhyto") == 0)
+        NPhyto[BoxNumber] = Value;
+    else if (strcmp(VariableName, "PPhyto") == 0)
+        PPhyto[BoxNumber] = Value;
     else
         rc = false;
 
@@ -1317,10 +1321,12 @@ void TCrestumaLeverPhytoplankton2DVIntLim::Go()
    			Production(i,j);
             Respiration(ABoxNumber);
             Exudation(ABoxNumber);
+#ifndef _PORT_FORTRAN_ 
             if (NitrogenLimitation == 1)
              	NitrogenUptake(ABoxNumber);
             if (PhosphorusLimitation == 1)
              	PhosphorusUptake(ABoxNumber);
+#endif
             Mortality(ABoxNumber);
             Settling(i,j);
          }
@@ -1524,11 +1530,18 @@ void TCrestumaLeverPhytoplankton2DVIntLim::Production(int ALine, int AColumn)
          }
 }
 
+#ifndef _PORT_FORTRAN_ 
 void TCrestumaLeverPhytoplankton2DVIntLim::NitrogenUptake(int ABoxNumber)
-{
+{ 
 	TEcoDynClass* MyNutrientPointer = MyPEcoDynClass->GetNutrientPointer();
+#else
+void TCrestumaLeverPhytoplankton2DVIntLim::NitrogenUptake(int ABoxNumber, double Ammonia, double Nitrate, double Nitrite)
+{
+#endif
+
    int i = ABoxNumber;
-   double AmmoniaUpTake, NitrateAndNitriteUptake, NMaxUptakeOfNitrate;
+   double NMaxUptakeOfNitrate;
+#ifndef _PORT_FORTRAN_    
 	if (MyNutrientPointer != NULL)
 	{
 		// the limitation is based on umol l-1 values passed from the
@@ -1548,7 +1561,7 @@ void TCrestumaLeverPhytoplankton2DVIntLim::NitrogenUptake(int ABoxNumber)
 												 "Nitrite",
 												 ObjectCode);
       //...
-
+#endif
    	if (
             (NCellQuota[i] >= MaxNCellQuota) ||
             (NCellQuota[i] / PCellQuota[i] > MaxNPRatio)
@@ -1562,7 +1575,7 @@ void TCrestumaLeverPhytoplankton2DVIntLim::NitrogenUptake(int ABoxNumber)
 
          NUptake[i] = AmmoniaUpTake;  //mg N m-3 h-1
          NMaxUptakeOfNitrate = MAX(0.0,NMaxUptake - NMaxUptake * Ammonia / (Ammonia + KNH4));
-
+#ifndef _PORT_FORTRAN_ 
          //No caso de a classe ser invocada a partir do EcoDynamo...
          MyNutrientPointer->Update(GetEcoDynClassName(), -AmmoniaUpTake /HOURSTOSECONDS/** DAYSTOHOURS*/ * CUBIC /NITROGENATOMICWEIGHT,
 															i,
@@ -1570,11 +1583,12 @@ void TCrestumaLeverPhytoplankton2DVIntLim::NitrogenUptake(int ABoxNumber)
 															ObjectCode);
 
          //...
+#endif
          NitrateAndNitriteUptake = /*NMaxUptake*/NMaxUptakeOfNitrate * (Nitrate + Nitrite) / ((Nitrate + Nitrite) + KNO3) * NPhyto[i]; //mg N m-3 h-1
 
 
          NUptake[i] = NUptake[i] + NitrateAndNitriteUptake; //mg N m-3 d-1
-
+#ifndef _PORT_FORTRAN_ 
          //No caso de a classe ser invocada a partir do EcoDynamo...
          MyNutrientPointer->Update(GetEcoDynClassName(), -NitrateAndNitriteUptake * Nitrate / (Nitrate + Nitrite) / HOURSTOSECONDS/**
                                      DAYSTOHOURS */ * CUBIC /NITROGENATOMICWEIGHT,
@@ -1589,22 +1603,29 @@ void TCrestumaLeverPhytoplankton2DVIntLim::NitrogenUptake(int ABoxNumber)
 															"Nitrite",
 															ObjectCode);
           //...
+#endif
     	}
+#ifndef _PORT_FORTRAN_ 
     }
-    else
+    else	
        NUptake[i] = 0.0;
+#endif
 
     NCellFlux[i] = NCellFlux[i] + NUptake[i] / HOURSTOSECONDS/** DAYSTOHOURS*/;   //mg N m-3 d-1
-
 }
 
 
 
-
+#ifndef _PORT_FORTRAN_
 void TCrestumaLeverPhytoplankton2DVIntLim::PhosphorusUptake(int ABoxNumber)
 {
 	TEcoDynClass* MyNutrientPointer = MyPEcoDynClass->GetNutrientPointer();
+#else
+void TCrestumaLeverPhytoplankton2DVIntLim::PhosphorusUptake(int ABoxNumber, double Phosphate)
+{
+#endif
    int i = ABoxNumber;
+#ifndef _PORT_FORTRAN_ 
 	if (MyNutrientPointer != NULL)
 	{
 		// the limitation is based on umol l-1 values passed from the
@@ -1616,7 +1637,7 @@ void TCrestumaLeverPhytoplankton2DVIntLim::PhosphorusUptake(int ABoxNumber)
 												 "Phosphate",
 												 ObjectCode);
       //...
-
+#endif
    	if (
             (PCellQuota[i] > MaxPCellQuota) ||
             (NCellQuota[i] / PCellQuota[i] <= MinNPRatio)
@@ -1626,16 +1647,19 @@ void TCrestumaLeverPhytoplankton2DVIntLim::PhosphorusUptake(int ABoxNumber)
       {
          PUptake[i] = PMaxUptake *  Phosphate / (Phosphate + KP) * PPhyto[i];
          //No caso de a classe ser invocada a partir do EcoDynamo...
+#ifndef _PORT_FORTRAN_ 
          MyNutrientPointer->Update(GetEcoDynClassName(), -PUptake[i] / HOURSTOSECONDS/** DAYSTOHOURS*/ * CUBIC / PHOSPHORUSATOMICWEIGHT,
                                         i,
                                         "Phosphate",
                                         ObjectCode);
-         //...                               
+         //...    
+#endif                           
     	}
+#ifndef _PORT_FORTRAN_ 
    }
    else
       PUptake[i] = 0.0;
-
+#endif
    PCellFlux[i] = PCellFlux[i] + PUptake[i] / HOURSTOSECONDS/** DAYSTOHOURS*/;  //mg P m-3 d-1
 }
 
