@@ -300,7 +300,7 @@ void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation)
    //cffPExudation = ptr->ExudatedFlux * ptr->PCellQuota[0] / ptr->PPhyto[0];        //Return value in m-3s-1 for compatibility with ROMS nonlinear backward-implicit solution 
 }
 
-void phytoplankton_nitrogenUptake__(int* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNO3NO2, double *cffNH4)
+void phytoplankton_nitrogen_uptake__(int* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNO3NO2, double *cffNH4)
 {
    double NitrogenUptake;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
@@ -310,7 +310,7 @@ void phytoplankton_nitrogenUptake__(int* PPhytoplankton, double* Ammonia, double
    *cffNO3NO2 = ptr->NitrateAndNitriteUptake / HOURSTOSECONDS / (*Nitrate + *Nitrite); 
 } 
 
-void phytoplankton_phosphorusUptake__(int* PPhytoplankton, double* Phosphate,double* cffPO4)
+void phytoplankton_phosphorus_uptake__(int* PPhytoplankton, double* Phosphate,double* cffPO4)
 {
    double PhosphorusUptake;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;

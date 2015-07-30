@@ -66,8 +66,9 @@ class _export TPhytoplankton : public TProdutor
         	double fallingSpeed, double ratioLightDarkRespiration);
            
         // AP, 2007.07.11
+#ifndef _PORT_FORTRAN_
         virtual bool SaveParameters();
-
+#endif
 	protected :
 	  long NCounter, PCounter;
         public :
@@ -559,11 +560,15 @@ class _export TCrestumaLeverPhytoplankton2DV : public TPhytoplankton     // Pedr
 		TCrestumaLeverPhytoplankton2DV(TEcoDynClass* APEcoDynClass, char* className);
 #else  //_PORT_FORTRAN_
         TCrestumaLeverPhytoplankton2DV(char* className);
+#endif
+#ifndef _PORT_FORTRAN_
         ~TCrestumaLeverPhytoplankton2DV();
 #endif  //_PORT_FORTRAN_
-		virtual void Go();
+         virtual void Go();
         // AP, 2007.07.11
+#ifndef _PORT_FORTRAN_
         virtual bool SaveVariables();
+#endif
 
    protected :
 #ifndef _PORT_FORTRAN_
@@ -634,8 +639,10 @@ class _export TCrestumaLeverPhytoplankton2DVIntLim : public TCrestumaLeverPhytop
                              int BoxNumber,
                              char* VariableName);
         // AP, 2007.07.11
+#ifndef _PORT_FORTRAN_ 
         virtual bool SaveParameters();
         virtual bool SaveVariables();
+#endif
 
    protected :
 #ifndef _PORT_FORTRAN_
@@ -961,9 +968,9 @@ extern "C" {
 
     void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation);
 
-    void phytoplankton_nitrogenUptake__(int* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNO3NO2, double *cffNH4);  
+    void phytoplankton_nitrogen_uptake__(int* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNO3NO2, double *cffNH4);  
 
-    void phytoplankton_phosphorusUptake__(int* PPhytoplankton, double* Phosphate,double* cffPO4); 
+    void phytoplankton_phosphorus_uptake__(int* PPhytoplankton, double* Phosphate,double* cffPO4); 
 
     void phytoplankton_mortality__(int* PPhytoplankton, double* nCellQuota, double* pCellQuota,
                                double* waterTemperature, double* biomass, double* timeStep, double* cff); 

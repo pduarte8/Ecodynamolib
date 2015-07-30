@@ -243,12 +243,14 @@ void TCrestumaLeverPhytoplankton2DV::PosBuildCrestumaLeverPhyto2DV()
 }
 
 
-//#else
+#else
 TCrestumaLeverPhytoplankton2DV::TCrestumaLeverPhytoplankton2DV(char* className)
         :TPhytoplankton(className)
 {
 }
+#endif
 
+#ifndef _PORT_FORTRAN_
 TCrestumaLeverPhytoplankton2DV::~TCrestumaLeverPhytoplankton2DV()
 {
     try {    if (NumberOfVariables > 0) {
@@ -384,6 +386,7 @@ bool TCrestumaLeverPhytoplankton2DV::SaveVariables()
 }
 
 #endif  // _PORT_FORTRAN_
+
 void TCrestumaLeverPhytoplankton2DV::Go ()
 {
    double MyBoxDepth, ALayer, MyPreviousSurfVolume, MyCurrentSurfVolume;
