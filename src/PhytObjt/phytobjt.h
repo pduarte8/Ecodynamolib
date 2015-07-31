@@ -914,7 +914,7 @@ class _export TPhytoplanktonGeneric : public TCrestumaLeverPhytoplankton2DVIntLi
                 WaterTemperature, Tmin, ExudatedFlux;
         int ABoxNumber, AUpperBoxNumber;
         bool SurfaceCell, BottomBox;
-
+        double const aMin = 0.00000000001;
 #ifdef _PORT_FORTRAN_
     private:
         static TPhytoplanktonGeneric *PPhytoplankton;
@@ -964,9 +964,9 @@ extern "C" {
     void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,
                                     int* piCurveOption, double* julianDay, double* GrossProduction);
 
-    void phytoplankton_respiration__(int* PPhytoplankton, double* cffCRespiration);
+    void phytoplankton_respiration__(int* PPhytoplankton, double* cffCRespiration, double *GrossProduction);
 
-    void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation);
+    void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation, double *GrossProduction);
 
     void phytoplankton_nitrogen_uptake__(int* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNO3NO2, double *cffNH4);  
 

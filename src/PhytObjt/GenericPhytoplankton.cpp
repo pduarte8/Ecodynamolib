@@ -188,20 +188,30 @@ void phytoplankton_new__(int* PPhytoplankton, double* pmax, double* iopt, double
         ptr->PreBuildPhytoplankton();
         //Variable declaration and zero initialization
         ptr->PreBuildCrestumaLeverPhyto2DVIntLim();
+        //cout << "PreBuildCrestumaLeverPhyto2DVIntLim "<< *PPhytoplankton<<endl;
         //Initialization of parameters with values imported from Fortran program
-        ptr->SetParameterValue("Pmax", *pmax);
+        ptr->SetParameterValue("Pmax", *pmax); 
         ptr->SetParameterValue("Iopt", *iopt);
         ptr->SetParameterValue("Slope", *slope);
         ptr->SetParameterValue("DefaultAEiler", *aEiler);
         ptr->SetParameterValue("BEiler", *bEiler);
         ptr->SetParameterValue("CEiler", *cEiler);
+
+        cout << "Pmax= "<< *pmax; cout << "Iopt= "<< *iopt; cout << "Slope= "<< *slope; 
+        //cout << "DefaultAEiler= "<< *aEiler;cout << "BEiler= "<< *bEiler;cout << "CEiler= "<< *cEiler<< endl;
+
         ptr->SetParameterValue("Maintenance respiration", *maintenanceRespiration);
         ptr->SetParameterValue("Respiration Coefficient",*respirationCoefficient);
         ptr->SetParameterValue("Dissolved organic carbon nutrient stress loss",*docStressLoss);
         ptr->SetParameterValue("Death loss",*deathLoss);
         ptr->SetParameterValue("RedfieldCFactor",*redfieldCFactor);
         ptr->SetParameterValue("RedfieldNFactor", *redfieldNFactor);
-        ptr->SetParameterValue("RedfieldPFactor", *redfieldPFactor);         
+        ptr->SetParameterValue("RedfieldPFactor", *redfieldPFactor);  
+
+        //cout << "Maintenance respiration= "<< *maintenanceRespiration; cout << "Respiration Coefficient= "<< *respirationCoefficient; 
+        //cout << "Dissolved organic carbon nutrient stress loss= "<< *docStressLoss; cout << "Death loss= "<< *deathLoss;
+        //cout << "RedfieldCFactor= "<< *redfieldCFactor;cout << "RedfieldNFactor= "<< *redfieldNFactor;cout << "RedfieldPFactor= "<< *redfieldPFactor<< endl;
+               
         ptr->SetParameterValue("TemperatureAugmentationRate",*temperatureAugmentationRate);
         ptr->SetParameterValue("SettlingSpeed",*settlingSpeed);   
         ptr->SetParameterValue("Light/Dark resp", *ratioLightDarkRespiration);
@@ -209,21 +219,51 @@ void phytoplankton_new__(int* PPhytoplankton, double* pmax, double* iopt, double
         ptr->SetParameterValue("MaxNPRatio", *maxNPRatio); 
         ptr->SetParameterValue("PMaxUptake",*pMaxUptake);
         ptr->SetParameterValue("NMaxUptake",*nMaxUptake);
+
+        //cout << "TemperatureAugmentationRate"<<*temperatureAugmentationRate; cout << "SettlingSpeed" << *settlingSpeed << endl;
+
         ptr->SetParameterValue("KP",*kP);
         ptr->SetParameterValue("KNO3",*kNO3);
         ptr->SetParameterValue("KNH4",*kNH4);
+
+        //cout << "KP"<<*kP; cout << "KNO3" << *kNO3; cout << "KNH4" << *kNH4 << endl;
+        
         ptr->SetParameterValue("MaxNCellQuota",*maxNCellQuota);
         ptr->SetParameterValue("MinNCellQuota",*minNCellQuota);
         ptr->SetParameterValue("MaxPCellQuota",*maxPCellQuota);
         ptr->SetParameterValue("MinPCellQuota",*minPCellQuota);
+
+        //cout << "MaxNCellQuota"<<*maxNCellQuota; cout << "MinNCellQuota" << *minNCellQuota; 
+        //cout << "MaxPCellQuota" << *maxPCellQuota;  cout << "MinPCellQuota" << *minPCellQuota << endl;
+
         ptr->SetParameterValue("KPInternal",*kPInternal);
         ptr->SetParameterValue("KNInternal",*kNInternal);
+
+        //cout << "KPInternal"<<*kPInternal; cout << "KNInternal" << *kNInternal<<endl;
+
         ptr->SetParameterValue("Carbon to Oxygen in photosynthesis",*carbonToOxygenProd);
+        
+        //cout << "Carbon to Oxygen in photosynthesis"<<*carbonToOxygenProd << endl;
+        
         ptr->SetParameterValue("Carbon to Oxygen in respiration",*carbonToOxygenResp);
+ 
+        //cout << "Carbon to Oxygen in respiration" << *carbonToOxygenResp << endl;
+
         ptr->SetParameterValue("TminPhotosynthesis",*tminPhotosynthesis);
+
+        //cout << "TminPhotosynthesis"<<*tminPhotosynthesis << endl; 
+
         ptr->SetParameterValue("TminRespiration",*tminRespiration);
+
+        //cout << "TminRespiration" << *tminRespiration << endl;
+
         ptr->SetParameterValue("Nitrogen limitation",*nitrogenLimitation);
+
+        //cout << "Nitrogen limitation"<<*nitrogenLimitation << endl;
+
         ptr->SetParameterValue("Phosphorus limitation",*phosphorusLimitation);
+            
+        //cout << "Phosphorus limitation" << *phosphorusLimitation << endl;
 }
 
 
@@ -237,8 +277,16 @@ void phytoplankton_go__(int* PPhytoplankton, double* nPhyto, double* pPhyto,doub
    MyBiomass = *biomass * CARBONATOMICWEIGHT; //Conversions from mmol/m3 to mg / m3
    MyNPhyto =  *nPhyto * NITROGENATOMICWEIGHT;
    MyPPhyto = *pPhyto * PHOSPHORUSATOMICWEIGHT;
-   MyNCellQuota = MyNPhyto / MyBiomass;
-   MyPCellQuota = MyPPhyto / MyBiomass; 
+   if (MyBiomass > ptr->aMin)
+   {
+       MyNCellQuota = MyNPhyto / MyBiomass;
+       MyPCellQuota = MyPPhyto / MyBiomass; 
+   }
+   else
+   {
+       MyNCellQuota = 0.0;
+       MyPCellQuota = 0.0;
+   }
    ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton initial biomass");
    ptr->SetVariableValue("Fortran", MyNCellQuota,0,"NCellQuota");
    ptr->SetVariableValue("Fortran", MyPCellQuota,0,"PCellQuota");
@@ -281,21 +329,33 @@ void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double*
    ptr->DailyAverageProduction();
 }
 
-void phytoplankton_respiration__(int* PPhytoplankton, double* cffCRespiration)
+void phytoplankton_respiration__(int* PPhytoplankton, double* cffCRespiration, double* GrossProduction)
 {
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
-   ptr->Respiration(0);
-   *cffCRespiration = ptr->RespiredFlux[0] / ptr->PhytoBiomass[0];                 //Return value in m-3s-1 for compatibility with ROMS nonlinear backward-implicit solution
+   ptr->GPP[0] = *GrossProduction;
+   if (ptr->PhytoBiomass[0] > ptr->aMin)
+   {
+      ptr->Respiration(0);
+      *cffCRespiration = ptr->RespiredFlux[0] / ptr->PhytoBiomass[0];                 //Return value in m-3s-1 for compatibility with ROMS nonlinear backward-implicit solution
+   }
+   else
+      *cffCRespiration = 0.0;
    //cffNRespiration = ptr->RespiratedFlux[0] * ptr->NCellQuota[0] / ptr->NPhyto[0]; //Return value in m-3s-1 for compatibility with ROMS nonlinear backward-implicit solution
    //cffPRespiration = ptr->RespiratedFlux[0] * ptr->PCellQuota[0] / ptr->PPhyto[0]; //Return value in m-3s-1 for compatibility with ROMS nonlinear backward-implicit solution
 }
 
-void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation)
+void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation, double* GrossProduction)
 {
    double Exudation;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
-   ptr->Exudation(0); 
-   *cffCExudation = ptr->ExudatedFlux / ptr->PhytoBiomass[0];                        //Return value in m-3s-1 for compatibility with ROMS nonlinear backward-implicit solution
+   ptr->GPP[0] = *GrossProduction;
+   if (ptr->PhytoBiomass[0] > ptr->aMin)
+   {
+      ptr->Exudation(0);   
+      *cffCExudation = ptr->ExudatedFlux / ptr->PhytoBiomass[0];                        //Return value in m-3s-1 for compatibility with ROMS nonlinear backward-implicit solution
+   }
+   else
+      *cffCExudation = 0.0;
    //cffNExudation = ptr->ExudatedFlux * ptr->NCellQuota[0] / ptr->NPhyto[0];        //Return value in m-3s-1 for compatibility with ROMS nonlinear backward-implicit solution
    //cffPExudation = ptr->ExudatedFlux * ptr->PCellQuota[0] / ptr->PPhyto[0];        //Return value in m-3s-1 for compatibility with ROMS nonlinear backward-implicit solution 
 }
@@ -744,56 +804,40 @@ void TPhytoplanktonGeneric::Respiration(int ABoxNumber)
    TEcoDynClass* MyWaterTemperaturePointer = MyPEcoDynClass->GetWaterTemperaturePointer();
    //...
 #endif
+   cout<< "PhytoBiomass = "<< PhytoBiomass[MyBoxNumber] << endl; 
+   cout<< "WaterTemperature = "<< WaterTemperature << endl;
    if (PhytoBiomass[MyBoxNumber] > 0.0)
    {
       Resp = MaintenanceRespiration[MyBoxNumber] / HOURSTOSECONDS;    //mmol O2 / mgChl / s
       //No caso de a classe ser invocada a partir do EcoDyn...
 #ifndef _PORT_FORTRAN_
       if (MyWaterTemperaturePointer != NULL)
-         MyWaterTemperaturePointer->Inquiry(GetEcoDynClassName(), WaterTemperature,
-                                             MyBoxNumber,
-                                             "Water temperature",
-                                             ObjectCode);
-
+         MyWaterTemperaturePointer->Inquiry(GetEcoDynClassName(), WaterTemperature,MyBoxNumber,"Water temperature", ObjectCode);
       else
          WaterTemperature = 0.0;
       //...
 #endif
-
-      if (PhytoProd[MyBoxNumber] <= 0.0)
-         Resp = Resp + RespirationCoefficient *
-               	DailyMeanGPP[MyBoxNumber] / OxygenMolecularWeight
+      if (GPP[MyBoxNumber] <= 0.0)
+         Resp = Resp + RespirationCoefficient * DailyMeanGPP[MyBoxNumber] / OxygenMolecularWeight
                 * TemperatureArrheniusExponentialLimitation(MyBoxNumber)
                 / HOURSTOSECONDS;
       else
-         Resp = Resp + RatioLightDarkRespiration * RespirationCoefficient *
-               	DailyMeanGPP[MyBoxNumber] / OxygenMolecularWeight
+         Resp = Resp + RatioLightDarkRespiration * RespirationCoefficient *DailyMeanGPP[MyBoxNumber] / OxygenMolecularWeight
                 * TemperatureArrheniusExponentialLimitation(MyBoxNumber)
-                / HOURSTOSECONDS;
-            //Resp in //mmol O2 / mg Chl / s
-
-      Resp = Resp * CarbonToOxygenResp * (PhytoBiomass[MyBoxNumber] / ChlToCarbon[MyBoxNumber]) * OxygenMolecularWeight;
-            //Resp in //mg C /m3 / s
-
+                / HOURSTOSECONDS;//Resp in //mmol O2 / mg Chl / s
+      Resp = Resp * CarbonToOxygenResp * (PhytoBiomass[MyBoxNumber] / ChlToCarbon[MyBoxNumber]) * OxygenMolecularWeight;//Resp in //mg C /m3 / s
       PhytoProd[MyBoxNumber] = PhytoProd[MyBoxNumber] - ( Resp );
       RespiredFlux[MyBoxNumber] = Resp;
 #ifndef _PORT_FORTRAN_
       NCellFlux[MyBoxNumber] = NCellFlux[MyBoxNumber] - Resp * NCellQuota[MyBoxNumber];
       PCellFlux[MyBoxNumber] = PCellFlux[MyBoxNumber] - Resp * PCellQuota[MyBoxNumber];
       //No caso de a classe ser invocada a partir do EcoDyn...
-
       if (MyNutrientPointer != NULL)
       {
          MyNutrientPointer->Update(GetEcoDynClassName(), Resp * CUBIC /
-                                   (NITROGENATOMICWEIGHT / NCellQuota[MyBoxNumber]),
-												MyBoxNumber,
-												"Ammonia",
-												ObjectCode);      //Return as umol N / m3
+                                   (NITROGENATOMICWEIGHT / NCellQuota[MyBoxNumber]),MyBoxNumber,"Ammonia",ObjectCode);  //Return as umol N / m3
          MyNutrientPointer->Update(GetEcoDynClassName(), Resp * CUBIC /
-                                   (PHOSPHORUSATOMICWEIGHT / PCellQuota[MyBoxNumber]),
-												MyBoxNumber,
-												"Phosphate",
-												ObjectCode);      //Return as umol P / m3
+                                   (PHOSPHORUSATOMICWEIGHT / PCellQuota[MyBoxNumber]),MyBoxNumber,"Phosphate",ObjectCode);  //Return as umol P / m3
       }
 #endif
    }
