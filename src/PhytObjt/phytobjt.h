@@ -675,7 +675,7 @@ class _export TCrestumaLeverPhytoplankton2DVIntLim : public TCrestumaLeverPhytop
        double MinNPRatio,MaxNPRatio, PMaxUptake,NMaxUptake,KP, KNO3,
              KNH4, MaxPCellQuota, MaxNCellQuota, MinPCellQuota, MinNCellQuota,
              KPInternal, KNInternal, SettlingSpeed, CarbonToOxygenProd, CarbonToOxygenResp,
-             TminPhotosynthesis, TminRespiration,AmmoniaUpTake, NitrateAndNitriteUptake;
+             TminPhotosynthesis, TminRespiration,AmmoniaUpTake, NitrateAndNitriteUptake, ExudatedFlux;
        int NitrogenLimitation, PhosphorusLimitation;      
 };
 
@@ -911,7 +911,7 @@ class _export TPhytoplanktonGeneric : public TCrestumaLeverPhytoplankton2DVIntLi
 
         char EquationName;
         double BoxDepth, MyUpperDepth, LightAtTop, LightAtBottom,
-                WaterTemperature, Tmin, ExudatedFlux;
+                WaterTemperature, Tmin;
         int ABoxNumber, AUpperBoxNumber;
         bool SurfaceCell, BottomBox;
         double const aMin = 0.00000000001;
@@ -968,7 +968,7 @@ extern "C" {
 
     void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation, double *GrossProduction);
 
-    void phytoplankton_nitrogen_uptake__(int* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNO3NO2, double *cffNH4);  
+    void phytoplankton_nitrogen_uptake__(int* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNH4, double *cffNO3NO2);  
 
     void phytoplankton_phosphorus_uptake__(int* PPhytoplankton, double* Phosphate,double* cffPO4); 
 

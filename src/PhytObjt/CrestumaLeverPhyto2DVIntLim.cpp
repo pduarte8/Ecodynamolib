@@ -1818,6 +1818,7 @@ void TCrestumaLeverPhytoplankton2DVIntLim::Exudation(int ABoxNumber)
          Exudate = GPP[MyBoxNumber] * DocStressLoss;
       else Exudate = 0.0;
          PhytoProd[MyBoxNumber] = PhytoProd[MyBoxNumber] - Exudate;
+      ExudatedFlux = Exudate; 
       //No caso de a classe ser invocada a partir do EcoDynamo...
 #ifndef _PORT_FORTRAN_
       if (MyNutrientPointer != NULL)
