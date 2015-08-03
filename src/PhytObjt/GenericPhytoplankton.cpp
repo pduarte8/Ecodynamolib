@@ -676,7 +676,7 @@ void TPhytoplanktonGeneric::GetLightIntensity()
 double TPhytoplanktonGeneric::SteeleProduction()
 {
    int MyBoxNumber = ABoxNumber;
-   //Debugger(11);
+
    if (PhytoBiomass[MyBoxNumber] > 0.0)
    {
       if ((BoxDepth > 0.0) && (LightAtTop > 0.0))
@@ -698,6 +698,7 @@ double TPhytoplanktonGeneric::SteeleProduction()
                         * ( exp ( -LightAtBottom * WATTSTOMICROEINSTEINS / Iopt[MyBoxNumber] )
                         -exp( -LightAtTop * WATTSTOMICROEINSTEINS / Iopt[MyBoxNumber] )
                         )/ HOURSTOSECONDS;    //mg C m-3 s-1;
+         //cout<< "Productivity= "<< Productivity<< endl;
 
       }
       else
