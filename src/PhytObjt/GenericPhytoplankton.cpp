@@ -310,9 +310,9 @@ void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double*
    ptr->SetLightAtTop(*lightAtTop);
    ptr->SetLightAtBottom(*lightAtBottom);
    ptr->SetParameterValue("KValue", *kValue);
-   //cout << "Light at top = "<< *lightAtTop << endl;
-   //cout<< "Light at bottom = "<< *lightAtBottom << endl;
-   //cout<< "kValue = "<< *kValue << endl;
+   /*cout << "Light at top = "<< *lightAtTop << endl;
+   cout<< "Light at bottom = "<< *lightAtBottom << endl;
+   cout<< "kValue = "<< *kValue << endl;*/
    //cout<< "piCurveOption = "<< *piCurveOption << endl; 
    switch (*piCurveOption)
    {
@@ -326,6 +326,7 @@ void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double*
          ptr->Productivity = ptr->EilerProduction();
          break;
    }
+   Productivity = ptr->GetParameterValue("Productivity");
    //cout<< "Productivity light limit = "<< Productivity << endl;
    ptr->Tmin = ptr->GetParameterValue("TminPhotosynthesis");
    //double ATemperatureAugmentationRate = ptr->GetParameterValue("TemperatureAugmentationRate");
@@ -680,6 +681,16 @@ double TPhytoplanktonGeneric::SteeleProduction()
    {
       if ((BoxDepth > 0.0) && (LightAtTop > 0.0))
       {
+         /*cout << "Light at top = "<< LightAtTop << endl;
+         cout<< "Light at bottom = "<< LightAtBottom << endl;
+         cout<< "Biomass= "<< PhytoBiomass[MyBoxNumber]<< endl;
+         cout<< "Pmax= "<< Pmax[MyBoxNumber] << endl;
+         cout<< "Iopt= "<< Iopt[MyBoxNumber] << endl;
+         cout<< "BoxDepth= "<< BoxDepth << endl;
+         cout<<"HOURSTOSECONDS= "<<HOURSTOSECONDS<<endl;
+         cout<< "KValue= "<< KValue << endl;
+         cout<<"WATTSTOMICROEINSTEINS= "<<WATTSTOMICROEINSTEINS<<endl;*/
+         
          Productivity = PhytoBiomass[MyBoxNumber]
 						* Pmax[MyBoxNumber]
                         * 2.718282
@@ -774,7 +785,7 @@ void TPhytoplanktonGeneric::DailyAverageProduction()
 //Arguments: Cell number and Chlorophyll to Carbon conversion (when not calculated by the class)
 {
    int MyBoxNumber = ABoxNumber;
-   if (MyPEcoDynClass->GetJulianDay() != ADay[MyBoxNumber])
+   if (MyPEcoDynClass->GetJulianDay() != ADay[MyBoxNumber]) 
     {
         DailyMeanGPP[MyBoxNumber] = 0.0;
         NumberOfParcels[MyBoxNumber] = 0;
