@@ -958,7 +958,7 @@ extern "C" {
                             double* settlingSpeed, double* carbonToOxygenProd,double* carbonToOxygenResp, double* tminRespiration,double* tminPhotosynthesis, 
                             int* nitrogenLimitation, int* phosphorusLimitation);
 
-    void phytoplankton_go__(int* PPhytoplankton, double* layerThickness,double* waterTemperature, double* timeStep);
+    void phytoplankton_go__(int* PPhytoplankton, double* layerThickness, double* timeStep);
 
     void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
                                     int* piCurveOption, double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass);
