@@ -1571,8 +1571,11 @@ void TCrestumaLeverPhytoplankton2DVIntLim::NitrogenUptake(int ABoxNumber, double
       {
 
       	 AmmoniaUpTake =  NMaxUptake *  Ammonia / (Ammonia + KNH4) * NPhyto[i];  //mg N m-3 h-1
-
-
+         //cout<< "NMaxUptake = "<< NMaxUptake<< endl;
+         //cout<< "KNH4 = "<< KNH4<< endl;
+         //cout<< "KNO3 = "<< KNO3<< endl;
+         //cout<<"NPhyto ssss= " <<NPhyto[i] << endl;
+         
          NUptake[i] = AmmoniaUpTake;  //mg N m-3 h-1
          NMaxUptakeOfNitrate = MAX(0.0,NMaxUptake - NMaxUptake * Ammonia / (Ammonia + KNH4));
 #ifndef _PORT_FORTRAN_ 

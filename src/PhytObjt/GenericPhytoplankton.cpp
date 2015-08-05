@@ -392,7 +392,8 @@ void phytoplankton_nitrogen_uptake__(int* PPhytoplankton, double* Ammonia, doubl
    double NitrogenUptake, MyBiomass, MyNPhyto, MyNCellQuota;
    //cout << "Nitrogen uptake start" << endl;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
-
+   ptr->AmmoniaUpTake = 0.0; 
+   ptr->NitrateAndNitriteUptake = 0.0;
    MyBiomass = *biomass * CARBONATOMICWEIGHT; //Conversions from mmol/m3 to mg / m3
    ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
    MyNPhyto =  *nPhyto * NITROGENATOMICWEIGHT;
@@ -401,9 +402,13 @@ void phytoplankton_nitrogen_uptake__(int* PPhytoplankton, double* Ammonia, doubl
    ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
    ptr->SetVariableValue("Fortran", MyNCellQuota,0,"NCellQuota");
    ptr->SetVariableValue("Fortran", MyNPhyto,0,"NPhyto");
-
+   
    if (ptr->GetParameterValue("Nitrogen limitation") == 1)
       ptr->NitrogenUptake(0,*Ammonia, *Nitrate, *Nitrite);
+   //cout<<"*Ammonia = " << *Ammonia << endl; 
+   //cout<<"*Nitrate = " << *Nitrate << endl; 
+   //cout<<"*AmmoniaUpTake = " << ptr->AmmoniaUpTake/NITROGENATOMICWEIGHT/ HOURSTOSECONDS / *Ammonia << endl;
+   //cout<<"*NitrateAndNitriteUptake = " << ptr->NitrateAndNitriteUptake/NITROGENATOMICWEIGHT/ HOURSTOSECONDS / (*Nitrate + *Nitrite) << endl;
    *cffNH4 = ptr->AmmoniaUpTake/NITROGENATOMICWEIGHT/ HOURSTOSECONDS / *Ammonia; 
    *cffNO3NO2 = ptr->NitrateAndNitriteUptake /NITROGENATOMICWEIGHT/ HOURSTOSECONDS / (*Nitrate + *Nitrite); 
 } 
