@@ -958,19 +958,18 @@ extern "C" {
                             double* settlingSpeed, double* carbonToOxygenProd,double* carbonToOxygenResp, double* tminRespiration,double* tminPhotosynthesis, 
                             int* nitrogenLimitation, int* phosphorusLimitation);
 
-    void phytoplankton_go__(int* PPhytoplankton, double* nCellQuota, double* pCellQuota,double* layerThickness, 
-                            double* waterTemperature, double* biomass, double* timeStep);
+    void phytoplankton_go__(int* PPhytoplankton, double* layerThickness,double* waterTemperature, double* timeStep);
 
-    void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,
-                                    int* piCurveOption, double* julianDay, double* GrossProduction);
+    void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
+                                    int* piCurveOption, double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass);
 
-    void phytoplankton_respiration__(int* PPhytoplankton, double* cffCRespiration, double *GrossProduction);
+    void phytoplankton_respiration__(int* PPhytoplankton, double* waterTemperature, double* cffCRespiration, double *GrossProduction, double* biomass);
 
-    void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation, double *GrossProduction);
+    void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation, double *GrossProduction, double* biomass);
 
-    void phytoplankton_nitrogen_uptake__(int* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNH4, double *cffNO3NO2);  
+    void phytoplankton_nitrogen_uptake__(int* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNH4, double *cffNO3NO2, double* nPhyto, double* biomass);  
 
-    void phytoplankton_phosphorus_uptake__(int* PPhytoplankton, double* Phosphate,double* cffPO4); 
+    void phytoplankton_phosphorus_uptake__(int* PPhytoplankton, double* Phosphate,double* cffPO4, double* pPhyto, double* biomass); 
 
     void phytoplankton_mortality__(int* PPhytoplankton, double* nCellQuota, double* pCellQuota,
                                double* waterTemperature, double* biomass, double* timeStep, double* cff); 

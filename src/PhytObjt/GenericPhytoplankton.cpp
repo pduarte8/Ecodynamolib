@@ -269,14 +269,30 @@ void phytoplankton_new__(int* PPhytoplankton, double* pmax, double* iopt, double
 }
 
 
-void phytoplankton_go__(int* PPhytoplankton, double* nPhyto, double* pPhyto,double* layerThickness, 
-                            double* waterTemperature, double* biomass, double* timeStep)
+void phytoplankton_go__(int* PPhytoplankton, double* layerThickness, double* timeStep)
 {
-   double Productivity, MyNCellQuota, MyPCellQuota, MyNPhyto, MyPPhyto, MyBiomass;
+   double Productivity;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
    ptr->SetTimeStep(*timeStep);
    ptr->SetABoxDepth(*layerThickness); 
+   ptr->SetABoxNumber(0);
+   //cout << "Input water temp = " << *waterTemperature << endl; 
+   //cout << "Water temp = "<< ptr->WaterTemperature << endl;
+}
+
+
+
+void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
+                                    int* piCurveOption, double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass)
+{
+   double Productivity, MyBiomass, MyNPhyto, MyPPhyto, MyNCellQuota, MyPCellQuota;
+   TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
+   ptr->SetLightAtTop(*lightAtTop);
+   ptr->SetLightAtBottom(*lightAtBottom);
+   ptr->SetParameterValue("KValue", *kValue);
+   ptr->SetWaterTemperature(*waterTemperature);
    MyBiomass = *biomass * CARBONATOMICWEIGHT; //Conversions from mmol/m3 to mg / m3
+   ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
    MyNPhyto =  *nPhyto * NITROGENATOMICWEIGHT;
    MyPPhyto = *pPhyto * PHOSPHORUSATOMICWEIGHT;
    if (MyBiomass > ptr->aMin)
@@ -294,22 +310,6 @@ void phytoplankton_go__(int* PPhytoplankton, double* nPhyto, double* pPhyto,doub
    ptr->SetVariableValue("Fortran", MyPCellQuota,0,"PCellQuota");
    ptr->SetVariableValue("Fortran", MyNPhyto,0,"NPhyto");
    ptr->SetVariableValue("Fortran", MyPPhyto,0,"PPhyto");
-   ptr->SetWaterTemperature(*waterTemperature);
-   ptr->SetABoxNumber(0);
-   //cout << "Input water temp = " << *waterTemperature << endl; 
-   //cout << "Water temp = "<< ptr->WaterTemperature << endl;
-}
-
-
-
-void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,
-                                    int* piCurveOption, double* julianDay, double* GrossProduction)
-{
-   double Productivity;
-   TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
-   ptr->SetLightAtTop(*lightAtTop);
-   ptr->SetLightAtBottom(*lightAtBottom);
-   ptr->SetParameterValue("KValue", *kValue);
    /*cout << "Light at top = "<< *lightAtTop << endl;
    cout<< "Light at bottom = "<< *lightAtBottom << endl;
    cout<< "kValue = "<< *kValue << endl;*/
@@ -344,9 +344,13 @@ void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double*
    //cout<< "Daily average production"<< endl;
 }
 
-void phytoplankton_respiration__(int* PPhytoplankton, double* cffCRespiration, double* GrossProduction)
+void phytoplankton_respiration__(int* PPhytoplankton, double* waterTemperature, double* cffCRespiration, double* GrossProduction, double * biomass)
 {
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
+   double MyBiomass;
+   ptr->SetWaterTemperature(*waterTemperature);
+   MyBiomass = *biomass * CARBONATOMICWEIGHT; //Conversions from mmol/m3 to mg / m3
+   ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
    ptr->GPP[0] = *GrossProduction;
    if (ptr->PhytoBiomass[0] > ptr->aMin)
    {
@@ -362,11 +366,13 @@ void phytoplankton_respiration__(int* PPhytoplankton, double* cffCRespiration, d
    //cout << "Respiration done" << endl;
 }
 
-void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation, double* GrossProduction)
+void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation, double* GrossProduction, double* biomass)
 {
-   double Exudation;
+   double Exudation, MyBiomass;
    //cout << "Exudation start" << endl;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
+   MyBiomass = *biomass * CARBONATOMICWEIGHT; //Conversions from mmol/m3 to mg / m3
+   ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
    ptr->GPP[0] = *GrossProduction;
    if (ptr->PhytoBiomass[0] > ptr->aMin)
    {
@@ -379,22 +385,42 @@ void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation, doubl
    //cffPExudation = ptr->ExudatedFlux * ptr->PCellQuota[0] / ptr->PPhyto[0];        //Return value in m-3s-1 for compatibility with ROMS nonlinear backward-implicit solution 
 }
 
-void phytoplankton_nitrogen_uptake__(int* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNH4, double *cffNO3NO2)
+void phytoplankton_nitrogen_uptake__(int* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNH4, double *cffNO3NO2, double* nPhyto, double* biomass)
 {
-   double NitrogenUptake;
+   double NitrogenUptake, MyBiomass, MyNPhyto, MyNCellQuota;
    //cout << "Nitrogen uptake start" << endl;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
+
+   MyBiomass = *biomass * CARBONATOMICWEIGHT; //Conversions from mmol/m3 to mg / m3
+   ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
+   MyNPhyto =  *nPhyto * NITROGENATOMICWEIGHT;
+   if (MyBiomass > ptr->aMin) MyNCellQuota = MyNPhyto / MyBiomass;
+   else MyNCellQuota = 0.0;
+   ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
+   ptr->SetVariableValue("Fortran", MyNCellQuota,0,"NCellQuota");
+   ptr->SetVariableValue("Fortran", MyNPhyto,0,"NPhyto");
+
    if (ptr->GetParameterValue("Nitrogen limitation") == 1)
       ptr->NitrogenUptake(0,*Ammonia, *Nitrate, *Nitrite);
    *cffNH4 = ptr->AmmoniaUpTake/NITROGENATOMICWEIGHT/ HOURSTOSECONDS / *Ammonia; 
    *cffNO3NO2 = ptr->NitrateAndNitriteUptake /NITROGENATOMICWEIGHT/ HOURSTOSECONDS / (*Nitrate + *Nitrite); 
 } 
 
-void phytoplankton_phosphorus_uptake__(int* PPhytoplankton, double* Phosphate,double* cffPO4)
+void phytoplankton_phosphorus_uptake__(int* PPhytoplankton, double* Phosphate,double* cffPO4, double *pPhyto, double* biomass)
 {
-   double PhosphorusUptake;
+   double PhosphorusUptake, MyBiomass, MyPPhyto, MyPCellQuota;
    //cout << "Phosphorus uptake start" << endl;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
+
+   MyBiomass = *biomass * CARBONATOMICWEIGHT; //Conversions from mmol/m3 to mg / m3
+   ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
+   MyPPhyto = *pPhyto * PHOSPHORUSATOMICWEIGHT;
+   if (MyBiomass > ptr->aMin)MyPCellQuota = MyPPhyto / MyBiomass; 
+   else MyPCellQuota = 0.0;
+   ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
+   ptr->SetVariableValue("Fortran", MyPCellQuota,0,"PCellQuota");
+   ptr->SetVariableValue("Fortran", MyPPhyto,0,"PPhyto");
+
    if (ptr->GetParameterValue("Phosphorus limitation") == 1)
       ptr->PhosphorusUptake(0, *Phosphate);
    *cffPO4 = ptr->PUptake[0] / PHOSPHORUSATOMICWEIGHT / HOURSTOSECONDS / *Phosphate;
