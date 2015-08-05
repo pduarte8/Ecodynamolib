@@ -881,7 +881,6 @@ class _export TPhytoplanktonGeneric : public TCrestumaLeverPhytoplankton2DVIntLi
         void SetWaterTemperature(double waterTemperature){WaterTemperature=waterTemperature;}
         void SetTimeStep(double timeStep) {TimeStep = timeStep;} 
         void SetABoxNumber (int aBoxNumber) {ABoxNumber = aBoxNumber;}         
-        void SetADay(int BoxNumber, double julianDay) {ADay[BoxNumber] = int (julianDay); JulianDay = int (julianDay);}
         void SetNumberOfLines(int numberOfLines) {NumberOfLines = numberOfLines;}
         void SetNumberOfColumns(int numberOfColumns) {NumberOfColumns = numberOfColumns;}
         void SetNumberOfLayers(int numberOfLayers) {NumberOfLayers = numberOfLayers;}
@@ -911,7 +910,7 @@ class _export TPhytoplanktonGeneric : public TCrestumaLeverPhytoplankton2DVIntLi
 
         char EquationName;
         double BoxDepth, MyUpperDepth, LightAtTop, LightAtBottom,
-                WaterTemperature, Tmin;
+                WaterTemperature, Tmin, MyDay;
         int ABoxNumber, AUpperBoxNumber;
         bool SurfaceCell, BottomBox;
         double const aMin = 0.00000000001;

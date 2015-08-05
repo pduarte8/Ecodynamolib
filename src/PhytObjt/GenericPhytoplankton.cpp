@@ -266,6 +266,7 @@ void phytoplankton_new__(int* PPhytoplankton, double* pmax, double* iopt, double
         //cout << "Phosphorus limitation" << *phosphorusLimitation << endl;
 
         ptr->ExudatedFlux = 0.0;
+        ptr->MyDay = 0;
 }
 
 
@@ -339,8 +340,9 @@ void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double*
   
    *GrossProduction = ptr->GetParameterValue("Productivity") / CARBONATOMICWEIGHT; //Return value in mmolC/m3/s for compatibility with ROMS
    //cout<< "Productivity nut limited = "<< *GrossProduction << endl;
-   ptr->SetADay(0,*julianDay);
+   ptr->SetJulianDay(*julianDay);
    ptr->DailyAverageProduction();
+   
    //cout<< "Daily average production"<< endl;
 }
 
@@ -816,7 +818,7 @@ void TPhytoplanktonGeneric::DailyAverageProduction()
     {
         DailyMeanGPP[MyBoxNumber] = 0.0;
         NumberOfParcels[MyBoxNumber] = 0;
-        ADay[MyBoxNumber] = ADay[MyBoxNumber] + 1;
+        ADay[MyBoxNumber] = MyPEcoDynClass->GetJulianDay();
     }
     DailyMeanGPP[MyBoxNumber] =
     (
