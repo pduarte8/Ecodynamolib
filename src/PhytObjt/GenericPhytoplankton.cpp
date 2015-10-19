@@ -173,7 +173,7 @@ void phytoplankton_new__(int* PPhytoplankton, double* pmax, double* iopt, double
                             double* ratioLightDarkRespiration, double* minNPRatio,double* maxNPRatio, double* pMaxUptake, double* nMaxUptake, double* kP,double* kNO3, 
                             double* kNH4, double* minPCellQuota, double* maxPCellQuota,double* minNCellQuota, double* maxNCellQuota, double* kPInternal,double* kNInternal, 
                             double* settlingSpeed, double* carbonToOxygenProd,double* carbonToOxygenResp, double* tminRespiration,double* tminPhotosynthesis, 
-                            int* nitrogenLimitation, int* phosphorusLimitation)
+                            int* nitrogenLimitation, int* phosphorusLimitation, int* Chl2Carbon)
 {
         TPhytoplanktonGeneric* ptr;
         ptr = TPhytoplanktonGeneric::getPhyto();
@@ -267,12 +267,12 @@ void phytoplankton_new__(int* PPhytoplankton, double* pmax, double* iopt, double
 
         ptr->ExudatedFlux = 0.0;
         ptr->MyDay = 0;
+        ptr->aMin = 0.00000000001;
 }
 
 
 void phytoplankton_go__(int* PPhytoplankton, double* layerThickness, double* timeStep)
 {
-   double Productivity;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
    ptr->SetTimeStep(*timeStep);
    ptr->SetABoxDepth(*layerThickness); 
@@ -284,13 +284,14 @@ void phytoplankton_go__(int* PPhytoplankton, double* layerThickness, double* tim
 
 
 void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
-                                    int* piCurveOption, double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass)
+                                    int* piCurveOption, double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass, double *ASlope)
 {
    double Productivity, MyBiomass, MyNPhyto, MyPPhyto, MyNCellQuota, MyPCellQuota;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
    ptr->SetLightAtTop(*lightAtTop);
    ptr->SetLightAtBottom(*lightAtBottom);
    ptr->SetParameterValue("KValue", *kValue);
+   ptr->SetParameterValue("Slope", *ASlope);
    ptr->SetWaterTemperature(*waterTemperature);
    MyBiomass = *biomass * CARBONATOMICWEIGHT; //Conversions from mmol/m3 to mg / m3
    ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
@@ -319,12 +320,15 @@ void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double*
    {
       case 1: /*STEELE*/ // add a list item
          ptr->Productivity = ptr->SteeleProduction();
+         ptr->Slope[0] = ptr->SteeleSlope();
          break;
       case 2: /*MICHAELIS_MENTEN*/	// add a list item
          ptr->Productivity = ptr->Michaelis_MentenProduction();
+         ptr->Slope[0] = ptr->MichaelisMentenSlope();
          break;
       case 3: /*EILER*/	// add a list item
          ptr->Productivity = ptr->EilerProduction();
+         ptr->Slope[0] = ptr->EilersAndPeetersSlope();
          break;
    }
    Productivity = ptr->GetParameterValue("Productivity");
@@ -339,6 +343,7 @@ void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double*
    ptr->NutrientLimitation(0);
   
    *GrossProduction = ptr->GetParameterValue("Productivity") / CARBONATOMICWEIGHT; //Return value in mmolC/m3/s for compatibility with ROMS
+   *ASlope = ptr->GetParameterValue("Slope"); //Return value in [s-1/(micro mol photons m-2 s-1)]
    //cout<< "Productivity nut limited = "<< *GrossProduction << endl;
    ptr->SetJulianDay(*julianDay);
    ptr->DailyAverageProduction();
@@ -389,7 +394,7 @@ void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation, doubl
 
 void phytoplankton_nitrogen_uptake__(int* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNH4, double *cffNO3NO2, double* nPhyto, double* biomass)
 {
-   double NitrogenUptake, MyBiomass, MyNPhyto, MyNCellQuota;
+   double MyBiomass, MyNPhyto, MyNCellQuota;
    //cout << "Nitrogen uptake start" << endl;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
    ptr->AmmoniaUpTake = 0.0; 
@@ -409,13 +414,19 @@ void phytoplankton_nitrogen_uptake__(int* PPhytoplankton, double* Ammonia, doubl
    //cout<<"*Nitrate = " << *Nitrate << endl; 
    //cout<<"*AmmoniaUpTake = " << ptr->AmmoniaUpTake/NITROGENATOMICWEIGHT/ HOURSTOSECONDS / *Ammonia << endl;
    //cout<<"*NitrateAndNitriteUptake = " << ptr->NitrateAndNitriteUptake/NITROGENATOMICWEIGHT/ HOURSTOSECONDS / (*Nitrate + *Nitrite) << endl;
-   *cffNH4 = ptr->AmmoniaUpTake/NITROGENATOMICWEIGHT/ HOURSTOSECONDS / *Ammonia; 
-   *cffNO3NO2 = ptr->NitrateAndNitriteUptake /NITROGENATOMICWEIGHT/ HOURSTOSECONDS / (*Nitrate + *Nitrite); 
+   if (*Ammonia > ptr->aMin)
+      *cffNH4 = ptr->AmmoniaUpTake/NITROGENATOMICWEIGHT/ HOURSTOSECONDS / *Ammonia; 
+   else
+      *cffNH4 = 0.0;
+   if (*Nitrate + *Nitrite > ptr->aMin) 
+      *cffNO3NO2 = ptr->NitrateAndNitriteUptake /NITROGENATOMICWEIGHT/ HOURSTOSECONDS / (*Nitrate + *Nitrite); 
+   else
+      *cffNO3NO2 = 0.0;
 } 
 
 void phytoplankton_phosphorus_uptake__(int* PPhytoplankton, double* Phosphate,double* cffPO4, double *pPhyto, double* biomass)
 {
-   double PhosphorusUptake, MyBiomass, MyPPhyto, MyPCellQuota;
+   double MyBiomass, MyPPhyto, MyPCellQuota;
    //cout << "Phosphorus uptake start" << endl;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
 
@@ -430,7 +441,10 @@ void phytoplankton_phosphorus_uptake__(int* PPhytoplankton, double* Phosphate,do
 
    if (ptr->GetParameterValue("Phosphorus limitation") == 1)
       ptr->PhosphorusUptake(0, *Phosphate);
-   *cffPO4 = ptr->PUptake[0] / PHOSPHORUSATOMICWEIGHT / HOURSTOSECONDS / *Phosphate;
+   if (*Phosphate > ptr->aMin)
+      *cffPO4 = ptr->PUptake[0] / PHOSPHORUSATOMICWEIGHT / HOURSTOSECONDS / *Phosphate;
+   else
+      *cffPO4 = 0.0;
    //cout << "Phosphorus uptake end" << endl;
 }
 
@@ -447,6 +461,11 @@ void phytoplankton_integrate__(int* PPhytoplankton,double* nCellQuota, double* p
 {
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
    ptr->Integrate();
+}
+
+void phytoplankton_rhochl_(int* PPhytoplankton, double* light, double* kValue, double* GrossProduction, double* slope, double* rhochl)
+{
+
 }
 
 void TPhytoplanktonGeneric::PreBuildPhytoplanktonGeneric(char* className)
@@ -587,6 +606,7 @@ TPhytoplanktonGeneric::TPhytoplanktonGeneric(TEcoDynClass* APEcoDynClass,
         :TCrestumaLeverPhytoplankton2DVIntLim(APEcoDynClass, className)
 {
     SurfaceCell = true;
+    aMin = 0.00000000001; 
 }
 
 #endif  //_PORT_FORTRAN_
@@ -709,11 +729,9 @@ void TPhytoplanktonGeneric::GetLightIntensity()
 double TPhytoplanktonGeneric::SteeleProduction()
 {
    int MyBoxNumber = ABoxNumber;
-
-   if (PhytoBiomass[MyBoxNumber] > 0.0)
+   if ((PhytoBiomass[MyBoxNumber] > aMin) &&
+       (BoxDepth > aMin) && (LightAtTop > aMin))
    {
-      if ((BoxDepth > 0.0) && (LightAtTop > 0.0))
-      {
          /*cout << "Light at top = "<< LightAtTop << endl;
          cout<< "Light at bottom = "<< LightAtBottom << endl;
          cout<< "Biomass= "<< PhytoBiomass[MyBoxNumber]<< endl;
@@ -724,31 +742,26 @@ double TPhytoplanktonGeneric::SteeleProduction()
          cout<< "KValue= "<< KValue << endl;
          cout<<"WATTSTOMICROEINSTEINS= "<<WATTSTOMICROEINSTEINS<<endl;*/
          
-         Productivity = PhytoBiomass[MyBoxNumber]
-						* Pmax[MyBoxNumber]
+         Productivity = PhytoBiomass[MyBoxNumber]* Pmax[MyBoxNumber]
                         * 2.718282
                         /(KValue * BoxDepth)
                         * ( exp ( -LightAtBottom * WATTSTOMICROEINSTEINS / Iopt[MyBoxNumber] )
                         -exp( -LightAtTop * WATTSTOMICROEINSTEINS / Iopt[MyBoxNumber] )
                         )/ HOURSTOSECONDS;    //mg C m-3 s-1;
          //cout<< "Productivity= "<< Productivity<< endl;
-
-      }
-      else
-         Productivity = 0.0;
-   }
-   return Productivity;
+    }
+    else Productivity = 0.0;
+    return Productivity;
 }
 
 double TPhytoplanktonGeneric::Michaelis_MentenProduction()
 {
    int MyBoxNumber = ABoxNumber;
    TEcoDynClass * MyWaterTemperaturePointer = MyPEcoDynClass->GetWaterTemperaturePointer();
-
-   if (PhytoBiomass[MyBoxNumber] > 0.0)
+   if ((PhytoBiomass[MyBoxNumber] > aMin) &&
+       (BoxDepth > aMin) && (LightAtTop > aMin))
    {
-      if ((BoxDepth > 0.0) && (LightAtTop > 0.0))
-      {
+  
          Productivity = PhytoBiomass[MyBoxNumber]*
                                     Pmax[MyBoxNumber] /
                                     KValue *
@@ -757,10 +770,8 @@ double TPhytoplanktonGeneric::Michaelis_MentenProduction()
                                        ) *
                                     DAYSTOHOURS /
                                     BoxDepth;
-      }
-      else
-           Productivity = 0.0;
    }
+   else Productivity = 0.0;
    return Productivity;
 }
 
@@ -768,10 +779,9 @@ double TPhytoplanktonGeneric::EilerProduction()
 {
    int i = ABoxNumber;
    double D, B1, B2;
-   if (PhytoBiomass[i] > 0.0)
+   if ((PhytoBiomass[i] > aMin) &&
+       (BoxDepth > aMin) && (LightAtTop > aMin))
    {
-      if ((BoxDepth > 0.0) && (LightAtTop > 0.0))
-      {
          if (AEiler[i] != 0.0)
          {
             D = BEiler[i] * BEiler[i] - 4.0 * AEiler[i] * CEiler[i];
@@ -806,11 +816,36 @@ double TPhytoplanktonGeneric::EilerProduction()
 										fabs(BEiler[i] * LightAtBottom * WATTSTOMICROEINSTEINS + CEiler[i]))
 										/ BoxDepth
 										* DAYSTOHOURS;    //mg C m-3 s-1;
-      }
-      else
-           Productivity = 0.0;
    }
+   else Productivity = 0.0;
    return Productivity;
+}
+
+double TPhytoplanktonGeneric::SteeleSlope()
+{
+   int MyBoxNumber = ABoxNumber;
+   if (Iopt[MyBoxNumber] > aMin)
+      return Pmax[MyBoxNumber] * exp(1.0) / Iopt[MyBoxNumber];//[s-1/(micro mol photons m-2 s-1)]
+   else
+      return Slope[MyBoxNumber];
+}
+
+double TPhytoplanktonGeneric::EilersAndPeetersSlope()
+{
+   int MyBoxNumber = ABoxNumber;
+   if (CEiler[MyBoxNumber] > aMin)
+      return 1.0 / CEiler[MyBoxNumber]; //[s-1/(micro mol photons m-2 s-1)]
+   else
+      return Slope[MyBoxNumber];
+}
+
+double TPhytoplanktonGeneric::MichaelisMentenSlope()
+{
+   int MyBoxNumber = ABoxNumber;
+   if (Imax[MyBoxNumber] > aMin)
+      return Pmax[MyBoxNumber] / Imax[MyBoxNumber]; //[s-1/(micro mol photons m-2 s-1)] Note that Imax is the light intensity corresponding to Pmax/2 
+   else
+      return Slope[MyBoxNumber];
 }
 
 void TPhytoplanktonGeneric::DailyAverageProduction()
@@ -872,7 +907,7 @@ void TPhytoplanktonGeneric::Respiration(int ABoxNumber)
 #endif
    //cout<< "PhytoBiomass = "<< PhytoBiomass[MyBoxNumber] << endl; 
    //cout<< "WaterTemperature = "<< WaterTemperature << endl;
-   if (PhytoBiomass[MyBoxNumber] > 0.0)
+   if (PhytoBiomass[MyBoxNumber] > aMin)
    {
       Resp = MaintenanceRespiration[MyBoxNumber] / HOURSTOSECONDS;    //mmol O2 / mgChl / s
       //No caso de a classe ser invocada a partir do EcoDyn...
@@ -988,6 +1023,9 @@ void TPhytoplanktonGeneric::Settling(int ABoxNumber)
    }
 #endif
 }
+
+
+ 
 
 
 

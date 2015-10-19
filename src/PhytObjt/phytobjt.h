@@ -833,49 +833,8 @@ class _export TPhytoplanktonGeneric : public TCrestumaLeverPhytoplankton2DVIntLi
         static TPhytoplanktonGeneric* getPhyto();
         static TPhytoplanktonGeneric* getPhyto(TPhytoplanktonGeneric* pphytoplankton);
         TPhytoplanktonGeneric(char* className);
-        void PreBuildPhytoplanktonGeneric(char* className);
-        /*void SetPmax(int BoxNumber, double pmax) {Pmax[BoxNumber] = pmax;} 
-        void SetIopt(int BoxNumber, double iopt) {Iopt[BoxNumber] = iopt;} 
-        void SetImax(int BoxNumber, double imax) {Imax[BoxNumber] = imax;} 
-        void SetSlope(int BoxNumber, double slope) {Slope[BoxNumber] = slope;} 
-        void SetAEiler(int BoxNumber, double aEiler) {AEiler[BoxNumber] = aEiler;} 
-        void SetBEiler(int BoxNumber, double bEiler) {BEiler[BoxNumber] = bEiler;} 
-        void SetCEiler(int BoxNumber, double cEiler) {CEiler[BoxNumber] = cEiler;} 
-        void SetKValue(double kValue) {KValue = kValue;}
-        void Setks(int BoxNumber, double ks) {Ks[BoxNumber] = ks;} 
-        void Setphi(double Phi) {phi = Phi;}  
-        void SetMaintenanceRespiration(int BoxNumber, double maintenanceRespiration) {MaintenanceRespiration[BoxNumber] = maintenanceRespiration;}
-        void SetRespirationCoefficient(double respirationCoefficient) {RespirationCoefficient = respirationCoefficient;}
-        void SetDocLoss(double docLoss) {DocLoss = docLoss;}
-        void SetDocStressLoss(double docStressLoss) {DocStressLoss = docStressLoss;}
-        void SetDeathLoss(double deathLoss) {DeathLoss = deathLoss;} 
-        void SetRedfieldCFactor(double redfieldCFactor) {RedfieldCFactor = redfieldCFactor;} 
-        void SetRedfieldNFactor(double redfieldNFactor) {RedfieldNFactor = redfieldNFactor;} 
-        void SetRedfieldPFactor(double redfieldPFactor) {RedfieldPFactor = redfieldPFactor;}         
-        void SetTemperatureAugmentationRate(double temperatureAugmentationRate) {TemperatureAugmentationRate = temperatureAugmentationRate;}
-        void SetRatioLightDarkRespiration(double ratioLightDarkRespiration) {RatioLightDarkRespiration = ratioLightDarkRespiration;}
-        void SetNCellQuota(int BoxNumber, double nCellQuota) {NCellQuota[BoxNumber] = nCellQuota;} 
-        void SetPCellQuota(int BoxNumber, double pCellQuota) {PCellQuota[BoxNumber] = pCellQuota;}
-        void SetMinNPRatio(double minNPRatio) {MinNPRatio = minNPRatio;}
-        void SetMaxNPRatio(double maxNPRatio) {MaxNPRatio = maxNPRatio;} 
-        void SetPMaxUptake(double pMaxUptake) {PMaxUptake = pMaxUptake;}
-        void SetNMaxUptake(double nMaxUptake) {NMaxUptake = nMaxUptake;} 
-        void SetKP(double kP) {KP = kP;} 
-        void SetKNO3(double kNO3) {KNO3 = kNO3;}
-        void SetKNH4(double kNH4) {KNH4 = kNH4;}
-        void SetMaxNCellQuota(double maxNCellQuota) {MaxNCellQuota = maxNCellQuota;}
-        void SetMinNCellQuota(double minNCellQuota) {MinNCellQuota = minNCellQuota;}
-        void SetMaxPCellQuota(double maxPCellQuota) {MaxPCellQuota = maxPCellQuota;}
-        void SetMinPCellQuota(double minPCellQuota) {MinPCellQuota = minPCellQuota;}
-        void SetKPInternal(double kPInternal) {KPInternal = kPInternal;}
-        void SetKNInternal(double kNInternal) {KNInternal = kNInternal;} 
-        void SetSettlingSpeed(double settlingSpeed) {SettlingSpeed = settlingSpeed;} 
-        void SetCarbonToOxygenProd(double carbonToOxygenProd) {CarbonToOxygenProd = carbonToOxygenProd;}
-        void SetCarbonToOxygenResp(double carbonToOxygenResp) {CarbonToOxygenResp = carbonToOxygenResp;}
-        void SetTminPhotosynthesis(double tminPhotosynthesis) {TminPhotosynthesis = tminPhotosynthesis;}
-        void SetTminRespiration(double tminRespiration) {TminRespiration = tminRespiration;}*/
+        void PreBuildPhytoplanktonGeneric(char* className);       
         void SetABoxDepth(double layerThickness) {BoxDepth = layerThickness;}    
-        //void SetBiomass(int box, double biomass){PhytoBiomass[box] = biomass;}
         void SetLightAtTop(double lightAtTop){LightAtTop=lightAtTop;}
         void SetLightAtBottom(double lightAtBottom){LightAtBottom=lightAtBottom;}
         void SetWaterTemperature(double waterTemperature){WaterTemperature=waterTemperature;}
@@ -887,10 +846,8 @@ class _export TPhytoplanktonGeneric : public TCrestumaLeverPhytoplankton2DVIntLi
         void SetNumberOfBoxes(int numberOfBoxes) {NumberOfBoxes = numberOfBoxes;}
         void SetTmin(double tmin) {Tmin = tmin;} 
         double GetKValue() {return KValue;}
-        double GetDocLoss() {return DocLoss;}  
-        
+        double GetDocLoss() {return DocLoss;}          
         double GetBiomass(int box) {return PhytoBiomass[box];}
-
         char debug;
 #endif  //_PORT_FORTRAN_
        ~TPhytoplanktonGeneric();
@@ -904,16 +861,19 @@ class _export TPhytoplanktonGeneric : public TCrestumaLeverPhytoplankton2DVIntLi
         double SteeleProduction();
         double Michaelis_MentenProduction();
         double EilerProduction();
+        double SteeleSlope();
+        double EilersAndPeetersSlope();
+        double MichaelisMentenSlope();
         virtual void Settling(int ABoxNumber);
         virtual double TemperatureArrheniusExponentialLimitation(int ABoxNumber);
         void DailyAverageProduction();
 
         char EquationName;
         double BoxDepth, MyUpperDepth, LightAtTop, LightAtBottom,
-                WaterTemperature, Tmin, MyDay;
+                WaterTemperature, Tmin, MyDay, RhoChl;
         int ABoxNumber, AUpperBoxNumber;
         bool SurfaceCell, BottomBox;
-        double const aMin = 0.00000000001;
+        double aMin;
 #ifdef _PORT_FORTRAN_
     private:
         static TPhytoplanktonGeneric *PPhytoplankton;
@@ -955,12 +915,12 @@ extern "C" {
                             double* ratioLightDarkRespiration, double* minNPRatio,double* maxNPRatio, double* pMaxUptake, double* nMaxUptake, double* kP,double* kNO3, 
                             double* kNH4, double* minPCellQuota, double* maxPCellQuota,double* minNCellQuota, double* maxNCellQuota, double* kPInternal,double* kNInternal, 
                             double* settlingSpeed, double* carbonToOxygenProd,double* carbonToOxygenResp, double* tminRespiration,double* tminPhotosynthesis, 
-                            int* nitrogenLimitation, int* phosphorusLimitation);
+                            int* nitrogenLimitation, int* phosphorusLimitation, int* Chl2Carbon);
 
     void phytoplankton_go__(int* PPhytoplankton, double* layerThickness, double* timeStep);
 
     void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
-                                    int* piCurveOption, double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass);
+                                    int* piCurveOption, double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass, double *Slope);
 
     void phytoplankton_respiration__(int* PPhytoplankton, double* waterTemperature, double* cffCRespiration, double *GrossProduction, double* biomass);
 
@@ -969,6 +929,8 @@ extern "C" {
     void phytoplankton_nitrogen_uptake__(int* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNH4, double *cffNO3NO2, double* nPhyto, double* biomass);  
 
     void phytoplankton_phosphorus_uptake__(int* PPhytoplankton, double* Phosphate,double* cffPO4, double* pPhyto, double* biomass); 
+
+    void phytoplankton_rhochl_(int* PPhytoplankton, double* light, double* kValue, double* GrossProduction, double* slope, double* rhochl);  
 
     void phytoplankton_mortality__(int* PPhytoplankton, double* nCellQuota, double* pCellQuota,
                                double* waterTemperature, double* biomass, double* timeStep, double* cff); 
