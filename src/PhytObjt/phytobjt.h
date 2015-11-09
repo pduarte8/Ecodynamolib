@@ -861,6 +861,7 @@ class _export TPhytoplanktonGeneric : public TCrestumaLeverPhytoplankton2DVIntLi
         double SteeleProduction();
         double Michaelis_MentenProduction();
         double EilerProduction();
+        double JassyAndPlattProduction();
         double SteeleSlope();
         double EilersAndPeetersSlope();
         double MichaelisMentenSlope();
@@ -915,14 +916,14 @@ extern "C" {
                             double* ratioLightDarkRespiration, double* minNPRatio,double* maxNPRatio, double* pMaxUptake, double* nMaxUptake, double* kP,double* kNO3, 
                             double* kNH4, double* minPCellQuota, double* maxPCellQuota,double* minNCellQuota, double* maxNCellQuota, double* kPInternal,double* kNInternal, 
                             double* settlingSpeed, double* carbonToOxygenProd,double* carbonToOxygenResp, double* tminRespiration,double* tminPhotosynthesis, 
-                            int* nitrogenLimitation, int* phosphorusLimitation, int* Chl2Carbon);
+                            int* nitrogenLimitation, int* phosphorusLimitation);
 
     void phytoplankton_go__(int* PPhytoplankton, double* layerThickness, double* timeStep);
 
     void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
-                                    int* piCurveOption, double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass, double *Slope);
+                                    int* piCurveOption, double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass, double *Slope, double* Chl2Carbon);
 
-    void phytoplankton_respiration__(int* PPhytoplankton, double* waterTemperature, double* cffCRespiration, double *GrossProduction, double* biomass);
+    void phytoplankton_respiration__(int* PPhytoplankton, double* waterTemperature, double* cffCRespiration, double *GrossProduction, double* biomass, double* Chl2Carbon);
 
     void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation, double *GrossProduction, double* biomass);
 
