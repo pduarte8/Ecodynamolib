@@ -294,7 +294,7 @@ void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double*
    ptr->SetParameterValue("Slope", *ASlope);
    ptr->SetWaterTemperature(*waterTemperature);
    MyBiomass = *biomass * CARBONATOMICWEIGHT; //Conversions from mmol/m3 to mg / m3
-   ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
+   //ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
    MyNPhyto =  *nPhyto * NITROGENATOMICWEIGHT;
    MyPPhyto = *pPhyto * PHOSPHORUSATOMICWEIGHT;
    if (MyBiomass > ptr->aMin)
@@ -339,13 +339,14 @@ void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double*
    //ptr->SetParameterValue("Tmin", tmin);
    //cout<< "Tmin = "<< ptr->Tmin << endl;
    Productivity = ptr->GetParameterValue("Productivity") * ptr->TemperatureArrheniusExponentialLimitation(0);
-   //cout<< "Productivity temp limited = "<< Productivity << endl;
    ptr->SetParameterValue("Productivity", Productivity);
+   //cout<< "Productivity temp limited = "<< Productivity << endl;
    ptr->NutrientLimitation(0);
-  
+   Productivity = ptr->GetParameterValue("Productivity");
+   //cout<< "Productivity nut limited = "<< Productivity << endl;
    *GrossProduction = ptr->GetParameterValue("Productivity") / CARBONATOMICWEIGHT; //Return value in mmolC/m3/s for compatibility with ROMS
    *ASlope = ptr->GetParameterValue("Slope"); //Return value in [s-1/(micro mol photons m-2 s-1)]
-   //cout<< "Productivity nut limited = "<< *GrossProduction << endl;
+   //cout<< "MyGrossProduction = "<< *GrossProduction << endl;
    ptr->SetJulianDay(*julianDay);
    ptr->DailyAverageProduction();
    
@@ -366,13 +367,10 @@ void phytoplankton_respiration__(int* PPhytoplankton, double* waterTemperature, 
       ptr->Tmin = ptr->GetParameterValue("TminRespiration");
       //ptr->SetParameterValue("Tmin", tmin);
       ptr->Respiration(0);
-      *cffCRespiration = ptr->RespiredFlux[0] / ptr->PhytoBiomass[0];                 //Return value in m-3s-1 for compatibility with ROMS nonlinear backward-implicit solution
+      *cffCRespiration = ptr->RespiredFlux[0] / ptr->PhytoBiomass[0];                 //Return value in s-1 for compatibility with ROMS nonlinear backward-implicit solution
    }
    else
       *cffCRespiration = 0.0;
-   //cffNRespiration = ptr->RespiratedFlux[0] * ptr->NCellQuota[0] / ptr->NPhyto[0]; //Return value in m-3s-1 for compatibility with ROMS nonlinear backward-implicit solution
-   //cffPRespiration = ptr->RespiratedFlux[0] * ptr->PCellQuota[0] / ptr->PPhyto[0]; //Return value in m-3s-1 for compatibility with ROMS nonlinear backward-implicit solution
-   //cout << "Respiration done" << endl;
 }
 
 void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation, double* GrossProduction, double* biomass)
@@ -386,12 +384,11 @@ void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation, doubl
    if (ptr->PhytoBiomass[0] > ptr->aMin)
    {
       ptr->Exudation(0);   
-      *cffCExudation = ptr->ExudatedFlux / ptr->PhytoBiomass[0];                        //Return value in m-3s-1 for compatibility with ROMS nonlinear backward-implicit solution
+      *cffCExudation = ptr->ExudatedFlux / ptr->PhytoBiomass[0];                        //Return value in s-1 for compatibility with ROMS nonlinear backward-implicit solution
    }
    else
       *cffCExudation = 0.0;
-   //cffNExudation = ptr->ExudatedFlux * ptr->NCellQuota[0] / ptr->NPhyto[0];        //Return value in m-3s-1 for compatibility with ROMS nonlinear backward-implicit solution
-   //cffPExudation = ptr->ExudatedFlux * ptr->PCellQuota[0] / ptr->PPhyto[0];        //Return value in m-3s-1 for compatibility with ROMS nonlinear backward-implicit solution 
+  
 }
 
 void phytoplankton_nitrogen_uptake__(int* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNH4, double *cffNO3NO2, double* nPhyto, double* biomass)
@@ -744,13 +741,17 @@ double TPhytoplanktonGeneric::SteeleProduction()
          cout<< "KValue= "<< KValue << endl;
          cout<<"WATTSTOMICROEINSTEINS= "<<WATTSTOMICROEINSTEINS<<endl;*/
          
+         
          Productivity = PhytoBiomass[MyBoxNumber]* Pmax[MyBoxNumber]
                         * 2.718282
                         /(KValue * BoxDepth)
                         * ( exp ( -LightAtBottom * WATTSTOMICROEINSTEINS / Iopt[MyBoxNumber] )
                         -exp( -LightAtTop * WATTSTOMICROEINSTEINS / Iopt[MyBoxNumber] )
                         )/ HOURSTOSECONDS;    //mg C m-3 s-1;
-         //cout<< "Productivity= "<< Productivity<< endl;
+         /*cout<< "Productivity= "<< Productivity/PhytoBiomass[MyBoxNumber]*HOURSTOSECONDS<< endl;
+         cout<< "TemperatureAugmentationRate= " << TemperatureAugmentationRate<<endl;
+         cout<< "WaterTemperature="<< WaterTemperature<<endl;
+         cout<< "Tmin="<<Tmin<<endl;*/  
     }
     else Productivity = 0.0;
     return Productivity;
@@ -927,10 +928,20 @@ void TPhytoplanktonGeneric::Respiration(int ABoxNumber)
 	   * TemperatureArrheniusExponentialLimitation(MyBoxNumber)
                 / HOURSTOSECONDS;
       else
-         Resp = Resp + RatioLightDarkRespiration * RespirationCoefficient *DailyMeanGPP[MyBoxNumber] / OxygenMolecularWeight
+         Resp = Resp + RatioLightDarkRespiration * RespirationCoefficient * DailyMeanGPP[MyBoxNumber] / OxygenMolecularWeight
 	   * TemperatureArrheniusExponentialLimitation(MyBoxNumber)
                 / HOURSTOSECONDS;//Resp in //mmol O2 / mg Chl / s
       Resp = Resp * CarbonToOxygenResp * (PhytoBiomass[MyBoxNumber] / ChlToCarbon[MyBoxNumber]) * OxygenMolecularWeight;//Resp in //mg C /m3 / s
+
+      /*cout << "Resp = " << Resp << endl;
+      cout << "CarbonToOxygenResp = " << CarbonToOxygenResp << endl;
+      cout << "RespirationCoefficient = " << RespirationCoefficient << endl;
+      cout << "DailyMeanGPP[MyBoxNumber] = " << DailyMeanGPP[MyBoxNumber] << endl;
+      cout << "PhytoBiomass[MyBoxNumber] = " << PhytoBiomass[MyBoxNumber] << endl;
+      cout << "ChlToCarbon[MyBoxNumber] = " << ChlToCarbon[MyBoxNumber] << endl;
+      cout << "TemperatureArrheniusExponentialLimitation(MyBoxNumber) = " << TemperatureArrheniusExponentialLimitation(MyBoxNumber)<< endl;*/
+
+
       PhytoProd[MyBoxNumber] = PhytoProd[MyBoxNumber] - ( Resp );
       RespiredFlux[MyBoxNumber] = Resp;
 #ifndef _PORT_FORTRAN_

@@ -1677,7 +1677,7 @@ void TCrestumaLeverPhytoplankton2DVIntLim::NutrientLimitation(int ABoxNumber)
 #endif
 	int i = ABoxNumber;  double NLimitation, PLimitation;
 
-   if (NitrogenLimitation == 1) {
+   if (PhosphorusLimitation == 1) {
      if (PCellQuota[i] < MinPCellQuota)
           PLimitation = 0.0;
      else
