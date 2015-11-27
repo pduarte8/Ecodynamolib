@@ -286,7 +286,7 @@ void phytoplankton_go__(int* PPhytoplankton, double* layerThickness, double* tim
 void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
                                     int* piCurveOption, double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass, double *ASlope, double* Chl2Carbon)
 {
-   double Productivity, MyBiomass, MyNPhyto, MyPPhyto, MyNCellQuota, MyPCellQuota;
+   double Productivity, MyBiomass, MyNPhyto, MyPPhyto, MyNCellQuota, MyPCellQuota, MyChl2Carbon, FromChl2Carbon;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
    ptr->SetLightAtTop(*lightAtTop);
    ptr->SetLightAtBottom(*lightAtBottom);
@@ -297,6 +297,8 @@ void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double*
    //ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
    MyNPhyto =  *nPhyto * NITROGENATOMICWEIGHT;
    MyPPhyto = *pPhyto * PHOSPHORUSATOMICWEIGHT;
+   MyChl2Carbon = *Chl2Carbon;
+   FromChl2Carbon = 1.0 / MyChl2Carbon; 
    if (MyBiomass > ptr->aMin)
    {
        MyNCellQuota = MyNPhyto / MyBiomass;
@@ -308,11 +310,12 @@ void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double*
        MyPCellQuota = 0.0;
    }
    ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
-   ptr->SetVariableValue("Fortran", MyBiomass,0,"Chlorophyll to Carbon");
+   ptr->SetVariableValue("Fortran", FromChl2Carbon,0,"Chlorophyll to Carbon");
    ptr->SetVariableValue("Fortran", MyNCellQuota,0,"NCellQuota");
    ptr->SetVariableValue("Fortran", MyPCellQuota,0,"PCellQuota");
    ptr->SetVariableValue("Fortran", MyNPhyto,0,"NPhyto");
    ptr->SetVariableValue("Fortran", MyPPhyto,0,"PPhyto");
+   
    /*cout << "Light at top = "<< *lightAtTop << endl;
    cout<< "Light at bottom = "<< *lightAtBottom << endl;
    cout<< "kValue = "<< *kValue << endl;*/
@@ -348,20 +351,20 @@ void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double*
    *ASlope = ptr->GetParameterValue("Slope"); //Return value in [s-1/(micro mol photons m-2 s-1)]
    //cout<< "MyGrossProduction = "<< *GrossProduction << endl;
    ptr->SetJulianDay(*julianDay);
-   ptr->DailyAverageProduction();
-   
-   //cout<< "Daily average production"<< endl;
+   //ptr->DailyAverageProduction();
 }
 
 void phytoplankton_respiration__(int* PPhytoplankton, double* waterTemperature, double* cffCRespiration, double* GrossProduction, double * biomass, double* Chl2Carbon)
 {
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
-   double MyBiomass;
+   double MyBiomass, MyChl2Carbon, FromChl2Carbon;
    ptr->SetWaterTemperature(*waterTemperature);
    MyBiomass = *biomass * CARBONATOMICWEIGHT; //Conversions from mmol/m3 to mg / m3
+   MyChl2Carbon = *Chl2Carbon;
+   FromChl2Carbon = 1.0 / MyChl2Carbon;
    ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
-   ptr->SetVariableValue("Fortran", MyBiomass,0,"Chlorophyll to Carbon");
-   ptr->GPP[0] = *GrossProduction;
+   ptr->SetVariableValue("Fortran", FromChl2Carbon,0,"Chlorophyll to Carbon");
+   ptr->GPP[0] = *GrossProduction * CARBONATOMICWEIGHT;
    if (ptr->PhytoBiomass[0] > ptr->aMin)
    {
       ptr->Tmin = ptr->GetParameterValue("TminRespiration");
@@ -380,7 +383,7 @@ void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation, doubl
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
    MyBiomass = *biomass * CARBONATOMICWEIGHT; //Conversions from mmol/m3 to mg / m3
    ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
-   ptr->GPP[0] = *GrossProduction;
+   ptr->GPP[0] = *GrossProduction * CARBONATOMICWEIGHT;
    if (ptr->PhytoBiomass[0] > ptr->aMin)
    {
       ptr->Exudation(0);   
@@ -388,7 +391,6 @@ void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation, doubl
    }
    else
       *cffCExudation = 0.0;
-  
 }
 
 void phytoplankton_nitrogen_uptake__(int* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNH4, double *cffNO3NO2, double* nPhyto, double* biomass)
@@ -739,8 +741,8 @@ double TPhytoplanktonGeneric::SteeleProduction()
          cout<< "BoxDepth= "<< BoxDepth << endl;
          cout<<"HOURSTOSECONDS= "<<HOURSTOSECONDS<<endl;
          cout<< "KValue= "<< KValue << endl;
-         cout<<"WATTSTOMICROEINSTEINS= "<<WATTSTOMICROEINSTEINS<<endl;*/
-         
+         cout<<"WATTSTOMICROEINSTEINS= "<<WATTSTOMICROEINSTEINS<<endl;
+         cout<<"PhytoBiomass= "<<PhytoBiomass[MyBoxNumber]<<endl;*/
          
          Productivity = PhytoBiomass[MyBoxNumber]* Pmax[MyBoxNumber]
                         * 2.718282
@@ -867,7 +869,7 @@ void TPhytoplanktonGeneric::DailyAverageProduction()
     (
         DailyMeanGPP[MyBoxNumber] * NumberOfParcels[MyBoxNumber] +
         Productivity / CarbonToOxygenProd / (PhytoBiomass[MyBoxNumber] / ChlToCarbon[MyBoxNumber]) * HOURSTOSECONDS
-    )  / (NumberOfParcels[MyBoxNumber] + 1);  //mg O2 / mg Chla / h
+    )  / (NumberOfParcels[MyBoxNumber] + 1);  //mg O2 / mg Chl / h
     NumberOfParcels[MyBoxNumber] = NumberOfParcels[MyBoxNumber] + 1;
 }
 
@@ -899,7 +901,7 @@ void TPhytoplanktonGeneric::Respiration(int ABoxNumber)
 //Water temperature
    int MyBoxNumber;
    double const OxygenMolecularWeight = 32.0;
-   double Resp;
+   double Resp, OxygenProd;
    MyBoxNumber = ABoxNumber;
 
    //No caso de a classe ser invocada a partir do EcoDyn...
@@ -910,6 +912,7 @@ void TPhytoplanktonGeneric::Respiration(int ABoxNumber)
 #endif
    //cout<< "PhytoBiomass = "<< PhytoBiomass[MyBoxNumber] << endl; 
    //cout<< "WaterTemperature = "<< WaterTemperature << endl;
+   Resp = 0.0;
    if (PhytoBiomass[MyBoxNumber] > aMin)
    {
       Resp = MaintenanceRespiration[MyBoxNumber] / HOURSTOSECONDS;    //mmol O2 / mgChl / s
@@ -921,19 +924,24 @@ void TPhytoplanktonGeneric::Respiration(int ABoxNumber)
          WaterTemperature = 0.0;
       //...
 #endif
-
-     
       if (GPP[MyBoxNumber] <= 0.0)
+      {
+         OxygenProd = GPP[MyBoxNumber] / CarbonToOxygenProd / (PhytoBiomass[MyBoxNumber] / ChlToCarbon[MyBoxNumber]);
+         Resp = Resp + RatioLightDarkRespiration * RespirationCoefficient * OxygenProd / OxygenMolecularWeight
+	   * TemperatureArrheniusExponentialLimitation(MyBoxNumber);//Resp in //mmol O2 / mg Chl / s  
+      }
+       /*if (GPP[MyBoxNumber] <= 0.0)
          Resp = Resp + RespirationCoefficient * DailyMeanGPP[MyBoxNumber] / OxygenMolecularWeight
 	   * TemperatureArrheniusExponentialLimitation(MyBoxNumber)
                 / HOURSTOSECONDS;
       else
          Resp = Resp + RatioLightDarkRespiration * RespirationCoefficient * DailyMeanGPP[MyBoxNumber] / OxygenMolecularWeight
 	   * TemperatureArrheniusExponentialLimitation(MyBoxNumber)
-                / HOURSTOSECONDS;//Resp in //mmol O2 / mg Chl / s
+                / HOURSTOSECONDS;//Resp in //mmol O2 / mg Chl / s  */
       Resp = Resp * CarbonToOxygenResp * (PhytoBiomass[MyBoxNumber] / ChlToCarbon[MyBoxNumber]) * OxygenMolecularWeight;//Resp in //mg C /m3 / s
 
       /*cout << "Resp = " << Resp << endl;
+      cout << "Maintenance respiration= "<< MaintenanceRespiration[MyBoxNumber] / HOURSTOSECONDS << endl;
       cout << "CarbonToOxygenResp = " << CarbonToOxygenResp << endl;
       cout << "RespirationCoefficient = " << RespirationCoefficient << endl;
       cout << "DailyMeanGPP[MyBoxNumber] = " << DailyMeanGPP[MyBoxNumber] << endl;
@@ -943,7 +951,7 @@ void TPhytoplanktonGeneric::Respiration(int ABoxNumber)
 
 
       PhytoProd[MyBoxNumber] = PhytoProd[MyBoxNumber] - ( Resp );
-      RespiredFlux[MyBoxNumber] = Resp;
+      
 #ifndef _PORT_FORTRAN_
       NCellFlux[MyBoxNumber] = NCellFlux[MyBoxNumber] - Resp * NCellQuota[MyBoxNumber];
       PCellFlux[MyBoxNumber] = PCellFlux[MyBoxNumber] - Resp * PCellQuota[MyBoxNumber];
@@ -957,6 +965,7 @@ void TPhytoplanktonGeneric::Respiration(int ABoxNumber)
       }
 #endif
    }
+   RespiredFlux[MyBoxNumber] = Resp;
 }
 
 
