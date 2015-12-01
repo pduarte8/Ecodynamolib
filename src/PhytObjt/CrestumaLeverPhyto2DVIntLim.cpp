@@ -1816,7 +1816,7 @@ void TCrestumaLeverPhytoplankton2DVIntLim::Exudation(int ABoxNumber)
    MyBoxNumber = ABoxNumber;
    if (PhytoBiomass[MyBoxNumber] > 0.0)
    {
-      DocStressLoss = DocLoss;
+      //DocStressLoss = DocLoss;
       if (GPP[MyBoxNumber] > 0.0)
          Exudate = GPP[MyBoxNumber] * DocStressLoss;
       else Exudate = 0.0;

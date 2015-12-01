@@ -28,7 +28,7 @@
 //
 // Constructors invoked outside EcoDyn shell...
 //
-
+#ifndef _PORT_FORTRAN_
 TNutrients::TNutrients(char* className, float timeStep, int nLines, int nColumns, double aDepth[],
         double aLength[], double aWidth[], double aElevation[], int aType[],
         int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[])
@@ -48,7 +48,7 @@ TNutrients::TNutrients(char* className, float timeStep, char* morphologyFilename
         BuildNutrients(className);
     }
 }
-// ...
+
 
 TNutrients::TNutrients(TEcoDynClass* APEcoDynClass, char* className)
 								 : TEcoDynClass()
@@ -59,6 +59,7 @@ TNutrients::TNutrients(TEcoDynClass* APEcoDynClass, char* className)
     JulianDay = MyPEcoDynClass->GetJulianDay();
     NumberOfDaysForBoundaryTimeSeries = 365;
 }
+#endif
 
 void TNutrients::BuildNutrients(char* className)
 {

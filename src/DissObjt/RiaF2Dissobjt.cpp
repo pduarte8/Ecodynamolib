@@ -23,13 +23,14 @@
 
 // TRiaF2DNutrients Class
 //
+#ifndef _PORT_FORTRAN_
 TRiaF2DNutrients::TRiaF2DNutrients(TEcoDynClass* APEcoDynClass, char* className)
 							  : TSangoNutrients(APEcoDynClass, className)
 {
     // Receive pointer to integrate
     BuildRiaF2DNutrients();
 }
-
+#endif
 void TRiaF2DNutrients::BuildRiaF2DNutrients()
 {
     PChemistry = new TChemistry();

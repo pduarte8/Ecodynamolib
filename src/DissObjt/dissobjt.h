@@ -15,7 +15,11 @@
 extern "C"
 {
 */
+//#ifndef __BORLANDC__
+//#define _export 
+//#endif  // __BORLANDC__
 #ifndef __BORLANDC__
+using namespace std;
 #define _export 
 #endif  // __BORLANDC__
 
@@ -23,25 +27,27 @@ class _export TNutrients : public TEcoDynClass
 {
 	public :
         // constructors invoked outside EcoDyn
+#ifndef _PORT_FORTRAN_
         TNutrients(char* className, float timeStep, int nLines, int nColumns, double aDepth[],
             double aLength[], double aWidth[], double aElevation[], int aType[],
             int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[]);
         TNutrients(char* className, float timeStep, char* morphologyFilename);
 
-		TNutrients(TEcoDynClass* APEcoDynClass, char* className);
-		~TNutrients();
+	TNutrients(TEcoDynClass* APEcoDynClass, char* className);
+#endif
+	~TNutrients();
         virtual void freeMemory();
-		virtual void Go();
-		virtual void Inquiry(char* srcName, double &Value,
+	virtual void Go();
+	virtual void Inquiry(char* srcName, double &Value,
 										 int BoxNumber,
 										 char* ParameterName,
 										 int AnObjectCode);
-		virtual void Inquiry(char* srcName, double &Value,
+	virtual void Inquiry(char* srcName, double &Value,
 										 int BoxX,
 										 int BoxY,
 										 char* ParameterName,
 										 int AnObjectCode);
-		virtual void Update(char* srcName, double Value,
+	virtual void Update(char* srcName, double Value,
 									int BoxNumber,
 									char* ParameterName,
 									int AnObjectCode);
@@ -145,6 +151,7 @@ class _export TNutrients : public TEcoDynClass
 
 };
 
+#ifndef _PORT_FORTRAN_
 class _export TNutrientsForcing : public TNutrients
 {
 	public :
@@ -448,11 +455,13 @@ class _export TSto0NutrientsInMeso: public  TSto0Nutrients     //Pedro Duarte 5/
    protected :
       virtual void Raeration();
 };
+#endif
 
 class _export TSangoNutrients: public  TNutrients
 {
 	public :
         // constructors invoked outside EcoDyn
+#ifndef _PORT_FORTRAN_
         TSangoNutrients(char* className, float timeStep, int nLines, int nColumns, double aDepth[],
             double aLength[], double aWidth[], double aElevation[], int aType[],
             int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[],
@@ -463,7 +472,8 @@ class _export TSangoNutrients: public  TNutrients
         TSangoNutrients(char* className, float timeStep, char* morphologyFilename,
             char* variablesFilename);
 
-		TSangoNutrients(TEcoDynClass* APEcoDynClass, char* className);
+	TSangoNutrients(TEcoDynClass* APEcoDynClass, char* className);
+#endif
         ~TSangoNutrients();
         virtual void freeMemory();
         virtual void Inquiry(char* srcName, double &Value,
@@ -490,7 +500,7 @@ class _export TSangoNutrients: public  TNutrients
         double *BoundaryNH4Concentration, *BoundaryNO3Concentration, *BoundaryNO2Concentration;
 };
 
-
+#ifndef _PORT_FORTRAN_
 class _export TCrestumaLeverDissobjt: public  TNutrientsBasic
 {
 	public :
@@ -600,21 +610,18 @@ class _export TCrestumaLeverVert2DDissobjt: public  TNutrients
 
       bool bdryNH4, bdryNO3, bdryNO2, bdryPO4, bdrySiO2;
 };
+#endif
 
 class _export TRiaF2DNutrients: public  TSangoNutrients
 {
 	public :
-		TRiaF2DNutrients(TEcoDynClass* APEcoDynClass, char* className);
+#ifndef _PORT_FORTRAN_
+	TRiaF2DNutrients(TEcoDynClass* APEcoDynClass, char* className);
+#endif
         ~TRiaF2DNutrients();
         virtual void freeMemory();
-        virtual void Inquiry(char* srcName, double &Value,
-										 int BoxNumber,
-										 char* ParameterName,
-										 int AnObjectCode);
-        virtual void Update(char* srcName, double Value,
-								 int BoxNumber,
-								 char* ParameterName,
-								 int AnObjectCode);
+        virtual void Inquiry(char* srcName, double &Value,int BoxNumber,char* ParameterName,int AnObjectCode);
+        virtual void Update(char* srcName, double Value,int BoxNumber,char* ParameterName, int AnObjectCode);
         // AP, 2006.05.26
         virtual bool SetVariableValue(char* srcName,
                             double Value,
@@ -662,8 +669,13 @@ class _export TRiaF2DNutrients: public  TSangoNutrients
           *BoundaryDOCConcentration, *BoundaryDONConcentration, *BoundaryDOPConcentration,
           *WaterNitrificationFlux, *WaterDeNitrificationFlux, *RaerationFlux, *RaerationCoef, *TemporaryRaerationCoef,
           *WaterNitrogenMineralizationFlux, *WaterPhosphorusMineralizationFlux, *WaterCarbonMineralizationFlux;
+/*#ifdef _PORT_FORTRAN_
+       private:
+          static TPhytoplanktonGeneric *PPhytoplankton;
+#endif  //_PORT_FORTRAN_*/
 };
 
+#ifndef _PORT_FORTRAN_
 class _export TCarlNutrients: public  TRiaF2DNutrients
 {
 	public :
@@ -688,11 +700,30 @@ class _export TNutrients3D: public  TRiaF2DNutrients
     protected :
         void Loads();
 };
+#endif
 
+#ifndef _PORT_FORTRAN_
 static TEcoDynClass *PNutrients;
+#else  //_PORT_FORTRAN_
 
-//} // of extern C
+/* Functions that can be called from Fortran */
+extern "C" {
+              void phytoplankton_new__(int* PNutrients, double* pmax, double* iopt, double* imax, double* slope, double* aEiler, double* bEiler, double* cEiler, 
+                            double* maintenanceRespiration, double* respirationCoefficient,double* docStressLoss,
+                            double* deathLoss, double* redfieldCFactor, double* redfieldNFactor,double* redfieldPFactor, double* temperatureAugmentationRate,
+                            double* ratioLightDarkRespiration, double* minNPRatio,double* maxNPRatio, double* pMaxUptake, double* nMaxUptake, double* kP,double* kNO3, 
+                            double* kNH4, double* minPCellQuota, double* maxPCellQuota,double* minNCellQuota, double* maxNCellQuota, double* kPInternal,double* kNInternal, 
+                            double* settlingSpeed, double* carbonToOxygenProd,double* carbonToOxygenResp, double* tminRespiration,double* tminPhotosynthesis, 
+                            int* nitrogenLimitation, int* phosphorusLimitation);
 
+              void phytoplankton_go__(int* PNutrients, double* layerThickness, double* timeStep);
+
+              void phytoplankton_production__(int* PNutrients, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
+                                    int* piCurveOption, double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass, double *Slope, double* Chl2Carbon);
+
+} // of extern C
+
+#endif  //_PORT_FORTRAN_
 #endif  // DISSOBJT_H
 
 

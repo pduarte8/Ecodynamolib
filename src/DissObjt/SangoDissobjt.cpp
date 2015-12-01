@@ -23,7 +23,7 @@
 //
 // Constructors invoked outside EcoDyn shell...
 //
-
+#ifndef _PORT_FORTRAN_
 TSangoNutrients::TSangoNutrients(char* className, float timeStep,
         int nLines, int nColumns, double aDepth[],
         double aLength[], double aWidth[], double aElevation[], int aType[],
@@ -75,6 +75,7 @@ TSangoNutrients::TSangoNutrients(TEcoDynClass* APEcoDynClass, char* className)
     // Receive pointer to integrate
     BuildSangoNutrients();
 }
+#endif
 
 void TSangoNutrients::PreBuildSangoNutrients()
 {

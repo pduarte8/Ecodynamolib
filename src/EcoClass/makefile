@@ -15,7 +15,7 @@ SRC = EcoDynClass.cpp EcoDynMisc.cpp
 
 
 EcoClass.o:
-	$(CC) $(CFLAGS) $(INCLUDE) -o EcoClass.so $(SRC)	
+	$(CC) $(CFLAGS) $(INCLUDE) -o ../../ecolib/libecoclass.so $(SRC)	
 
 
      clean:

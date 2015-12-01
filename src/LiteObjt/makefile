@@ -15,7 +15,7 @@ SRC = Liteobjt.cpp
 
 
 Liteobjt.o:
-	$(CC) $(CFLAGS) $(INCLUDE) -o Liteobjt.so Liteobjt.cpp	
+	$(CC) $(CFLAGS) $(INCLUDE) -o ../../ecolib/libliteobjt.so Liteobjt.cpp	
 
 #Liteobjt.so:
 #	$(CC) -shared -o Liteobjt.so Liteobjt.o

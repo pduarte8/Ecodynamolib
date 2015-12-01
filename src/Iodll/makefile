@@ -15,7 +15,7 @@ SRC = Iodll.cpp Log.cpp Properties.cpp
 
 
 Iodll.o:
-	$(CC) $(CFLAGS) $(INCLUDE) -o Iodll.so $(SRC)	
+	$(CC) $(CFLAGS) $(INCLUDE) -o ../../ecolib/libiodll.so $(SRC)	
 
 
      clean:

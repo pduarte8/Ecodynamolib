@@ -376,15 +376,18 @@ void phytoplankton_respiration__(int* PPhytoplankton, double* waterTemperature, 
       *cffCRespiration = 0.0;
 }
 
-void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation, double* GrossProduction, double* biomass)
+void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation, double* GrossProduction, double* biomass, double *NCellQuota, double *PCellQuota)
 {
    double Exudation, MyBiomass;
    //cout << "Exudation start" << endl;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
    MyBiomass = *biomass * CARBONATOMICWEIGHT; //Conversions from mmol/m3 to mg / m3
    ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
+   ptr->SetVariableValue("Fortran", *NCellQuota,0,"NCellQuota");
+   ptr->SetVariableValue("Fortran", *PCellQuota,0,"PCellQuota");
    ptr->GPP[0] = *GrossProduction * CARBONATOMICWEIGHT;
-   if (ptr->PhytoBiomass[0] > ptr->aMin)
+   
+   if ((ptr->PhytoBiomass[0] > ptr->aMin) && (ptr->GPP[0] > ptr->aMin) && ((ptr->NCellQuota[0] < ptr->RedfieldNFactor) || (ptr->PCellQuota[0] < ptr->RedfieldPFactor)))
    {
       ptr->Exudation(0);   
       *cffCExudation = ptr->ExudatedFlux / ptr->PhytoBiomass[0];                        //Return value in s-1 for compatibility with ROMS nonlinear backward-implicit solution
