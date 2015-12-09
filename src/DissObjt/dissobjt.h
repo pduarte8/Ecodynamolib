@@ -34,6 +34,8 @@ class _export TNutrients : public TEcoDynClass
         TNutrients(char* className, float timeStep, char* morphologyFilename);
 
 	TNutrients(TEcoDynClass* APEcoDynClass, char* className);
+#else
+        TNutrients::TNutrients(char* className);
 #endif
 	~TNutrients();
         virtual void freeMemory();
@@ -58,7 +60,7 @@ class _export TNutrients : public TEcoDynClass
                              int BoxNumber,
                              char* VariableName);
 
-	protected :
+	//protected :
 		double
 				  *Ammonia,           // Nitrogen species
                   *Nitrite,
@@ -473,7 +475,9 @@ class _export TSangoNutrients: public  TNutrients
             char* variablesFilename);
 
 	TSangoNutrients(TEcoDynClass* APEcoDynClass, char* className);
-#endif
+#else
+        TSangoNutrients(char* className);
+#endif //_PORT_FORTRAN_
         ~TSangoNutrients();
         virtual void freeMemory();
         virtual void Inquiry(char* srcName, double &Value,
@@ -617,6 +621,16 @@ class _export TRiaF2DNutrients: public  TSangoNutrients
 	public :
 #ifndef _PORT_FORTRAN_
 	TRiaF2DNutrients(TEcoDynClass* APEcoDynClass, char* className);
+#else
+        static TRiaF2DNutrients* getNuts();
+        TRiaF2DNutrients(char* className);
+        void SetNumberOfLines(int numberOfLines) {NumberOfLines = numberOfLines;}
+        void SetNumberOfColumns(int numberOfColumns) {NumberOfColumns = numberOfColumns;}
+        void SetNumberOfLayers(int numberOfLayers) {NumberOfLayers = numberOfLayers;}
+        void SetNumberOfBoxes(int numberOfBoxes) {NumberOfBoxes = numberOfBoxes;}
+        void SetABoxDepth(double layerThickness) {BoxDepth = layerThickness;}   
+        void SetABoxNumber (int aBoxNumber) {ABoxNumber = aBoxNumber;}  
+        void SetWaterTemperature(double waterTemperature){WaterTemperature=waterTemperature;}
 #endif
         ~TRiaF2DNutrients();
         virtual void freeMemory();
@@ -635,7 +649,7 @@ class _export TRiaF2DNutrients: public  TSangoNutrients
         virtual bool SaveVariables();
         virtual bool SaveParameters();
 
-   protected:
+   //protected:
         void BuildRiaF2DNutrients();
         //void PosBuildRiaF2DNutrients();
         void Loads();
@@ -653,6 +667,7 @@ class _export TRiaF2DNutrients: public  TSangoNutrients
             double *NH4RiverLoad, *NO3RiverLoad, *NO2RiverLoad, *PO4RiverLoad, *SiO2RiverLoad, *DOCRiverLoad, *O2RiverLoad;
         }  LoadRiverRecord;
         LoadRiverRecord* ALoadRiverRecord;*/
+
         virtual void Nitrification(int ABoxNumber);
         virtual void DeNitrification(int ABoxNumber);
         double OxygenLimitation(int ABoxNumber, double K);
@@ -664,14 +679,15 @@ class _export TRiaF2DNutrients: public  TSangoNutrients
         virtual void CarbonMineralization(int ABoxNumber);
 
    double CriticalDepthForLandBoundary, knit, kdenit, knitO2, kdenitO2, Kt, ProportionOfNH4FromDenitrification, ARaerationCoefficient,
-          minRate, kminO2, FractionMineralizedToAmmonia;
+          minRate, kminO2, FractionMineralizedToAmmonia, BoxDepth, WaterTemperature;
    double *Oxygen, *OxygenFlux, *OxygenLoad, *OxygenSaturation, *TemporaryOxygenSaturation, *BoundaryPhosphateConcentration, *BoundaryOxygenConcentration,
           *BoundaryDOCConcentration, *BoundaryDONConcentration, *BoundaryDOPConcentration,
           *WaterNitrificationFlux, *WaterDeNitrificationFlux, *RaerationFlux, *RaerationCoef, *TemporaryRaerationCoef,
-          *WaterNitrogenMineralizationFlux, *WaterPhosphorusMineralizationFlux, *WaterCarbonMineralizationFlux;
-/*#ifdef _PORT_FORTRAN_
+          *WaterNitrogenMineralizationFlux, *WaterPhosphorusMineralizationFlux, *WaterCarbonMineralizationFlux, *DIC, *CO2, *Alkalinity;
+   int ABoxNumber;
+#ifdef _PORT_FORTRAN_
        private:
-          static TPhytoplanktonGeneric *PPhytoplankton;
+          static TRiaF2DNutrients *PNutrients;
 #endif  //_PORT_FORTRAN_*/
 };
 
@@ -708,18 +724,12 @@ static TEcoDynClass *PNutrients;
 
 /* Functions that can be called from Fortran */
 extern "C" {
-              void phytoplankton_new__(int* PNutrients, double* pmax, double* iopt, double* imax, double* slope, double* aEiler, double* bEiler, double* cEiler, 
-                            double* maintenanceRespiration, double* respirationCoefficient,double* docStressLoss,
-                            double* deathLoss, double* redfieldCFactor, double* redfieldNFactor,double* redfieldPFactor, double* temperatureAugmentationRate,
-                            double* ratioLightDarkRespiration, double* minNPRatio,double* maxNPRatio, double* pMaxUptake, double* nMaxUptake, double* kP,double* kNO3, 
-                            double* kNH4, double* minPCellQuota, double* maxPCellQuota,double* minNCellQuota, double* maxNCellQuota, double* kPInternal,double* kNInternal, 
-                            double* settlingSpeed, double* carbonToOxygenProd,double* carbonToOxygenResp, double* tminRespiration,double* tminPhotosynthesis, 
-                            int* nitrogenLimitation, int* phosphorusLimitation);
+              void dissobjt_new__(int *PNutrients, double *NitriR, double *kdenit, double *knitO2, double *kdenitO2,  double *kt, double *minRate, double *ProportionOfNH4FromDenitrification, double *FractionMineralizedToAmmonia);
 
-              void phytoplankton_go__(int* PNutrients, double* layerThickness, double* timeStep);
+              void dissobjt_go__(int *PNutrients, double *layerThickness, double *timeStep);
 
-              void phytoplankton_production__(int* PNutrients, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
-                                    int* piCurveOption, double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass, double *Slope, double* Chl2Carbon);
+              void dissobjt_nitrification__(int *PNutrients, double *lightAtTop, double *lightAtBottom, double *kValue, double * waterTemperature,
+                                            double *Ammonia, double *Oxygen, double *AmmoniaFlux, double *NitrateFlux, double *OxygenFlux);
 
 } // of extern C
 

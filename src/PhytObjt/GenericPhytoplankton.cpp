@@ -176,18 +176,18 @@ void phytoplankton_new__(int* PPhytoplankton, double* pmax, double* iopt, double
                             int* nitrogenLimitation, int* phosphorusLimitation)
 {
         TPhytoplanktonGeneric* ptr;
-        ptr = TPhytoplanktonGeneric::getPhyto();
-        *PPhytoplankton = (int)ptr;
         ptr->SetNumberOfLines(1);
         ptr->SetNumberOfColumns(1);
         ptr->SetNumberOfLayers(1);
         ptr->SetNumberOfBoxes(1); 
+        ptr = TPhytoplanktonGeneric::getPhyto();
+        *PPhytoplankton = (int)ptr;
         //Parameter declaration and zero initialization
-        ptr->BuildProdutor("TPhytoplanktonGeneric");
         //Initialization of parameters with default values
+        ptr->BuildProdutor("TPhytoplanktonGeneric");        
         ptr->PreBuildPhytoplankton();
         //Variable declaration and zero initialization
-        ptr->PreBuildCrestumaLeverPhyto2DVIntLim();
+        //ptr->PreBuildCrestumaLeverPhyto2DVIntLim();
         //cout << "PreBuildCrestumaLeverPhyto2DVIntLim "<< *PPhytoplankton<<endl;
         //Initialization of parameters with values imported from Fortran program
         ptr->SetParameterValue("Pmax", *pmax); 
@@ -284,7 +284,7 @@ void phytoplankton_go__(int* PPhytoplankton, double* layerThickness, double* tim
 
 
 void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
-                                    int* piCurveOption, double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass, double *ASlope, double* Chl2Carbon)
+                                    int* piCurveOption, double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass, double *ASlope, double* Chl2Carbon, double *OxygenProduction)
 {
    double Productivity, MyBiomass, MyNPhyto, MyPPhyto, MyNCellQuota, MyPCellQuota, MyChl2Carbon, FromChl2Carbon;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
@@ -354,7 +354,7 @@ void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double*
    //ptr->DailyAverageProduction();
 }
 
-void phytoplankton_respiration__(int* PPhytoplankton, double* waterTemperature, double* cffCRespiration, double* GrossProduction, double * biomass, double* Chl2Carbon)
+void phytoplankton_respiration__(int* PPhytoplankton, double* waterTemperature, double* cffCRespiration, double* GrossProduction, double *biomass, double* Chl2Carbon, double *OxygenConsumption)
 {
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
    double MyBiomass, MyChl2Carbon, FromChl2Carbon;

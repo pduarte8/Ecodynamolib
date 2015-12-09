@@ -84,7 +84,7 @@
 #define SILICAATOMICWEIGHT            28.085
 #define PHOSPHORUSATOMICWEIGHT        30.97
 #define OXYGENmlTOmg                   1.4286
-#define OGYGENATOMICWEIGHT          15.9994
+#define OXYGENATOMICWEIGHT          15.9994
 
 #ifdef __BORLANDC__
 #define INFINITY                 1000000.0

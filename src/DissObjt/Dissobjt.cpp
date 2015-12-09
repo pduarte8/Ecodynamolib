@@ -27,7 +27,7 @@
 // TNutrients Class
 //
 // Constructors invoked outside EcoDyn shell...
-//
+
 #ifndef _PORT_FORTRAN_
 TNutrients::TNutrients(char* className, float timeStep, int nLines, int nColumns, double aDepth[],
         double aLength[], double aWidth[], double aElevation[], int aType[],
@@ -61,6 +61,13 @@ TNutrients::TNutrients(TEcoDynClass* APEcoDynClass, char* className)
 }
 #endif
 
+#ifdef _PORT_FORTRAN_
+TNutrients::TNutrients(char* className)
+{
+   BuildNutrients(className);
+}
+#endif
+
 void TNutrients::BuildNutrients(char* className)
 {
     int i,j;
@@ -68,16 +75,19 @@ void TNutrients::BuildNutrients(char* className)
     NumberOfLines = MyPEcoDynClass->GetNumberOfLines();
     NumberOfColumns = MyPEcoDynClass->GetNumberOfColumns();
     NumberOfLayers =  MyPEcoDynClass->GetNumberOfLayers();
-
+#ifndef _PORT_FORTRAN_
     AStartTime = MyPEcoDynClass->getDefaultsRecord()->StartTime;
     ATime = AStartTime;
     AFinishTime = MyPEcoDynClass->getDefaultsRecord()->FinishTime;
-
+#endif
     // Get array size
     NumberOfBoxes = MyPEcoDynClass->GetGridSize(); // Size of array - i.e. number of model boxes
     //Debugger(NumberOfBoxes);
+#ifndef _PORT_FORTRAN_
     TimeStep = MyPEcoDynClass->GetTimeStep();
+#endif
     ObjectCode = NUTROBJECTCODE;
+
     // Initialise pointers
     if (NumberOfBoxes > 0)                       // Initialise arrays for variable pairs - one
     {                                            // for boxes and one for loads into boxes

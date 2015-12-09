@@ -75,6 +75,13 @@ TSangoNutrients::TSangoNutrients(TEcoDynClass* APEcoDynClass, char* className)
     // Receive pointer to integrate
     BuildSangoNutrients();
 }
+
+#else
+
+TSangoNutrients::TSangoNutrients(char* className)
+        :TNutrients(className)
+{
+}
 #endif
 
 void TSangoNutrients::PreBuildSangoNutrients()

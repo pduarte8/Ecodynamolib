@@ -23,6 +23,110 @@
 
 // TRiaF2DNutrients Class
 //
+#ifdef _PORT_FORTRAN_
+//-----------------------------------------------
+// ...Methods invoked from Fortran...
+//
+//        only one box
+//
+//-----------------------------------------------
+
+
+TRiaF2DNutrients* TRiaF2DNutrients::getNuts()
+{
+   if (PNutrients == 0) {
+      PNutrients = new TRiaF2DNutrients("TRiaF2DNutrients");
+   }
+   return PNutrients;
+}
+
+TRiaF2DNutrients::TRiaF2DNutrients(char* className)
+         :TSangoNutrients(className)
+{
+    MyPEcoDynClass = (TEcoDynClass*)this;
+    NumberOfVariables = 14;
+    VariableNameArray = new VNA[NumberOfVariables];
+
+    strcpy(VariableNameArray[0], "Ammonia");  //micro mol L-1
+    strcpy(VariableNameArray[1], "Nitrite");  //micro mol L-1
+    strcpy(VariableNameArray[2], "Nitrate");  //micro mol L-1
+    strcpy(VariableNameArray[3], "DIN");      //micro mol L-1
+    strcpy(VariableNameArray[4], "Silicate"); //micro mol L-1
+    strcpy(VariableNameArray[5], "Phosphate");//micro mol L-1
+    strcpy(VariableNameArray[6], "DOC");      //micro mol L-1
+    strcpy(VariableNameArray[7], "DON");      //micro mol L-1
+    strcpy(VariableNameArray[8], "DOP");      //micro mol L-1
+    strcpy(VariableNameArray[9], "Oxygen");   //mg L-1
+    strcpy(VariableNameArray[10], "Oxygen saturation");//mg L-1
+    strcpy(VariableNameArray[11], "DIC");
+    strcpy(VariableNameArray[12], "CO2");
+    strcpy(VariableNameArray[13], "Alkalinity");
+}
+
+TRiaF2DNutrients* TRiaF2DNutrients::PNutrients = 0;
+
+void dissobjt_new__(int* PNutrients, double* NitriR, double* kdenit, double* knitO2, double* kdenitO2,  double* kt, double *minRate,
+                    double *ProportionOfNH4FromDenitrification,double *FractionMineralizedToAmmonia)
+{
+   TRiaF2DNutrients* ptr;
+   ptr->SetNumberOfLines(1);
+   ptr->SetNumberOfColumns(1);
+   ptr->SetNumberOfLayers(1);
+   ptr->SetNumberOfBoxes(1); 
+   ptr = TRiaF2DNutrients::getNuts();
+   *PNutrients = (int)ptr;
+   ptr->BuildRiaF2DNutrients();
+   ptr->SetParameterValue("knit", *NitriR); //Nitrification rate in Fennel model is NitriR but in EcoDynamo the maximum nitrification is knit
+   ptr->SetParameterValue("kdenit", *kdenit);
+   ptr->SetParameterValue("knitO2", *knitO2);
+   ptr->SetParameterValue("kdenitO2", *kdenitO2);
+   ptr->SetParameterValue("kt", *kt);
+   ptr->SetParameterValue("minRate", *minRate);
+   ptr->SetParameterValue("ProportionOfNH4FromDenitrification", *ProportionOfNH4FromDenitrification);
+   ptr->SetParameterValue("FractionMineralizedToAmmonia", *FractionMineralizedToAmmonia);
+}
+
+void dissobjt_go__(int* PNutrients, double* layerThickness, double* timeStep)
+{
+   TRiaF2DNutrients* ptr = (TRiaF2DNutrients*) *PNutrients;
+   ptr->SetTimeStep(*timeStep);
+   ptr->SetABoxDepth(*layerThickness); 
+   ptr->SetABoxNumber(0);
+}
+
+
+void dissobjt_nitrification__(int* PNutrients, double* lightAtTop, double* lightAtBottom, double* kValue, double* waterTemperature,
+                              double* Ammonia, double *Oxygen, double *AmmoniaFlux, double *NitrateFlux, double *OxygenFlux)
+{
+   double MyWaterTemperature, MyAmmonia, MyOxygen, AMin;
+   AMin = 0.0000000001;
+   TRiaF2DNutrients* ptr = (TRiaF2DNutrients*) *PNutrients;
+   MyWaterTemperature = *waterTemperature;
+   MyAmmonia = *Ammonia;
+   MyOxygen = *Oxygen * (2.0 * OXYGENATOMICWEIGHT) / CUBIC; //Convert to mg O2 L-for compatibility with EcoDynamo
+   ptr->SetWaterTemperature(MyWaterTemperature);
+   ptr->SetVariableValue("Fortran", MyAmmonia,0,"Ammonia");
+   ptr->SetVariableValue("Fortran", MyOxygen,0,"Oxygen");
+   ptr->NH4Flux[0] = 0.0;
+   ptr->NO3Flux[0] = 0.0;
+   ptr->OxygenFlux[0] = 0.0;
+   ptr->Nitrification(0);
+   if (*Ammonia > AMin)
+      *AmmoniaFlux = -ptr->NH4Flux[0] / *Ammonia;   //NH4Flux in mmol N m-3 s-1 but return value in s-1 for compatibility with ROMS nonlinear backward-implicit solution for negative fluxes (values must be > 0)
+   else
+      *AmmoniaFlux = 0.0;
+   *NitrateFlux = ptr->NO3Flux[0];       //mmol N m-3 s-1
+   if (*Oxygen > AMin)
+      *OxygenFlux = -ptr->OxygenFlux[0] / (2.0 * OXYGENATOMICWEIGHT) / *Oxygen; //OxygenFlux in mmol O2 m-3 s-1 but return value in s-1 for compatibility with ROMS nonlinear backward-implicit  solution for negative fluxes (values must be > 0)
+   else
+      *Oxygen = 0.0; 
+   cout<<"Ammonia flux= "<<*AmmoniaFlux<<endl;
+   cout<<"Nitrate flux= "<<*NitrateFlux<<endl;
+   cout<<"Oxygen flux= "<<*OxygenFlux<<endl;
+}
+
+#endif
+
 #ifndef _PORT_FORTRAN_
 TRiaF2DNutrients::TRiaF2DNutrients(TEcoDynClass* APEcoDynClass, char* className)
 							  : TSangoNutrients(APEcoDynClass, className)
@@ -31,6 +135,7 @@ TRiaF2DNutrients::TRiaF2DNutrients(TEcoDynClass* APEcoDynClass, char* className)
     BuildRiaF2DNutrients();
 }
 #endif
+
 void TRiaF2DNutrients::BuildRiaF2DNutrients()
 {
     PChemistry = new TChemistry();
@@ -44,6 +149,7 @@ void TRiaF2DNutrients::BuildRiaF2DNutrients()
     kminO2 = 0.0; /*mg L-1*/
     Kt = 0.07;
     ProportionOfNH4FromDenitrification = 1.0; //(Chapelle et al. (1995) - Ecolog. Modell 80: 131-147) - Remaining 0.6 is lost as N2
+    FractionMineralizedToAmmonia = 1.0;
     ARaerationCoefficient = 1.0;
     minRate = 0.0; //d-1
     NumberOfLoads = 0;
@@ -51,6 +157,9 @@ void TRiaF2DNutrients::BuildRiaF2DNutrients()
     NumberOfRiverLoads = 0;
 
     Oxygen = new double[NumberOfBoxes];
+    CO2 = new double[NumberOfBoxes];
+    DIC = new double[NumberOfBoxes];
+    Alkalinity = new double[NumberOfBoxes];
     OxygenFlux = new double[NumberOfBoxes];
     OxygenLoad = new double[NumberOfBoxes];
     OxygenSaturation = new double[NumberOfBoxes];
@@ -67,6 +176,9 @@ void TRiaF2DNutrients::BuildRiaF2DNutrients()
     for (int i = 0; i < NumberOfBoxes; i++)
     {
        Oxygen[i] = 0.0;
+       CO2[i] = 0.0;
+       DIC[i] = 0.0;
+       Alkalinity[i] = 0.0;
        OxygenFlux[i] = 0.0;
        OxygenLoad[i] = 0.0;
        OxygenSaturation[i] = 1.0;
@@ -80,7 +192,7 @@ void TRiaF2DNutrients::BuildRiaF2DNutrients()
        WaterPhosphorusMineralizationFlux[i] = 0.0;
        WaterCarbonMineralizationFlux[i] = 0.0;
     }
-
+#ifndef _PORT_FORTRAN_
     TReadWrite* PReadWrite = (TReadWrite*)MyPEcoDynClass->OpenParametersFile("Nutrients");
     if (PReadWrite == NULL)
     {
@@ -762,6 +874,7 @@ void TRiaF2DNutrients::BuildRiaF2DNutrients()
 #endif  // __BORLANDC__
         CloseDataFile((void*)PReadWrite);
     }
+#endif //Fortran
 }
 
 
@@ -1931,9 +2044,9 @@ void TRiaF2DNutrients::Nitrification(int ABoxNumber)
    MyBoxNumber = ABoxNumber;
    double OxygenNitrogenRatioInNitrification = 0.064; //g O2 consumed for 1 mmol N mineralized or mg O2 per micromol N (Chapelle et al. (1995) - Ecolog. Modell 80: 131-147)
    WaterNitrificationFlux[MyBoxNumber] = knit * Ammonia[MyBoxNumber] * TemperatureLimitation(MyBoxNumber) * OxygenLimitation(MyBoxNumber, knitO2); //micro mol N-NO3 m-3 d-1
-   NO3Flux[MyBoxNumber] = NO3Flux[MyBoxNumber] + WaterNitrificationFlux[MyBoxNumber] / DAYSTOSECONDS;      //micro mol N-NO3 m-3 s-1
-   OxygenFlux[MyBoxNumber] = OxygenFlux[MyBoxNumber] - WaterNitrificationFlux[MyBoxNumber] / CUBIC * OxygenNitrogenRatioInNitrification / DAYSTOSECONDS; //mg O2 L-1 s-1
-   NH4Flux[MyBoxNumber] = NH4Flux[MyBoxNumber] - WaterNitrificationFlux[MyBoxNumber] / DAYSTOSECONDS;//micro mol N m-3 s-1
+   NO3Flux[MyBoxNumber] = NO3Flux[MyBoxNumber] + WaterNitrificationFlux[MyBoxNumber] / DAYSTOSECONDS;      //EcoDynamo - micro mol N-NO3 m-3 s-1, ROMS - mmol N-NO3 m-3 s-1
+   OxygenFlux[MyBoxNumber] = OxygenFlux[MyBoxNumber] - WaterNitrificationFlux[MyBoxNumber] / CUBIC * OxygenNitrogenRatioInNitrification / DAYSTOSECONDS; //EcoDynamo mg O2 L-1 s-1, ROMS - micro g O2 L-1 s-1 or mg O2 m-3 s-1
+   NH4Flux[MyBoxNumber] = NH4Flux[MyBoxNumber] - WaterNitrificationFlux[MyBoxNumber] / DAYSTOSECONDS;//EcoDynamo - micro mol N m-3 s-1, ROMS mmol N m-3 s-1
 }
 
 void TRiaF2DNutrients::DeNitrification(int ABoxNumber)
@@ -1990,6 +2103,7 @@ void TRiaF2DNutrients::CarbonMineralization(int ABoxNumber)
 double TRiaF2DNutrients::TemperatureLimitation(int ABoxNumber)
 {
    int MyBoxNumber; MyBoxNumber = ABoxNumber;
+#ifndef _PORT_FORTRAN_
    TEcoDynClass* MyWaterTemperaturePointer = MyPEcoDynClass->GetWaterTemperaturePointer();
    if (MyWaterTemperaturePointer != NULL)
    {
@@ -1998,9 +2112,12 @@ double TRiaF2DNutrients::TemperatureLimitation(int ABoxNumber)
                                              MyBoxNumber,
                                              "Water temperature",
                                              ObjectCode);
+#endif
       return exp(Kt * WaterTemperature);
+#ifndef _PORT_FORTRAN_
    }
    else
+#endif
    return 1.0;
 }
 
