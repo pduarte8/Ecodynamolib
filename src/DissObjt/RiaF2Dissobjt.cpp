@@ -112,17 +112,17 @@ void dissobjt_nitrification__(int* PNutrients, double* lightAtTop, double* light
    ptr->OxygenFlux[0] = 0.0;
    ptr->Nitrification(0);
    if (*Ammonia > AMin)
-      *AmmoniaFlux = -ptr->NH4Flux[0] / *Ammonia;   //NH4Flux in mmol N m-3 s-1 but return value in s-1 for compatibility with ROMS nonlinear backward-implicit solution for negative fluxes (values must be > 0)
+      *AmmoniaFlux = -ptr->NH4Flux[0] / *Ammonia / CUBIC;   //NH4Flux in mmol N m-3 s-1 but return value in s-1 for compatibility with ROMS nonlinear backward-implicit solution for negative fluxes (values must be > 0)
    else
       *AmmoniaFlux = 0.0;
-   *NitrateFlux = ptr->NO3Flux[0];       //mmol N m-3 s-1
+   *NitrateFlux = ptr->NO3Flux[0] / CUBIC;       //mmol N m-3 s-1
    if (*Oxygen > AMin)
-      *OxygenFlux = -ptr->OxygenFlux[0] / (2.0 * OXYGENATOMICWEIGHT) / *Oxygen; //OxygenFlux in mmol O2 m-3 s-1 but return value in s-1 for compatibility with ROMS nonlinear backward-implicit  solution for negative fluxes (values must be > 0)
+      *OxygenFlux = -ptr->OxygenFlux[0] * CUBIC / (2.0 * OXYGENATOMICWEIGHT) / *Oxygen; //OxygenFlux in mmol O2 m-3 s-1 but return value in s-1 for compatibility with ROMS nonlinear backward-implicit  solution for negative fluxes (values must be > 0)
    else
       *Oxygen = 0.0; 
-   cout<<"Ammonia flux= "<<*AmmoniaFlux<<endl;
-   cout<<"Nitrate flux= "<<*NitrateFlux<<endl;
-   cout<<"Oxygen flux= "<<*OxygenFlux<<endl;
+   //cout<<"Ammonia flux= "<<*AmmoniaFlux<<endl;
+   //cout<<"Nitrate flux= "<<*NitrateFlux<<endl;
+   //cout<<"Oxygen flux= "<<*OxygenFlux<<endl;
 }
 
 #endif
@@ -2044,9 +2044,9 @@ void TRiaF2DNutrients::Nitrification(int ABoxNumber)
    MyBoxNumber = ABoxNumber;
    double OxygenNitrogenRatioInNitrification = 0.064; //g O2 consumed for 1 mmol N mineralized or mg O2 per micromol N (Chapelle et al. (1995) - Ecolog. Modell 80: 131-147)
    WaterNitrificationFlux[MyBoxNumber] = knit * Ammonia[MyBoxNumber] * TemperatureLimitation(MyBoxNumber) * OxygenLimitation(MyBoxNumber, knitO2); //micro mol N-NO3 m-3 d-1
-   NO3Flux[MyBoxNumber] = NO3Flux[MyBoxNumber] + WaterNitrificationFlux[MyBoxNumber] / DAYSTOSECONDS;      //EcoDynamo - micro mol N-NO3 m-3 s-1, ROMS - mmol N-NO3 m-3 s-1
-   OxygenFlux[MyBoxNumber] = OxygenFlux[MyBoxNumber] - WaterNitrificationFlux[MyBoxNumber] / CUBIC * OxygenNitrogenRatioInNitrification / DAYSTOSECONDS; //EcoDynamo mg O2 L-1 s-1, ROMS - micro g O2 L-1 s-1 or mg O2 m-3 s-1
-   NH4Flux[MyBoxNumber] = NH4Flux[MyBoxNumber] - WaterNitrificationFlux[MyBoxNumber] / DAYSTOSECONDS;//EcoDynamo - micro mol N m-3 s-1, ROMS mmol N m-3 s-1
+   NO3Flux[MyBoxNumber] = NO3Flux[MyBoxNumber] + WaterNitrificationFlux[MyBoxNumber] / DAYSTOSECONDS;      //EcoDynamo - micro mol N-NO3 m-3 s-1
+   OxygenFlux[MyBoxNumber] = OxygenFlux[MyBoxNumber] - WaterNitrificationFlux[MyBoxNumber] / CUBIC * OxygenNitrogenRatioInNitrification / DAYSTOSECONDS; //EcoDynamo mg O2 L-1 s-1 
+   NH4Flux[MyBoxNumber] = NH4Flux[MyBoxNumber] - WaterNitrificationFlux[MyBoxNumber] / DAYSTOSECONDS;//EcoDynamo - micro mol N m-3 s-1
 }
 
 void TRiaF2DNutrients::DeNitrification(int ABoxNumber)

@@ -284,9 +284,9 @@ void phytoplankton_go__(int* PPhytoplankton, double* layerThickness, double* tim
 
 
 void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
-                                    int* piCurveOption, double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass, double *ASlope, double* Chl2Carbon, double *OxygenProduction)
+                                    int* piCurveOption, double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass, double *TIC, double *ASlope, double* Chl2Carbon, double *OxygenProduction, double *TICConsumption)
 {
-   double Productivity, MyBiomass, MyNPhyto, MyPPhyto, MyNCellQuota, MyPCellQuota, MyChl2Carbon, FromChl2Carbon;
+   double Productivity, MyBiomass, MyNPhyto, MyPPhyto, MyNCellQuota, MyPCellQuota, MyChl2Carbon, FromChl2Carbon, CarbonOxygenRatio;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
    ptr->SetLightAtTop(*lightAtTop);
    ptr->SetLightAtBottom(*lightAtBottom);
@@ -352,12 +352,14 @@ void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double*
    //cout<< "MyGrossProduction = "<< *GrossProduction << endl;
    ptr->SetJulianDay(*julianDay);
    //ptr->DailyAverageProduction();
+   ptr->GetParameterValue("Carbon to Oxygen in photosynthesis",CarbonOxygenRatio);
+   *OxygenProduction = ptr->GetParameterValue("Productivity") / CarbonOxygenRatio / (2.0 * OXYGENATOMICWEIGHT); //OxygenProduction in mmol O2 m-3 s-1 
 }
 
-void phytoplankton_respiration__(int* PPhytoplankton, double* waterTemperature, double* cffCRespiration, double* GrossProduction, double *biomass, double* Chl2Carbon, double *OxygenConsumption)
+void phytoplankton_respiration__(int* PPhytoplankton, double* waterTemperature, double* cffCRespiration, double* GrossProduction, double *biomass, double *Oxygen, double* Chl2Carbon, double *OxygenConsumption, double *TICProduction)
 {
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
-   double MyBiomass, MyChl2Carbon, FromChl2Carbon;
+   double MyBiomass, MyChl2Carbon, FromChl2Carbon, CarbonOxygenRatio;
    ptr->SetWaterTemperature(*waterTemperature);
    MyBiomass = *biomass * CARBONATOMICWEIGHT; //Conversions from mmol/m3 to mg / m3
    MyChl2Carbon = *Chl2Carbon;
@@ -371,9 +373,14 @@ void phytoplankton_respiration__(int* PPhytoplankton, double* waterTemperature, 
       //ptr->SetParameterValue("Tmin", tmin);
       ptr->Respiration(0);
       *cffCRespiration = ptr->RespiredFlux[0] / ptr->PhytoBiomass[0];                 //Return value in s-1 for compatibility with ROMS nonlinear backward-implicit solution
+      ptr->GetParameterValue("Carbon to Oxygen in photosynthesis",CarbonOxygenRatio);
+      *OxygenConsumption = ptr->RespiredFlux[0] / CarbonOxygenRatio / (2.0 * OXYGENATOMICWEIGHT) / *Oxygen; //Return value in s-1 for compatibility with ROMS nonlinear backward-implicit solution
    }
    else
+   {
       *cffCRespiration = 0.0;
+      *OxygenConsumption = 0.0;
+   }
 }
 
 void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation, double* GrossProduction, double* biomass, double *NCellQuota, double *PCellQuota)
