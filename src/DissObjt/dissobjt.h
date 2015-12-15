@@ -730,6 +730,8 @@ extern "C" {
 
               void dissobjt_nitrification__(int *PNutrients, double *lightAtTop, double *lightAtBottom, double *kValue, double * waterTemperature,
                                             double *Ammonia, double *Oxygen, double *AmmoniaFlux, double *NitrateFlux, double *OxygenFlux);
+              void dissobjt_denitrification__(int *PNutrients, double * waterTemperature,
+                                            double *Nitrate, double *Oxygen, double *AmmoniaFlux, double *NitrateFlux);  
 
 } // of extern C
 

@@ -125,6 +125,28 @@ void dissobjt_nitrification__(int* PNutrients, double* lightAtTop, double* light
    //cout<<"Oxygen flux= "<<*OxygenFlux<<endl;
 }
 
+void dissobjt_denitrification__(int *PNutrients, double * waterTemperature,double *Nitrate, double *Oxygen, double *AmmoniaFlux, double *NitrateFlux)
+{
+   double MyWaterTemperature, MyNitrate, MyOxygen, AMin;
+   AMin = 0.0000000001;
+   TRiaF2DNutrients* ptr = (TRiaF2DNutrients*) *PNutrients;
+   MyWaterTemperature = *waterTemperature;
+   MyNitrate = *Nitrate;
+   MyOxygen = *Oxygen * (2.0 * OXYGENATOMICWEIGHT) / CUBIC; //Convert to mg O2 L-for compatibility with EcoDynamo
+   ptr->SetWaterTemperature(MyWaterTemperature);
+   ptr->SetVariableValue("Fortran", MyNitrate,0,"Nitrate");
+   ptr->SetVariableValue("Fortran", MyOxygen,0,"Oxygen");
+   ptr->NH4Flux[0] = 0.0;
+   ptr->NO3Flux[0] = 0.0;
+   ptr->DeNitrification(0);
+   if (*Nitrate > AMin)
+      *NitrateFlux = -ptr->NO3Flux[0] / *Nitrate / CUBIC;   //NH4Flux in mmol N m-3 s-1 but return value in s-1 for compatibility with ROMS nonlinear backward-implicit solution for negative fluxes (values must be > 0)
+   else
+      *NitrateFlux = 0.0;
+   *AmmoniaFlux = ptr->NH4Flux[0] / CUBIC;       //mmol N m-3 s-1
+
+}
+
 #endif
 
 #ifndef _PORT_FORTRAN_
