@@ -1826,7 +1826,7 @@ double TLight::GetAtmosphericInfraRed(int ABoxNumber)
 
 double TLight::GetDeclination(int ADay) // Brock, 1981 Ecol. Model. 14: 1-19
 {
-	return 23.45 * sin( 360.0 * (284.0 + ADay) / 365.0 * M_PI / 180.0); // Degrees
+	return 23.45 * sin( 360.0 * (284.0 + ADay) / 365.25 * M_PI / 180.0); // Degrees
 }
 
 double TLight::GetSunSetRiseHourAngle(double ALatitude,  // Brock, 1981 Ecol. Model. 14: 1-19
@@ -1857,7 +1857,7 @@ double TLight::GetHourAngle(double ATrueSolarTime)  // Brock, 1981 Ecol. Model. 
 
 double TLight::GetRadiusVector(int ADay)
 {
-	return 1 / sqrt( 1 + (0.033 * cos( 360.0 * ADay / 365.0 * M_PI / 180 ) ) );
+	return 1 / sqrt( 1 + (0.033 * cos( 360.0 * ADay / 365.25 * M_PI / 180 ) ) );
 }
 
 double TLight::GetSolarAltitude(double ALatitude,double ADeclinationAngle,double AHourAngle)
