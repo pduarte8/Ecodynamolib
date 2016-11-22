@@ -2,7 +2,7 @@
 
 #define the C compiler to use
 CC = g++
-CFLAGS = -Wall -shared -fPIC -D_PORT_FORTRAN_ -fpermissive 
+CFLAGS = -O3 -Wall -shared -fPIC -D_PORT_FORTRAN_ -fpermissive 
 
 #define directories/files containing header files
 INCLUDE = -I../include -I../Iodll -I../EcoClass -I../ECDProtocol -I../Utilities 

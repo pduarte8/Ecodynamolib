@@ -336,9 +336,9 @@ void phytoplankton_respiration__(int* PPhytoplankton, double* waterTemperature, 
       ptr->Tmin = ptr->GetParameterValue("TminRespiration");
       //ptr->SetParameterValue("Tmin", tmin);
       ptr->Respiration(0);
-      *cffCRespiration = ptr->RespiredFlux[0] / ptr->PhytoBiomass[0];                 //Return value in s-1 for compatibility with ROMS nonlinear backward-implicit solution
+      *cffCRespiration = ptr->RespiredFlux[0] / CARBONATOMICWEIGHT/*/ ptr->PhytoBiomass[0]*/;  //Return value in mmol C m-3 s-1 for compatibility with ROMS nonlinear backward-implicit solution
       CarbonOxygenRatio = ptr->GetParameterValue("Carbon to Oxygen in respiration");
-      *OxygenConsumption = ptr->RespiredFlux[0] / CarbonOxygenRatio / (2.0 * OXYGENATOMICWEIGHT) / *Oxygen; //Return value in s-1 for compatibility with ROMS nonlinear backward-implicit solution
+      *OxygenConsumption = ptr->RespiredFlux[0] / CarbonOxygenRatio / (2.0 * OXYGENATOMICWEIGHT) /*/ *Oxygen*/; //Return value in mmol O2 m-3 s-1 for compatibility with ROMS nonlinear backward-implicit solution
    }
    else
    {
@@ -361,7 +361,7 @@ void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation, doubl
    if ((ptr->PhytoBiomass[0] > ptr->aMin) && (ptr->GPP[0] > ptr->aMin) && ((ptr->NCellQuota[0] < ptr->RedfieldNFactor) || (ptr->PCellQuota[0] < ptr->RedfieldPFactor)))
    {
       ptr->Exudation(0);   
-      *cffCExudation = ptr->ExudatedFlux / ptr->PhytoBiomass[0];                        //Return value in s-1 for compatibility with ROMS nonlinear backward-implicit solution
+      *cffCExudation = ptr->ExudatedFlux / CARBONATOMICWEIGHT/*/ ptr->PhytoBiomass[0]*/; //Return value in mmol C m-3 s-1 for compatibility with ROMS nonlinear backward-implicit solution
    }
    else
       *cffCExudation = 0.0;
@@ -390,11 +390,11 @@ void phytoplankton_nitrogen_uptake__(int* PPhytoplankton, double* Ammonia, doubl
    //cout<<"*AmmoniaUpTake = " << ptr->AmmoniaUpTake/NITROGENATOMICWEIGHT/ HOURSTOSECONDS / *Ammonia << endl;
    //cout<<"*NitrateAndNitriteUptake = " << ptr->NitrateAndNitriteUptake/NITROGENATOMICWEIGHT/ HOURSTOSECONDS / (*Nitrate + *Nitrite) << endl;
    if (*Ammonia > ptr->aMin)
-      *cffNH4 = ptr->AmmoniaUpTake/NITROGENATOMICWEIGHT/ HOURSTOSECONDS / *Ammonia; 
+      *cffNH4 = ptr->AmmoniaUpTake/NITROGENATOMICWEIGHT/ HOURSTOSECONDS /*/ *Ammonia*/; 
    else
       *cffNH4 = 0.0;
    if (*Nitrate + *Nitrite > ptr->aMin) 
-      *cffNO3NO2 = ptr->NitrateAndNitriteUptake /NITROGENATOMICWEIGHT/ HOURSTOSECONDS / (*Nitrate + *Nitrite); 
+      *cffNO3NO2 = ptr->NitrateAndNitriteUptake /NITROGENATOMICWEIGHT/ HOURSTOSECONDS /*/ (*Nitrate + *Nitrite)*/; 
    else
       *cffNO3NO2 = 0.0;
 } 
@@ -417,7 +417,7 @@ void phytoplankton_phosphorus_uptake__(int* PPhytoplankton, double* Phosphate,do
    if (ptr->GetParameterValue("Phosphorus limitation") == 1)
       ptr->PhosphorusUptake(0, *Phosphate);
    if (*Phosphate > ptr->aMin)
-      *cffPO4 = ptr->PUptake[0] / PHOSPHORUSATOMICWEIGHT / HOURSTOSECONDS / *Phosphate;
+      *cffPO4 = ptr->PUptake[0] / PHOSPHORUSATOMICWEIGHT / HOURSTOSECONDS /*/ *Phosphate*/;
    else
       *cffPO4 = 0.0;
    //cout << "Phosphorus uptake end" << endl;

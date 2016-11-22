@@ -112,12 +112,12 @@ void dissobjt_nitrification__(int* PNutrients, double* lightAtTop, double* light
    ptr->OxygenFlux[0] = 0.0;
    ptr->Nitrification(0);
    if (*Ammonia > AMin)
-      *AmmoniaFlux = -ptr->NH4Flux[0] / *Ammonia / CUBIC;   //NH4Flux in mmol N m-3 s-1 but return value in s-1 for compatibility with ROMS nonlinear backward-implicit solution for negative fluxes (values must be > 0)
+      *AmmoniaFlux = -ptr->NH4Flux[0] /*/ *Ammonia*/ / CUBIC;   //NH4Flux in mmol N m-3 s-1 
    else
       *AmmoniaFlux = 0.0;
    *NitrateFlux = ptr->NO3Flux[0] / CUBIC;       //mmol N m-3 s-1
    if (*Oxygen > AMin)
-      *OxygenFlux = -ptr->OxygenFlux[0] * CUBIC / (2.0 * OXYGENATOMICWEIGHT) / *Oxygen; //OxygenFlux in mmol O2 m-3 s-1 but return value in s-1 for compatibility with ROMS nonlinear backward-implicit  solution for negative fluxes (values must be > 0)
+      *OxygenFlux = -ptr->OxygenFlux[0] * CUBIC / (2.0 * OXYGENATOMICWEIGHT) /*/ *Oxygen*/; //OxygenFlux in mmol O2 m-3 s-1 
    else
       *Oxygen = 0.0; 
    //cout<<"Ammonia flux= "<<*AmmoniaFlux<<endl;
@@ -140,7 +140,7 @@ void dissobjt_denitrification__(int *PNutrients, double * waterTemperature,doubl
    ptr->NO3Flux[0] = 0.0;
    ptr->DeNitrification(0);
    if (*Nitrate > AMin)
-      *NitrateFlux = -ptr->NO3Flux[0] / *Nitrate / CUBIC;   //NH4Flux in mmol N m-3 s-1 but return value in s-1 for compatibility with ROMS nonlinear backward-implicit solution for negative fluxes (values must be > 0)
+      *NitrateFlux = -ptr->NO3Flux[0] /*/ *Nitrate*/ / CUBIC;   //NH4Flux in mmol N m-3 s-1 
    else
       *NitrateFlux = 0.0;
    *AmmoniaFlux = ptr->NH4Flux[0] / CUBIC;       //mmol N m-3 s-1
