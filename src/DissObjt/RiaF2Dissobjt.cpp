@@ -66,7 +66,7 @@ TRiaF2DNutrients::TRiaF2DNutrients(char* className)
 TRiaF2DNutrients* TRiaF2DNutrients::PNutrients = 0;
 
 void dissobjt_new__(int* PNutrients, double* NitriR, double* kdenit, double* knitO2, double* kdenitO2,  double* kt, double *minRate,
-                    double *ProportionOfNH4FromDenitrification,double *FractionMineralizedToAmmonia)
+                    double *ProportionOfNH4FromDenitrification,double *FractionMineralizedToAmmonia, double *ThresholdForLightInhib, double *HalfSatForLightInhib)
 {
    TRiaF2DNutrients* ptr;
    ptr->SetNumberOfLines(1);
@@ -83,7 +83,9 @@ void dissobjt_new__(int* PNutrients, double* NitriR, double* kdenit, double* kni
    ptr->SetParameterValue("kt", *kt);
    ptr->SetParameterValue("minRate", *minRate);
    ptr->SetParameterValue("ProportionOfNH4FromDenitrification", *ProportionOfNH4FromDenitrification);
-   ptr->SetParameterValue("FractionMineralizedToAmmonia", *FractionMineralizedToAmmonia);
+   ptr->SetParameterValue("FractionMineralizedToAmmonia", *FractionMineralizedToAmmonia); 
+   ptr->SetParameterValue("ThresholdForLightInhib", *ThresholdForLightInhib); 
+   ptr->SetParameterValue("HalfSatForLightInhib", *HalfSatForLightInhib); 
 }
 
 void dissobjt_go__(int* PNutrients, double* layerThickness, double* timeStep)
@@ -96,9 +98,9 @@ void dissobjt_go__(int* PNutrients, double* layerThickness, double* timeStep)
 
 
 void dissobjt_nitrification__(int* PNutrients, double* lightAtTop, double* lightAtBottom, double* kValue, double* waterTemperature,
-                              double* Ammonia, double *Oxygen, double *AmmoniaFlux, double *NitrateFlux, double *OxygenFlux)
+                              double* Ammonia, double *Oxygen, double *NitrificationFlux, double *OxygenFlux)
 {
-   double MyWaterTemperature, MyAmmonia, MyOxygen, AMin;
+   double MyWaterTemperature, MyAmmonia, MyOxygen, AMin, LightLim;
    AMin = 0.0000000001;
    TRiaF2DNutrients* ptr = (TRiaF2DNutrients*) *PNutrients;
    MyWaterTemperature = *waterTemperature;
@@ -107,17 +109,22 @@ void dissobjt_nitrification__(int* PNutrients, double* lightAtTop, double* light
    ptr->SetWaterTemperature(MyWaterTemperature);
    ptr->SetVariableValue("Fortran", MyAmmonia,0,"Ammonia");
    ptr->SetVariableValue("Fortran", MyOxygen,0,"Oxygen");
+   ptr->SetParameterValue("lightAtTop", *lightAtTop); 
+   ptr->SetParameterValue("lightAtBottom", *lightAtBottom); 
+   ptr->SetParameterValue("kValue", *kValue); 
    ptr->NH4Flux[0] = 0.0;
    ptr->NO3Flux[0] = 0.0;
    ptr->OxygenFlux[0] = 0.0;
    ptr->Nitrification(0);
+   LightLim = 1.0;
+   LightLim = ptr->LightInhibitionOfNitrification(0);
    if (*Ammonia > AMin)
-      *AmmoniaFlux = -ptr->NH4Flux[0] /*/ *Ammonia*/ / CUBIC;   //NH4Flux in mmol N m-3 s-1 
+      *NitrificationFlux = -ptr->NH4Flux[0] /*/ *Ammonia*/ / CUBIC * LightLim;   //NH4Flux in mmol N m-3 s-1 
    else
-      *AmmoniaFlux = 0.0;
-   *NitrateFlux = ptr->NO3Flux[0] / CUBIC;       //mmol N m-3 s-1
+      *NitrificationFlux = 0.0;
+   //*NitrateFlux = ptr->NO3Flux[0] / CUBIC * LightLim;       //mmol N m-3 s-1
    if (*Oxygen > AMin)
-      *OxygenFlux = -ptr->OxygenFlux[0] * CUBIC / (2.0 * OXYGENATOMICWEIGHT) /*/ *Oxygen*/; //OxygenFlux in mmol O2 m-3 s-1 
+      *OxygenFlux = -ptr->OxygenFlux[0] * CUBIC / (2.0 * OXYGENATOMICWEIGHT) * LightLim/*/ *Oxygen*/; //OxygenFlux in mmol O2 m-3 s-1 
    else
       *Oxygen = 0.0; 
    //cout<<"Ammonia flux= "<<*AmmoniaFlux<<endl;
@@ -140,12 +147,97 @@ void dissobjt_denitrification__(int *PNutrients, double * waterTemperature,doubl
    ptr->NO3Flux[0] = 0.0;
    ptr->DeNitrification(0);
    if (*Nitrate > AMin)
+   {
       *NitrateFlux = -ptr->NO3Flux[0] /*/ *Nitrate*/ / CUBIC;   //NH4Flux in mmol N m-3 s-1 
+      *AmmoniaFlux = ptr->NH4Flux[0] / CUBIC;       //mmol N m-3 s-1
+   }
    else
+   {
       *NitrateFlux = 0.0;
-   *AmmoniaFlux = ptr->NH4Flux[0] / CUBIC;       //mmol N m-3 s-1
-
+      *AmmoniaFlux = 0.0;
+   }
 }
+
+
+void dissobjt_CarbonMineralization__(int *PNutrients, double * waterTemperature,
+                                     double *OrganicCarbon, double *Oxygen, double *OrganicCarbonFlux, double *minRateC)
+{
+   double MyWaterTemperature, MyOrganicCarbon, MyOxygen, AMin;
+   AMin = 0.0000000001;
+   TRiaF2DNutrients* ptr = (TRiaF2DNutrients*) *PNutrients;
+   MyWaterTemperature = *waterTemperature;
+   MyOrganicCarbon = *OrganicCarbon;
+   MyOxygen = *Oxygen * (2.0 * OXYGENATOMICWEIGHT) / CUBIC; //Convert to mg O2 L-for compatibility with EcoDynamo
+   ptr->SetWaterTemperature(MyWaterTemperature);
+   ptr->SetVariableValue("Fortran", MyOrganicCarbon,0,"DOC"); //DOC is dissolved organic carbon but I am using it also for POC mineralization from Fortran 
+   ptr->SetVariableValue("Fortran", MyOxygen,0,"Oxygen");
+   ptr->SetParameterValue("minRate", *minRateC);
+   ptr->DOCFlux[0] = 0.0;
+   ptr->CarbonMineralization(0);
+   if (*OrganicCarbon > AMin)
+   {
+      *OrganicCarbonFlux = -ptr->DOCFlux[0] / CUBIC;   //Flux in mmol C m-3 s-1 
+   }
+   else
+   {
+      *OrganicCarbonFlux = 0.0;
+   }
+}
+
+void dissobjt_NitrogenMineralization__(int *PNutrients, double * waterTemperature,
+                                     double *OrganicNitrogen, double *Oxygen, double *OrganicNitrogenFlux, double *OxygenFlux, double *minRateN)
+{
+   double MyWaterTemperature, MyOrganicNitrogen, MyOxygen, AMin;
+   AMin = 0.0000000001;
+   TRiaF2DNutrients* ptr = (TRiaF2DNutrients*) *PNutrients;
+   MyWaterTemperature = *waterTemperature;
+   MyOrganicNitrogen = *OrganicNitrogen;
+   MyOxygen = *Oxygen * (2.0 * OXYGENATOMICWEIGHT) / CUBIC; //Convert to mg O2 L-for compatibility with EcoDynamo
+   ptr->SetWaterTemperature(MyWaterTemperature);
+   ptr->SetVariableValue("Fortran", MyOrganicNitrogen,0,"DON"); //DON is dissolved organic carbon but I am using it also for PON mineralization from Fortran 
+   ptr->SetVariableValue("Fortran", MyOxygen,0,"Oxygen");
+   ptr->SetParameterValue("minRate", *minRateN);
+   ptr->DONFlux[0] = 0.0;
+   ptr->NH4Flux[0] = 0.0;
+   ptr->OxygenFlux[0] = 0.0;
+   ptr->NitrogenMineralization(0);
+   if (*OrganicNitrogen > AMin)
+   {
+      *OrganicNitrogenFlux = -ptr->DONFlux[0] / CUBIC;   //Flux in mmol N m-3 s-1    
+      *OxygenFlux = -ptr->OxygenFlux[0] * CUBIC / (2.0 * OXYGENATOMICWEIGHT); //OxygenFlux in mmol O2 m-3 s-1 
+   }
+   else
+   {
+      *OrganicNitrogenFlux = 0.0;
+      *OxygenFlux = 0.0;
+   }
+}
+
+void dissobjt_PhosphorusMineralization__(int *PNutrients, double * waterTemperature,
+                                      double *OrganicPhosphorus, double *Oxygen, double *OrganicPhosphorusFlux, double *minRateP)
+{
+   double MyWaterTemperature, MyOrganicPhosphorus, MyOxygen, AMin;
+   AMin = 0.0000000001;
+   TRiaF2DNutrients* ptr = (TRiaF2DNutrients*) *PNutrients;
+   MyWaterTemperature = *waterTemperature;
+   MyOrganicPhosphorus = *OrganicPhosphorus;
+   MyOxygen = *Oxygen * (2.0 * OXYGENATOMICWEIGHT) / CUBIC; //Convert to mg O2 L-for compatibility with EcoDynamo
+   ptr->SetWaterTemperature(MyWaterTemperature);
+   ptr->SetVariableValue("Fortran", MyOrganicPhosphorus,0,"DOP"); //DOP is dissolved organic phosphorus but I am using it also for POP mineralization from Fortran 
+   ptr->SetVariableValue("Fortran", MyOxygen,0,"Oxygen");
+   ptr->SetParameterValue("minRate", *minRateP);
+   ptr->DOPFlux[0] = 0.0;
+   ptr->PO4Flux[0] = 0.0;
+   ptr->PhosphorusMineralization(0);
+   if (*OrganicPhosphorus > AMin)
+   {
+      *OrganicPhosphorusFlux = -ptr->DOPFlux[0] / CUBIC;   //Flux in mmol P m-3 s-1    
+   }
+   else
+   {
+      *OrganicPhosphorusFlux = 0.0;
+   }
+}  
 
 #endif
 
@@ -174,6 +266,8 @@ void TRiaF2DNutrients::BuildRiaF2DNutrients()
     FractionMineralizedToAmmonia = 1.0;
     ARaerationCoefficient = 1.0;
     minRate = 0.0; //d-1
+    ThresholdForLightInhib = 0.0095; //W m-2 Table 1 of Fennel et al. (2006) - Global Biogeochem. Cycles, 20, GB3007, doi:10.1029/2005GB002456
+    HalfSatForLightInhib = 0.1;      //W m-2 Table 1 of Fennel et al. (2006) - Global Biogeochem. Cycles, 20, GB3007, doi:10.1029/2005GB002456
     NumberOfLoads = 0;
     NumberOfDaysForLoads = 0;
     NumberOfRiverLoads = 0;
@@ -1070,6 +1164,26 @@ bool TRiaF2DNutrients::SetParameterValue(char* MyParameter, double value)
     else if (strcmp(MyParameter, "FractionMineralizedToAmmonia") == 0)
     {
         FractionMineralizedToAmmonia = value;
+    }
+    else if (strcmp(MyParameter, "ThresholdForLightInhib") == 0)  
+    {
+        ThresholdForLightInhib = value;
+    }
+    else if (strcmp(MyParameter, "HalfSatForLightInhib") == 0)
+    {
+        HalfSatForLightInhib = value;
+    }
+    else if (strcmp(MyParameter, "lightAtTop") == 0)
+    {
+        lightAtTop = value;
+    }
+    else if (strcmp(MyParameter, "lightAtBottom") == 0)  
+    {
+        lightAtBottom = value;
+    }
+    else if (strcmp(MyParameter, "kValue") == 0)
+    {
+        kValue = value;
     }
     else
         rc = false;
@@ -2141,6 +2255,19 @@ double TRiaF2DNutrients::TemperatureLimitation(int ABoxNumber)
    else
 #endif
    return 1.0;
+}
+
+double TRiaF2DNutrients::LightInhibitionOfNitrification(int ABoxNumber)
+{
+   double LightLimitation, VerticallyAveragedLight;
+   double TINNY = 0.00000001;
+   LightLimitation = 1.0; VerticallyAveragedLight = 0.0;
+   if ((BoxDepth > TINNY) && (kValue > TINNY)) 
+   {
+      VerticallyAveragedLight = lightAtTop*(exp(-kValue * lightAtTop) - exp(-kValue * lightAtBottom)) / (kValue * BoxDepth); 
+      LightLimitation = 1.0 - MAX(0,(VerticallyAveragedLight - ThresholdForLightInhib) / (HalfSatForLightInhib + VerticallyAveragedLight - ThresholdForLightInhib));  
+   }  
+   return (LightLimitation); 
 }
 
 void  TRiaF2DNutrients::Raeration(int ABoxNumber, double ADepth)
