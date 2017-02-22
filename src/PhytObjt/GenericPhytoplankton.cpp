@@ -145,14 +145,14 @@ void phyto_setparams__(int* PPhytoplankton, double* pmax, double* iopt, double* 
 //
 //-----------------------------------------------
 
-TPhytoplanktonGeneric* TPhytoplanktonGeneric::PPhytoplankton = 0;
+//TPhytoplanktonGeneric* TPhytoplanktonGeneric::PPhytoplankton = 0;
 
 /*
  * This constructor calls Go() and Integrate() after initialisation
  *
  * 'box' used only for debug AP 050119 - AP 050119
  */
-void phytoplankton_(int* PPhytoplankton,int* box, float* depth, float* biomass,
+void phytoplankton_(long* PPhytoplankton,int* box, float* depth, float* biomass,
         float* lightAtTop, float* lightAtBottom, float* waterTemperature,
         float* timeStep)
 {
@@ -167,7 +167,7 @@ void phytoplankton_(int* PPhytoplankton,int* box, float* depth, float* biomass,
    ptr->SetTimeStep(*timeStep);
 }
 
-void phytoplankton_new__(int* PPhytoplankton, double* pmax, double* iopt, double* imax, double* slope, double* aEiler, double* bEiler, double* cEiler, 
+void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, double* imax, double* slope, double* aEiler, double* bEiler, double* cEiler, 
                             double* maintenanceRespiration, double* respirationCoefficient,double* docStressLoss,
                             double* deathLoss, double* redfieldCFactor, double* redfieldNFactor,double* redfieldPFactor, double* temperatureAugmentationRate,
                             double* ratioLightDarkRespiration, double* minNPRatio,double* maxNPRatio, double* pMaxUptake, double* nMaxUptake, double* kP,double* kNO3, 
@@ -177,13 +177,13 @@ void phytoplankton_new__(int* PPhytoplankton, double* pmax, double* iopt, double
 {
         TPhytoplanktonGeneric* ptr;
         //***Grid dimensions set to "ones" because this is for usage of EcoDynamo functions from ROMS (or other software) and the functions remain agnostic about grid details***/
+        ptr = TPhytoplanktonGeneric::getPhyto();
+        *PPhytoplankton = (long)ptr;
         ptr->SetNumberOfLines(1);
         ptr->SetNumberOfColumns(1);
         ptr->SetNumberOfLayers(1);
         ptr->SetNumberOfBoxes(1); 
-        ptr = TPhytoplanktonGeneric::getPhyto();
-        *PPhytoplankton = (int)ptr;
-        /**********************************************Parameter declaration and zero initialization*****************************************************************************/
+                /**********************************************Parameter declaration and zero initialization*****************************************************************************/
         ptr->BuildProdutor("TPhytoplanktonGeneric"); 
         /**********************************************Variable declaration and zero initialization******************************************************************************/
         ptr->PreBuildPhytoplankton();
@@ -230,7 +230,7 @@ void phytoplankton_new__(int* PPhytoplankton, double* pmax, double* iopt, double
 }
 
 
-void phytoplankton_go__(int* PPhytoplankton, double* layerThickness, double* timeStep)
+void phytoplankton_go__(long* PPhytoplankton, double* layerThickness, double* timeStep)
 {
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
    /********Time step is reseted every "go". This is not necessary for ROMS but it may become necessary for othervariable time step application******************/
@@ -239,11 +239,12 @@ void phytoplankton_go__(int* PPhytoplankton, double* layerThickness, double* tim
    ptr->SetABoxDepth(*layerThickness);
    /********************************************Resetes box number to zero....just in case....*******************************************************************/
    ptr->SetABoxNumber(0);
+   //cout<< "Pmax= "<< ptr->Pmax[0] << endl;
 }
 
 
 
-void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
+void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
                                     int* piCurveOption, double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass, double *TIC, double *ASlope, double* Chl2Carbon, double *OxygenProduction)
 {
    double Productivity, MyBiomass, MyNPhyto, MyPPhyto, MyNCellQuota, MyPCellQuota, MyChl2Carbon, FromChl2Carbon, CarbonOxygenRatio;
@@ -320,7 +321,7 @@ void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double*
    *OxygenProduction = ptr->GetParameterValue("Productivity") / CarbonOxygenRatio / (2.0 * OXYGENATOMICWEIGHT); //OxygenProduction in mmol O2 m-3 s-1 
 }
 
-void phytoplankton_respiration__(int* PPhytoplankton, double* waterTemperature, double* cffCRespiration, double* GrossProduction, double *biomass, double *Oxygen, double* Chl2Carbon, double *OxygenConsumption)
+void phytoplankton_respiration__(long* PPhytoplankton, double* waterTemperature, double* cffCRespiration, double* GrossProduction, double *biomass, double *Oxygen, double* Chl2Carbon, double *OxygenConsumption)
 {
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
    double MyBiomass, MyChl2Carbon, FromChl2Carbon, CarbonOxygenRatio;
@@ -347,7 +348,7 @@ void phytoplankton_respiration__(int* PPhytoplankton, double* waterTemperature, 
    }
 }
 
-void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation, double* GrossProduction, double* biomass, double *NCellQuota, double *PCellQuota)
+void phytoplankton_exudation__(long* PPhytoplankton, double* cffCExudation, double* GrossProduction, double* biomass, double *NCellQuota, double *PCellQuota)
 {
    double Exudation, MyBiomass;
    //cout << "Exudation start" << endl;
@@ -367,7 +368,7 @@ void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation, doubl
       *cffCExudation = 0.0;
 }
 
-void phytoplankton_nitrogen_uptake__(int* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNH4, double *cffNO3NO2, double* nPhyto, double* biomass)
+void phytoplankton_nitrogen_uptake__(long* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNH4, double *cffNO3NO2, double* nPhyto, double* biomass)
 {
    double MyBiomass, MyNPhyto, MyNCellQuota;
    //cout << "Nitrogen uptake start" << endl;
@@ -399,7 +400,7 @@ void phytoplankton_nitrogen_uptake__(int* PPhytoplankton, double* Ammonia, doubl
       *cffNO3NO2 = 0.0;
 } 
 
-void phytoplankton_phosphorus_uptake__(int* PPhytoplankton, double* Phosphate,double* cffPO4, double *pPhyto, double* biomass)
+void phytoplankton_phosphorus_uptake__(long* PPhytoplankton, double* Phosphate,double* cffPO4, double *pPhyto, double* biomass)
 {
    double MyBiomass, MyPPhyto, MyPCellQuota;
    //cout << "Phosphorus uptake start" << endl;
@@ -423,7 +424,7 @@ void phytoplankton_phosphorus_uptake__(int* PPhytoplankton, double* Phosphate,do
    //cout << "Phosphorus uptake end" << endl;
 }
 
-void phytoplankton_mortality__(int* PPhytoplankton, double* nCellQuota, double* pCellQuota,
+void phytoplankton_mortality__(long* PPhytoplankton, double* nCellQuota, double* pCellQuota,
                                double* waterTemperature, double* biomass, double* timeStep, double* cff)
 {
    double Mortality;
@@ -432,13 +433,13 @@ void phytoplankton_mortality__(int* PPhytoplankton, double* nCellQuota, double* 
 }
 
 
-void phytoplankton_integrate__(int* PPhytoplankton,double* nCellQuota, double* pCellQuota,double* biomass)
+void phytoplankton_integrate__(long* PPhytoplankton,double* nCellQuota, double* pCellQuota,double* biomass)
 {
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
    ptr->Integrate();
 }
 
-void phytoplankton_rhochl_(int* PPhytoplankton, double* light, double* kValue, double* GrossProduction, double* slope, double* rhochl)
+void phytoplankton_rhochl_(long* PPhytoplankton, double* light, double* kValue, double* GrossProduction, double* slope, double* rhochl)
 {
 
 }
@@ -468,19 +469,21 @@ void TPhytoplanktonGeneric::PreBuildPhytoplanktonGeneric(char* className)
  */
 TPhytoplanktonGeneric* TPhytoplanktonGeneric::getPhyto(TPhytoplanktonGeneric* pphytoplankton)
 {
-   if (PPhytoplankton == 0) {
+   /*if (PPhytoplankton == 0) {
       PPhytoplankton = new TPhytoplanktonGeneric("TPhytoplanktonGeneric");
       PPhytoplankton->debug = 'N';
-   }
+   }*/
+   TPhytoplanktonGeneric *PPhytoplankton = new TPhytoplanktonGeneric("TPhytoplanktonGeneric");
    return PPhytoplankton;
 }
 
 TPhytoplanktonGeneric* TPhytoplanktonGeneric::getPhyto()
 {
-   if (PPhytoplankton == 0) {
-      PPhytoplankton = new TPhytoplanktonGeneric("TPhytoplanktonGeneric");
-      PPhytoplankton->debug = 'N';
-   }
+   //if (PPhytoplankton == 0) {
+      //PPhytoplankton = new TPhytoplanktonGeneric("TPhytoplanktonGeneric");
+      //PPhytoplankton->debug = 'N';
+   //}
+   TPhytoplanktonGeneric *PPhytoplankton = new TPhytoplanktonGeneric("TPhytoplanktonGeneric");
    return PPhytoplankton;
 }
 

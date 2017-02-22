@@ -875,10 +875,10 @@ class _export TPhytoplanktonGeneric : public TCrestumaLeverPhytoplankton2DVIntLi
         int ABoxNumber, AUpperBoxNumber;
         bool SurfaceCell, BottomBox;
         double aMin;
-#ifdef _PORT_FORTRAN_
+/*#ifdef _PORT_FORTRAN_
     private:
         static TPhytoplanktonGeneric *PPhytoplankton;
-#endif  //_PORT_FORTRAN_
+#endif  //_PORT_FORTRAN_*/
 };
 
 #ifndef _PORT_FORTRAN_
@@ -892,11 +892,11 @@ extern "C" {
 /*
  * This constructor calls Go() and Integrate() after initialisation
  */
-    void phytoplankton__(int* PPhytoplankton,int* box, float* depth, float* biomass,
+    void phytoplankton__(long* PPhytoplankton,int* box, float* depth, float* biomass,
                         float* lightAtTop, float* lightAtBottom,
                         float* waterTemperature, float* timeStep);
 
-    void phyto_setparams__(int* PPhytoplankton, double* pmax, double* iopt, double* imax, double* slope, double* aEiler, double* bEiler, double* cEiler, double* kValue,
+    void phyto_setparams__(long* PPhytoplankton, double* pmax, double* iopt, double* imax, double* slope, double* aEiler, double* bEiler, double* cEiler, double* kValue,
                             double* Ks, double* phi, double* maintenanceRespiration, double* respirationCoefficient,double* docLoss, double* docStressLoss,
                             double* deathLoss, double* redfieldCFactor, double* redfieldNFactor,double* redfieldPFactor, double* temperatureAugmentationRate,
                             double* ratioLightDarkRespiration, double* minNPRatio,
@@ -910,7 +910,7 @@ extern "C" {
     void phyto_setkvalue__(float* kvalue);
     void phyto_setbiomass__(int* box, float* biomass);
 
-    void phytoplankton_new__(int* PPhytoplankton, double* pmax, double* iopt, double* imax, double* slope, double* aEiler, double* bEiler, double* cEiler, 
+    void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, double* imax, double* slope, double* aEiler, double* bEiler, double* cEiler, 
                             double* maintenanceRespiration, double* respirationCoefficient,double* docStressLoss,
                             double* deathLoss, double* redfieldCFactor, double* redfieldNFactor,double* redfieldPFactor, double* temperatureAugmentationRate,
                             double* ratioLightDarkRespiration, double* minNPRatio,double* maxNPRatio, double* pMaxUptake, double* nMaxUptake, double* kP,double* kNO3, 
@@ -918,25 +918,25 @@ extern "C" {
                             double* settlingSpeed, double* carbonToOxygenProd,double* carbonToOxygenResp, double* tminRespiration,double* tminPhotosynthesis, 
                             int* nitrogenLimitation, int* phosphorusLimitation);
 
-    void phytoplankton_go__(int* PPhytoplankton, double* layerThickness, double* timeStep);
+    void phytoplankton_go__(long* PPhytoplankton, double* layerThickness, double* timeStep);
 
-    void phytoplankton_production__(int* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
+    void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
                                     int* piCurveOption, double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass, double *TIC, double *Slope, double* Chl2Carbon, double *OxygenProduction);
 
-    void phytoplankton_respiration__(int* PPhytoplankton, double* waterTemperature, double* cffCRespiration, double *GrossProduction, double* biomass, double *Oxygen, double* Chl2Carbon, double *OxygenConsumption);
+    void phytoplankton_respiration__(long* PPhytoplankton, double* waterTemperature, double* cffCRespiration, double *GrossProduction, double* biomass, double *Oxygen, double* Chl2Carbon, double *OxygenConsumption);
 
-    void phytoplankton_exudation__(int* PPhytoplankton, double* cffCExudation, double *GrossProduction, double* biomass, double *NCellQuota, double *PCellQuota);
+    void phytoplankton_exudation__(long* PPhytoplankton, double* cffCExudation, double *GrossProduction, double* biomass, double *NCellQuota, double *PCellQuota);
 
-    void phytoplankton_nitrogen_uptake__(int* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNH4, double *cffNO3NO2, double* nPhyto, double* biomass);  
+    void phytoplankton_nitrogen_uptake__(long* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNH4, double *cffNO3NO2, double* nPhyto, double* biomass);  
 
-    void phytoplankton_phosphorus_uptake__(int* PPhytoplankton, double* Phosphate,double* cffPO4, double* pPhyto, double* biomass); 
+    void phytoplankton_phosphorus_uptake__(long* PPhytoplankton, double* Phosphate,double* cffPO4, double* pPhyto, double* biomass); 
 
-    void phytoplankton_rhochl_(int* PPhytoplankton, double* light, double* kValue, double* GrossProduction, double* slope, double* rhochl);  
+    void phytoplankton_rhochl_(long* PPhytoplankton, double* light, double* kValue, double* GrossProduction, double* slope, double* rhochl);  
 
-    void phytoplankton_mortality__(int* PPhytoplankton, double* nCellQuota, double* pCellQuota,
+    void phytoplankton_mortality__(long* PPhytoplankton, double* nCellQuota, double* pCellQuota,
                                double* waterTemperature, double* biomass, double* timeStep, double* cff); 
 
-    void phytoplankton_integrate__(int* PPhytoplankton,double* nCellQuota, double* pCellQuota,double* biomass); 
+    void phytoplankton_integrate__(long* PPhytoplankton,double* nCellQuota, double* pCellQuota,double* biomass); 
    
 /*
  * calls Go() and Integrate()
