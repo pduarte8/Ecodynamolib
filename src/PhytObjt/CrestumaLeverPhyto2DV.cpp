@@ -253,17 +253,21 @@ TCrestumaLeverPhytoplankton2DV::TCrestumaLeverPhytoplankton2DV(char* className)
 #ifndef _PORT_FORTRAN_
 TCrestumaLeverPhytoplankton2DV::~TCrestumaLeverPhytoplankton2DV()
 {
-    try {    if (NumberOfVariables > 0) {
+     if (NumberOfVariables > 0) {
+            delete [] VariableNameArray;
+            NumberOfVariables = 0;
+        }
+    /*try {    if (NumberOfVariables > 0) {
             delete [] VariableNameArray;
             NumberOfVariables = 0;
         }
     }
-    catch (EAccessViolation &e) {
+    atch (EAccessViolation &e) {
         //Application->ShowException(&e);
     }
     catch (Exception &exception) {
         //Application->ShowException(&exception);
-    }
+    }*/
 }
 //#endif  // _PORT_FORTRAN_
 

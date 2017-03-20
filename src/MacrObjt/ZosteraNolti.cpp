@@ -1744,17 +1744,17 @@ void TZosteraNoltii::Respiration(int ABoxNumber)
        Resp = LeafResp[MyBoxNumber] + RootResp[MyBoxNumber]; //g O2 s-1 m-2
        /*if (NPP[ABoxNumber] < 0.0)
        {
-            PhytoFlux[ABoxNumber] = (NPP[ABoxNumber] - LeafResp[MyBoxNumber]) / (PQ  * 2.0 * OGYGENATOMICWEIGHT) * CUBIC; //mmol C s-1 m-2
-            PhytoFluxRoot[ABoxNumber] = - RootResp[MyBoxNumber] / (PQ  * 2.0 * OGYGENATOMICWEIGHT) * CUBIC; //mmol C s-1 m-2
+            PhytoFlux[ABoxNumber] = (NPP[ABoxNumber] - LeafResp[MyBoxNumber]) / (PQ  * 2.0 * OXYGENATOMICWEIGHT) * CUBIC; //mmol C s-1 m-2
+            PhytoFluxRoot[ABoxNumber] = - RootResp[MyBoxNumber] / (PQ  * 2.0 * OXYGENATOMICWEIGHT) * CUBIC; //mmol C s-1 m-2
        } */
        NPP[ABoxNumber] = NPP[ABoxNumber] * CPhyto[MyBoxNumber]; //g O2 m-2 s-1
        if (NPP[ABoxNumber] - Resp < 0.0)
        {
-            PhytoFlux[ABoxNumber] = (NPP[ABoxNumber] - LeafResp[MyBoxNumber]) / (PQ  * 2.0 * OGYGENATOMICWEIGHT) * CUBIC; //mmol C s-1 m-2
-            PhytoFluxRoot[ABoxNumber] = - RootResp[MyBoxNumber] / (PQ  * 2.0 * OGYGENATOMICWEIGHT) * CUBIC; //mmol C s-1 m-2
+            PhytoFlux[ABoxNumber] = (NPP[ABoxNumber] - LeafResp[MyBoxNumber]) / (PQ  * 2.0 * OXYGENATOMICWEIGHT) * CUBIC; //mmol C s-1 m-2
+            PhytoFluxRoot[ABoxNumber] = - RootResp[MyBoxNumber] / (PQ  * 2.0 * OXYGENATOMICWEIGHT) * CUBIC; //mmol C s-1 m-2
        }
        else
-            NPP[ABoxNumber] = (NPP[ABoxNumber] - Resp) / (PQ  * 2.0 * OGYGENATOMICWEIGHT) * CUBIC; //mmol C s-1 m-2
+            NPP[ABoxNumber] = (NPP[ABoxNumber] - Resp) / (PQ  * 2.0 * OXYGENATOMICWEIGHT) * CUBIC; //mmol C s-1 m-2
    }
 }
 

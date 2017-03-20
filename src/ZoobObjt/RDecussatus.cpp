@@ -2496,7 +2496,7 @@ void TRDecussatusIndivGrowthPhytoAndTPM::Excrete(int ABoxNumber, int AClassNumbe
       MyTransportPointer->Inquiry(GetEcoDynClassName(), MyDepth,i,"Box depth",ObjectCode);
    else MyDepth = MyPEcoDynClass->GetBoxDepth(i);
 
-   ExcretionRate = ARespirationRate / OGYGENATOMICWEIGHT * NH4OxygenRatio; //mmol N-NH4 / L /s
+   ExcretionRate = ARespirationRate / OXYGENATOMICWEIGHT * NH4OxygenRatio; //mmol N-NH4 / L /s
    ZooDINRelease[ABoxNumber] = ExcretionRate * CUBIC; //micromol N-NH4 / L / s
    EnergyLossThroughExcretion = ZooDINRelease[ABoxNumber] * NH4ToEnergy * CUBIC /*J m-3 s-1*/
                                / (ZooClassDensity[k * NumberOfBoxes + i] / MyDepth); //J/ ind / s-1

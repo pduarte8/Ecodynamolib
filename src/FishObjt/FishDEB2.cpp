@@ -174,7 +174,7 @@ void TFishWithWeakHomeostasis::Respire(int ABox, int AFish)
    }
    AverageRQ = (PolysaccharidesRQ * PolysaccharideContent + LipidsRQ * LipidContent + ProteinsRQ * ProteinContent) /
                   (PolysaccharideContent + LipidContent + ProteinContent);
-   CarbonLostByResp = AverageRQ * CARBONATOMICWEIGHT / (OGYGENATOMICWEIGHT * 2.0) * OxygenConsumption; //mg C d-1 per fish in CO2 lost through respiration
+   CarbonLostByResp = AverageRQ * CARBONATOMICWEIGHT / (OXYGENATOMICWEIGHT * 2.0) * OxygenConsumption; //mg C d-1 per fish in CO2 lost through respiration
 }
 
 

@@ -1048,7 +1048,7 @@ void TIceAlgae::Respiration(int ABoxNumber)
           //Resp in //mmol O2 / mg Chl / s
     //Debugger(TemperatureArrheniusExponentialLimitation(TempCoefRespiration, WaterTemperature, TminRespiration));
     //Debugger(RespirationCoefficient);
-    OxygenNetProduction[MyBoxNumber] = OxygenNetProduction[MyBoxNumber] - Resp * OGYGENATOMICWEIGHT;
+    OxygenNetProduction[MyBoxNumber] = OxygenNetProduction[MyBoxNumber] - Resp * OXYGENATOMICWEIGHT;
     double RespInCarbonUnits;
     RespInCarbonUnits = Resp * OxygenMolecularWeight * CarbonToOxygenProd;
     NPP[MyBoxNumber] = GPP[MyBoxNumber] - RespInCarbonUnits;
