@@ -34,9 +34,10 @@
 
 TRiaF2DNutrients* TRiaF2DNutrients::getNuts()
 {
-   if (PNutrients == 0) {
+   /*if (PNutrients == 0) {
       PNutrients = new TRiaF2DNutrients("TRiaF2DNutrients");
-   }
+   }*/
+   TRiaF2DNutrients *PNutrients = new TRiaF2DNutrients("TRiaF2DNutrients");
    return PNutrients;
 }
 
@@ -63,9 +64,9 @@ TRiaF2DNutrients::TRiaF2DNutrients(char* className)
     strcpy(VariableNameArray[13], "Alkalinity");
 }
 
-TRiaF2DNutrients* TRiaF2DNutrients::PNutrients = 0;
+//TRiaF2DNutrients* TRiaF2DNutrients::PNutrients = 0;
 
-void dissobjt_new__(int* PNutrients, double* NitriR, double* kdenit, double* knitO2, double* kdenitO2,  double* kt, double *minRate,
+void dissobjt_new__(long* PNutrients, double* NitriR, double* kdenit, double* knitO2, double* kdenitO2,  double* kt, double *minRate,
                     double *ProportionOfNH4FromDenitrification,double *FractionMineralizedToAmmonia, double *ThresholdForLightInhib, double *HalfSatForLightInhib)
 {
    TRiaF2DNutrients* ptr;
@@ -74,7 +75,7 @@ void dissobjt_new__(int* PNutrients, double* NitriR, double* kdenit, double* kni
    ptr->SetNumberOfLayers(1);
    ptr->SetNumberOfBoxes(1); 
    ptr = TRiaF2DNutrients::getNuts();
-   *PNutrients = (int)ptr;
+   *PNutrients = (long)ptr;
    ptr->BuildRiaF2DNutrients();
    ptr->SetParameterValue("knit", *NitriR); //Nitrification rate in Fennel model is NitriR but in EcoDynamo the maximum nitrification is knit
    ptr->SetParameterValue("kdenit", *kdenit);
@@ -88,7 +89,7 @@ void dissobjt_new__(int* PNutrients, double* NitriR, double* kdenit, double* kni
    ptr->SetParameterValue("HalfSatForLightInhib", *HalfSatForLightInhib); 
 }
 
-void dissobjt_go__(int* PNutrients, double* layerThickness, double* timeStep)
+void dissobjt_go__(long* PNutrients, double* layerThickness, double* timeStep)
 {
    TRiaF2DNutrients* ptr = (TRiaF2DNutrients*) *PNutrients;
    ptr->SetTimeStep(*timeStep);
@@ -97,7 +98,7 @@ void dissobjt_go__(int* PNutrients, double* layerThickness, double* timeStep)
 }
 
 
-void dissobjt_nitrification__(int* PNutrients, double* lightAtTop, double* lightAtBottom, double* kValue, double* waterTemperature,
+void dissobjt_nitrification__(long* PNutrients, double* lightAtTop, double* lightAtBottom, double* kValue, double* waterTemperature,
                               double* Ammonia, double *Oxygen, double *NitrificationFlux, double *OxygenFlux)
 {
    double MyWaterTemperature, MyAmmonia, MyOxygen, AMin, LightLim;
@@ -132,7 +133,7 @@ void dissobjt_nitrification__(int* PNutrients, double* lightAtTop, double* light
    //cout<<"Oxygen flux= "<<*OxygenFlux<<endl;
 }
 
-void dissobjt_denitrification__(int *PNutrients, double * waterTemperature,double *Nitrate, double *Oxygen, double *AmmoniaFlux, double *NitrateFlux)
+void dissobjt_denitrification__(long *PNutrients, double * waterTemperature,double *Nitrate, double *Oxygen, double *AmmoniaFlux, double *NitrateFlux)
 {
    double MyWaterTemperature, MyNitrate, MyOxygen, AMin;
    AMin = 0.0000000001;
@@ -159,7 +160,7 @@ void dissobjt_denitrification__(int *PNutrients, double * waterTemperature,doubl
 }
 
 
-void dissobjt_CarbonMineralization__(int *PNutrients, double * waterTemperature,
+void dissobjt_CarbonMineralization__(long *PNutrients, double * waterTemperature,
                                      double *OrganicCarbon, double *Oxygen, double *OrganicCarbonFlux, double *minRateC)
 {
    double MyWaterTemperature, MyOrganicCarbon, MyOxygen, AMin;
@@ -184,7 +185,7 @@ void dissobjt_CarbonMineralization__(int *PNutrients, double * waterTemperature,
    }
 }
 
-void dissobjt_NitrogenMineralization__(int *PNutrients, double * waterTemperature,
+void dissobjt_NitrogenMineralization__(long *PNutrients, double * waterTemperature,
                                      double *OrganicNitrogen, double *Oxygen, double *OrganicNitrogenFlux, double *OxygenFlux, double *minRateN)
 {
    double MyWaterTemperature, MyOrganicNitrogen, MyOxygen, AMin;
@@ -213,7 +214,7 @@ void dissobjt_NitrogenMineralization__(int *PNutrients, double * waterTemperatur
    }
 }
 
-void dissobjt_PhosphorusMineralization__(int *PNutrients, double * waterTemperature,
+void dissobjt_PhosphorusMineralization__(long *PNutrients, double * waterTemperature,
                                       double *OrganicPhosphorus, double *Oxygen, double *OrganicPhosphorusFlux, double *minRateP)
 {
    double MyWaterTemperature, MyOrganicPhosphorus, MyOxygen, AMin;

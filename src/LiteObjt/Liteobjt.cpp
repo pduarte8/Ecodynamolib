@@ -594,16 +594,16 @@ void TLight::PreBuildLight(char* className)
    NumberOfMomentsForTimeSeries = 0;
 }
 
-void light_new__(int* PLight)
+void light_new__(long* PLight)
 {
   //MyPEcoDynClass = (TEcoDynClass*)this;
    TLight* ptr;
    ptr = TLight::getLight();
-   *PLight = (int)ptr;
+   *PLight = (long)ptr;
    ptr->PreBuildLight("TLight"); 
 }
 
-void light_new_go__(int* plight, double* curtime, double* julianday, double* latitude, double* cloudcover, double* seaalbedo, double* light)
+void light_new_go__(long* plight, double* curtime, double* julianday, double* latitude, double* cloudcover, double* seaalbedo, double* light)
 {
     int numberOfMomentsForTimeSeries = 0;
     /*cout << "Starting light_new_go__ ";

@@ -687,7 +687,7 @@ class _export TRiaF2DNutrients: public  TSangoNutrients
           *WaterNitrificationFlux, *WaterDeNitrificationFlux, *RaerationFlux, *RaerationCoef, *TemporaryRaerationCoef,
           *WaterNitrogenMineralizationFlux, *WaterPhosphorusMineralizationFlux, *WaterCarbonMineralizationFlux, *DIC, *CO2, *Alkalinity;
    int ABoxNumber;
-#ifdef _PORT_FORTRAN_
+/*#ifdef _PORT_FORTRAN_
        private:
           static TRiaF2DNutrients *PNutrients;
 #endif  //_PORT_FORTRAN_*/
@@ -726,20 +726,20 @@ static TEcoDynClass *PNutrients;
 
 /* Functions that can be called from Fortran */
 extern "C" {
-              void dissobjt_new__(int *PNutrients, double *NitriR, double *kdenit, double *knitO2, double *kdenitO2,  double *kt, double *minRate,double *ProportionOfNH4FromDenitrification, double *FractionMineralizedToAmmonia, double *ThresholdForLightInhib, double *HalfSatForLightInhib);
+              void dissobjt_new__(long *PNutrients, double *NitriR, double *kdenit, double *knitO2, double *kdenitO2,  double *kt, double *minRate,double *ProportionOfNH4FromDenitrification, double *FractionMineralizedToAmmonia, double *ThresholdForLightInhib, double *HalfSatForLightInhib);
 
-              void dissobjt_go__(int *PNutrients, double *layerThickness, double *timeStep);
+              void dissobjt_go__(long *PNutrients, double *layerThickness, double *timeStep);
 
-              void dissobjt_nitrification__(int *PNutrients, double *lightAtTop, double *lightAtBottom, double *kValue, double * waterTemperature,
+              void dissobjt_nitrification__(long *PNutrients, double *lightAtTop, double *lightAtBottom, double *kValue, double * waterTemperature,
                                             double *Ammonia, double *Oxygen, double *NitrificationFlux, double *OxygenFlux);
-              void dissobjt_denitrification__(int *PNutrients, double * waterTemperature,
+              void dissobjt_denitrification__(long *PNutrients, double * waterTemperature,
                                             double *Nitrate, double *Oxygen, double *AmmoniaFlux, double *NitrateFlux);
 
-              void dissobjt_CarbonMineralization__(int *PNutrients, double * waterTemperature,
+              void dissobjt_CarbonMineralization__(long *PNutrients, double * waterTemperature,
                                                     double *OrganicCarbon, double *Oxygen, double *OrganicCarbonFlux, double *minRateC);
-              void dissobjt_NitrogenMineralization__(int *PNutrients, double * waterTemperature,
+              void dissobjt_NitrogenMineralization__(long *PNutrients, double * waterTemperature,
                                                     double *OrganicNitrogen, double *Oxygen, double *OrganicNitrogenFlux, double *OxygenFlux,  double *minRateN);
-              void dissobjt_PhosphorusMineralization__(int *PNutrients, double * waterTemperature,
+              void dissobjt_PhosphorusMineralization__(long *PNutrients, double * waterTemperature,
                                                     double *OrganicPhosphorus, double *Oxygen, double *OrganicPhosphorusFlux, double *minRateP);       
 
 } // of extern C
