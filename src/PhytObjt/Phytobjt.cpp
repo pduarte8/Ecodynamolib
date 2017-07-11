@@ -37,7 +37,7 @@ TPhytoplankton::TPhytoplankton(char* className,
         float timeStep, int nLines, int nColumns, double aDepth[],
         double aLength[], double aWidth[], double aElevation[], int aType[],
         int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[],
-        int nParams, double pmax, double iopt, double slope, double aEiler,
+        int nParams, double pmax, double iopt, double slope, double beta, double aEiler,
         double bEiler, double cEiler, double kValue, double ks, double kAmmonia,
         double kNitrate, double pHi, double maintenanceRespiration,
         double respirationCoefficient, double docLoss, double docStressLoss,
@@ -50,7 +50,7 @@ TPhytoplankton::TPhytoplankton(char* className,
     PreBuildPhytoplankton();
 
 	NumberOfParameters = nParams;
-    SetPhytoParams(pmax, iopt, slope, aEiler, bEiler, cEiler,
+    SetPhytoParams(pmax, iopt, slope, beta, aEiler, bEiler, cEiler,
             kValue, ks, kAmmonia, kNitrate, pHi, maintenanceRespiration,
             respirationCoefficient, docLoss, docStressLoss,
             deathLoss, redfieldCFactor, redfieldNFactor,
@@ -81,7 +81,7 @@ TPhytoplankton::TPhytoplankton(char* className) :TProdutor(className)
 #endif  // !(_PORT_FORTRAN_)
 
 void TPhytoplankton::SetPhytoParams(double pmax, double iopt,
-        double slope, double aEiler, double bEiler, double cEiler,
+        double slope, double Beta, double aEiler, double bEiler, double cEiler,
         double kValue, double ks, double kAmmonia,
         double kNitrate, double pHi, double maintenanceRespiration,
         double respirationCoefficient, double docLoss, double docStressLoss,
@@ -94,6 +94,7 @@ void TPhytoplankton::SetPhytoParams(double pmax, double iopt,
 		Pmax[j] = pmax;
 		Iopt[j] = iopt;
 		Slope[j] = slope;
+                beta[j] = Beta;
 		AEiler[j] = aEiler;
 		BEiler[j] = bEiler;
 		CEiler[j] = cEiler;

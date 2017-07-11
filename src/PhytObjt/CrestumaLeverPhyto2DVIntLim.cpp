@@ -633,6 +633,11 @@ bool TCrestumaLeverPhytoplankton2DVIntLim::SetParameterValue(char* MyParameter, 
         for (j = 0; j < NumberOfBoxes; j++)
             Slope[j] = value;
     }
+    else if (strcmp(MyParameter, "Beta") == 0)
+    {
+        for (j = 0; j < NumberOfBoxes; j++)
+            beta[j] = value;
+    }
     else if (strcmp(MyParameter, "DefaultAEiler") == 0)
     {
         for (j = 0; j < NumberOfBoxes; j++)

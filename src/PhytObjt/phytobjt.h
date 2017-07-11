@@ -27,7 +27,7 @@ class _export TPhytoplankton : public TProdutor
             float timeStep, int nLines, int nColumns, double aDepth[],
             double aLength[], double aWidth[], double aElevation[], int aType[],
             int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[],
-            int nParams, double pmax, double iopt, double slope, double aEiler,
+            int nParams, double pmax, double iopt, double slope, double beta, double aEiler,
             double bEiler, double cEiler, double kValue, double ks, double kAmmonia,
             double kNitrate, double pHi, double maintenanceRespiration,
             double respirationCoefficient, double docLoss, double docStressLoss,
@@ -57,7 +57,7 @@ class _export TPhytoplankton : public TProdutor
                              char* VariableName);
 
         virtual void SetPhytoParams(double pmax, double iopt,
-        	double slope, double aEiler, double bEiler, double cEiler,
+        	double slope, double beta, double aEiler, double bEiler, double cEiler,
         	double kValue, double ks, double kAmmonia,
         	double kNitrate, double pHi, double maintenanceRespiration,
         	double respirationCoefficient, double docLoss, double docStressLoss,
@@ -861,6 +861,7 @@ class _export TPhytoplanktonGeneric : public TCrestumaLeverPhytoplankton2DVIntLi
         double SteeleProduction();
         double Michaelis_MentenProduction();
         double EilerProduction();
+        double PlattProduction();
         double JassyAndPlattProduction();
         double SteeleSlope();
         double EilersAndPeetersSlope();
@@ -896,7 +897,7 @@ extern "C" {
                         float* lightAtTop, float* lightAtBottom,
                         float* waterTemperature, float* timeStep);
 
-    void phyto_setparams__(long* PPhytoplankton, double* pmax, double* iopt, double* imax, double* slope, double* aEiler, double* bEiler, double* cEiler, double* kValue,
+    void phyto_setparams__(long* PPhytoplankton, double* pmax, double* iopt, double* imax, double* slope, double* beta, double* aEiler, double* bEiler, double* cEiler, double* kValue,
                             double* Ks, double* phi, double* maintenanceRespiration, double* respirationCoefficient,double* docLoss, double* docStressLoss,
                             double* deathLoss, double* redfieldCFactor, double* redfieldNFactor,double* redfieldPFactor, double* temperatureAugmentationRate,
                             double* ratioLightDarkRespiration, double* minNPRatio,
@@ -910,7 +911,7 @@ extern "C" {
     void phyto_setkvalue__(float* kvalue);
     void phyto_setbiomass__(int* box, float* biomass);
 
-    void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, double* imax, double* slope, double* aEiler, double* bEiler, double* cEiler, 
+    void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, double* imax, double* slope, double* beta, double* aEiler, double* bEiler, double* cEiler, 
                             double* maintenanceRespiration, double* respirationCoefficient,double* docStressLoss,
                             double* deathLoss, double* redfieldCFactor, double* redfieldNFactor,double* redfieldPFactor, double* temperatureAugmentationRate,
                             double* ratioLightDarkRespiration, double* minNPRatio,double* maxNPRatio, double* pMaxUptake, double* nMaxUptake, double* kP,double* kNO3, 

@@ -113,7 +113,7 @@ void phyto_go__()
    ptr->Integrate();
 }
 
-void phyto_setparams__(int* PPhytoplankton, double* pmax, double* iopt, double* imax, double* slope, double* aEiler, double* bEiler, double* cEiler, double* kValue,
+void phyto_setparams__(int* PPhytoplankton, double* pmax, double* iopt, double* imax, double* slope, double* beta, double* aEiler, double* bEiler, double* cEiler, double* kValue,
                             double* Ks, double* phi, double* maintenanceRespiration, double* respirationCoefficient,double* docLoss, double* docStressLoss,
                             double* deathLoss, double* redfieldCFactor, double* redfieldNFactor,double* redfieldPFactor, double* temperatureAugmentationRate,
                             double* fallingSpeed, double* ratioLightDarkRespiration, double* nCellQuota, double* pCellQuota, double* minNPRatio,
@@ -124,7 +124,7 @@ void phyto_setparams__(int* PPhytoplankton, double* pmax, double* iopt, double* 
 {
     TPhytoplanktonGeneric* ptr;
     ptr = TPhytoplanktonGeneric::getPhyto();
-    ptr->SetPhytoParams(*pmax, *iopt, *slope, *aEiler, *bEiler, *cEiler,
+    ptr->SetPhytoParams(*pmax, *iopt, *slope, *beta, *aEiler, *bEiler, *cEiler,
             *kValue, *Ks, *kNO3, *kNH4, *phi, *maintenanceRespiration,
             *respirationCoefficient, *docLoss, *docStressLoss, *deathLoss,
             *redfieldCFactor, *redfieldNFactor, *redfieldPFactor,
@@ -167,7 +167,7 @@ void phytoplankton_(long* PPhytoplankton,int* box, float* depth, float* biomass,
    ptr->SetTimeStep(*timeStep);
 }
 
-void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, double* imax, double* slope, double* aEiler, double* bEiler, double* cEiler, 
+void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, double* imax, double* slope,double* beta, double* aEiler, double* bEiler, double* cEiler, 
                             double* maintenanceRespiration, double* respirationCoefficient,double* docStressLoss,
                             double* deathLoss, double* redfieldCFactor, double* redfieldNFactor,double* redfieldPFactor, double* temperatureAugmentationRate,
                             double* ratioLightDarkRespiration, double* minNPRatio,double* maxNPRatio, double* pMaxUptake, double* nMaxUptake, double* kP,double* kNO3, 
@@ -191,6 +191,7 @@ void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, doubl
         ptr->SetParameterValue("Pmax", *pmax); 
         ptr->SetParameterValue("Iopt", *iopt);
         ptr->SetParameterValue("Slope", *slope);
+        ptr->SetParameterValue("Beta", *beta);
         ptr->SetParameterValue("DefaultAEiler", *aEiler);
         ptr->SetParameterValue("BEiler", *bEiler);
         ptr->SetParameterValue("CEiler", *cEiler);
@@ -297,6 +298,9 @@ void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double
       case 3: /*EILER*/	// add a list item
          ptr->Productivity = ptr->EilerProduction();
          ptr->Slope[0] = ptr->EilersAndPeetersSlope();
+         break;
+      case 4: /*Platt*/	// add a list item
+         ptr->Productivity = ptr->PlattProduction();
          break;
    }
    /***************************************Light limited productivity calculated in mg C / m3**********************************************************************/
@@ -798,6 +802,33 @@ double TPhytoplanktonGeneric::EilerProduction()
 										fabs(BEiler[i] * LightAtBottom * WATTSTOMICROEINSTEINS + CEiler[i]))
 										/ BoxDepth
 										* DAYSTOHOURS;    //mg C m-3 s-1;
+   }
+   else Productivity = 0.0;
+   return Productivity;
+}
+
+
+double TPhytoplanktonGeneric::PlattProduction()
+{
+   int i = ABoxNumber;
+   double LightLimitation, PARLight;
+   double IntegrationSteps = 30;
+   double DeltaZ, Soma;
+   
+   Productivity = 0.0;
+   if ((PhytoBiomass[i] > aMin) &&
+       (BoxDepth > aMin) && (LightAtTop > aMin) && (IntegrationSteps >= 1.0))
+   {  
+         DeltaZ = BoxDepth / IntegrationSteps;
+         Soma = 0.0;   
+         PARLight = LightAtTop * WATTSTOMICROEINSTEINS; 
+         for (int Step = 1; Step <= IntegrationSteps; Step++)    //Eiler integration as a function of depth
+         {      
+            Soma = Soma + (1 - exp(-Slope[i] * PARLight / Pmax[i])) * exp(-beta[i] * PARLight/ Pmax[i]) * DeltaZ;
+            PARLight = PARLight * exp(-KValue * DeltaZ);
+         }
+         LightLimitation = Soma / BoxDepth; 
+         Productivity = Pmax[i] * LightLimitation / HOURSTOSECONDS * PhytoBiomass[i]; //mg C m-3 s-1;    
    }
    else Productivity = 0.0;
    return Productivity;
