@@ -661,22 +661,25 @@ class _export TCrestumaLeverPhytoplankton2DVIntLim : public TCrestumaLeverPhytop
 #ifndef _PORT_FORTRAN_
         virtual void NitrogenUptake(int ABoxNumber);
         virtual void PhosphorusUptake(int ABoxNumber);
+        virtual void SilicaUptake(int ABoxNumber); 
 #else
         virtual void NitrogenUptake(int ABoxNumber, double Ammonia, double Nitrate, double Nitrite);
         virtual void PhosphorusUptake(int ABoxNumber, double Phosphate);
+        virtual void SilicaUptake(int ABoxNumber, double Silica); 
 #endif
         virtual void NutrientLimitation(int ABoxNumber);
         virtual double TemperatureArrheniusExponentialLimitation(double ATemperature, double AReferenceTemperature);
         virtual void Settling(int ALine, int AColumn);
         double *NCellQuota, *PCellQuota, *NUptake, *PUptake,
              *PhytoNLoad, *PhytoPLoad, *NPhyto, *PPhyto,
-             *NCellFlux, *PCellFlux, *DailyMeanGPP, *NumberOfParcels, *SettlingLoss;
+             *NCellFlux, *PCellFlux, *DailyMeanGPP, *NumberOfParcels, *SettlingLoss,
+             *SiCellQuota, *SiUptake, *PhytoSiLoad, *SiPhyto, *SiCellFlux;
        int *ADay;
-       double MinNPRatio,MaxNPRatio, PMaxUptake,NMaxUptake,KP, KNO3,
-             KNH4, MaxPCellQuota, MaxNCellQuota, MinPCellQuota, MinNCellQuota,
-             KPInternal, KNInternal, SettlingSpeed, CarbonToOxygenProd, CarbonToOxygenResp,
+       double MinNPRatio,MaxNPRatio, MinNSiRatio, MaxNSiRatio, PMaxUptake,NMaxUptake, SiMaxUptake,KP, KNO3,
+             KNH4, KSi, MaxPCellQuota, MaxNCellQuota, MaxSiCellQuota, MinPCellQuota, MinNCellQuota, MinSiCellQuota,
+             KPInternal, KNInternal, KSiInternal,SettlingSpeed, CarbonToOxygenProd, CarbonToOxygenResp,
              TminPhotosynthesis, TminRespiration,AmmoniaUpTake, NitrateAndNitriteUptake, ExudatedFlux;
-       int NitrogenLimitation, PhosphorusLimitation;      
+       int NitrogenLimitation, PhosphorusLimitation, SilicaLimitation;      
 };
 
 #ifndef _PORT_FORTRAN_
@@ -916,8 +919,9 @@ extern "C" {
                             double* deathLoss, double* redfieldCFactor, double* redfieldNFactor,double* redfieldPFactor, double* temperatureAugmentationRate,
                             double* ratioLightDarkRespiration, double* minNPRatio,double* maxNPRatio, double* pMaxUptake, double* nMaxUptake, double* kP,double* kNO3, 
                             double* kNH4, double* minPCellQuota, double* maxPCellQuota,double* minNCellQuota, double* maxNCellQuota, double* kPInternal,double* kNInternal, 
-                            double* settlingSpeed, double* carbonToOxygenProd,double* carbonToOxygenResp, double* tminRespiration,double* tminPhotosynthesis, 
-                            int* nitrogenLimitation, int* phosphorusLimitation);
+                            double* maxSiCellQuota, double* minNSiRatio, double* siMaxUptake, double* kSi, double* kSiInternal, double* redfieldSiFactor,
+                            double* settlingSpeed, double* carbonToOxygenProd,double* carbonToOxygenResp, double* tminRespiration,double* tminPhotosynthesis,    
+                            int* nitrogenLimitation, int* phosphorusLimitation, int* silicaLimitation);
 
     void phytoplankton_go__(long* PPhytoplankton, double* layerThickness, double* timeStep);
 
@@ -931,6 +935,8 @@ extern "C" {
     void phytoplankton_nitrogen_uptake__(long* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNH4, double *cffNO3NO2, double* nPhyto, double* biomass);  
 
     void phytoplankton_phosphorus_uptake__(long* PPhytoplankton, double* Phosphate,double* cffPO4, double* pPhyto, double* biomass); 
+ 
+    void phytoplankton_silica_uptake__(long* PPhytoplankton, double* Silicate,double* cffSiOH4, double *siPhyto, double* biomass);
 
     void phytoplankton_rhochl_(long* PPhytoplankton, double* light, double* kValue, double* GrossProduction, double* slope, double* rhochl);  
 

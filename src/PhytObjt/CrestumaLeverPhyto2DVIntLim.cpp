@@ -98,7 +98,29 @@ void TCrestumaLeverPhytoplankton2DVIntLim::BuildCrestumaLeverPhyto2DVIntLim()
     PreBuildCrestumaLeverPhyto2DVIntLim();
     NitrogenLimitation	= 1;
     PhosphorusLimitation = 1;
+    SilicaLimitation = 0;
     AmmoniaUpTake = 0.0; NitrateAndNitriteUptake = 0.0;
+    MaxNCellQuota = 0.0;
+    MaxPCellQuota = 0.0;
+    MaxSiCellQuota = 0.0;
+    MinNCellQuota = 0.0;
+    MinPCellQuota = 0.0;
+    MinSiCellQuota = 0.0;
+
+    NMaxUptake = 1.0;
+    PMaxUptake = 1.0;
+
+    KNO3 = 1.0;
+    KNH4 = 1.0;
+    KP = 0.1;
+    KSi = 2.2;
+    KNInternal = 0.028;  //[mg N mg C-1] Duarte et al. (2007) - Transitional Waters Monographs 1: 13-51
+    KPInternal = 0.04;   //[mg P mg C-1] Duarte et al. (2007) - Transitional Waters Monographs 1: 13-51
+    KSiInternal = 0.0;
+    MaxNPRatio = 291.0;
+    MinNPRatio = 4.0;
+    MaxNSiRatio = 0.5;
+    MinNSiRatio = 0.125; //This corresponds to Si:N = 8 in mass and ~4 in atoms which is the default value in CICE
     int X, Y;
 //	TReadWrite* PReadWrite = (TReadWrite*)MyPEcoDynClass->GetParmsFileHandle();
 	TReadWrite* PReadWrite = (TReadWrite*)MyPEcoDynClass->OpenParametersFile("Phytoplankton");
@@ -123,6 +145,14 @@ void TCrestumaLeverPhytoplankton2DVIntLim::BuildCrestumaLeverPhyto2DVIntLim()
                 {
                     PReadWrite->ReadNumber(X+3, i, MaxNPRatio);
                 }
+                else if (strcmp(MyParameter, "MinNSiRatio") == 0)
+                {
+                    PReadWrite->ReadNumber(X+3, i, MinNSiRatio);
+                }
+                else if (strcmp(MyParameter, "MaxNSiRatio") == 0)
+                {
+                    PReadWrite->ReadNumber(X+3, i, MaxNSiRatio);
+                }
                 else if (strcmp(MyParameter, "PMaxUptake") == 0)
                 {
                     PReadWrite->ReadNumber(X+3, i, PMaxUptake);
@@ -130,6 +160,10 @@ void TCrestumaLeverPhytoplankton2DVIntLim::BuildCrestumaLeverPhyto2DVIntLim()
                 else if (strcmp(MyParameter, "NMaxUptake") == 0)
                 {
                     PReadWrite->ReadNumber(X+3, i, NMaxUptake);
+                }
+                else if (strcmp(MyParameter, "SiMaxUptake") == 0)
+                {
+                    PReadWrite->ReadNumber(X+3, i, SiMaxUptake);
                 }
                 else if (strcmp(MyParameter, "KP") == 0)
                 {
@@ -143,6 +177,10 @@ void TCrestumaLeverPhytoplankton2DVIntLim::BuildCrestumaLeverPhyto2DVIntLim()
                 {
                     PReadWrite->ReadNumber(X+3, i, KNH4);
                 }
+                else if (strcmp(MyParameter, "KSi") == 0)
+                {
+                    PReadWrite->ReadNumber(X+3, i, KSi);
+                }
                 else if (strcmp(MyParameter, "MinPCellQuota") == 0)
                 {
                     PReadWrite->ReadNumber(X+3, i, MinPCellQuota);
@@ -150,6 +188,10 @@ void TCrestumaLeverPhytoplankton2DVIntLim::BuildCrestumaLeverPhyto2DVIntLim()
                 else if (strcmp(MyParameter, "MinNCellQuota") == 0)
                 {
                     PReadWrite->ReadNumber(X+3, i, MinNCellQuota);
+                }
+                else if (strcmp(MyParameter, "MinSiCellQuota") == 0)
+                {
+                    PReadWrite->ReadNumber(X+3, i, MinSiCellQuota);
                 }
                 else if (strcmp(MyParameter, "MaxPCellQuota") == 0)
                 {
@@ -159,6 +201,10 @@ void TCrestumaLeverPhytoplankton2DVIntLim::BuildCrestumaLeverPhyto2DVIntLim()
                 {
                     PReadWrite->ReadNumber(X+3, i, MaxNCellQuota);
                 }
+                else if (strcmp(MyParameter, "MaxSiCellQuota") == 0)
+                {
+                    PReadWrite->ReadNumber(X+3, i, MaxSiCellQuota);
+                }
                 else if (strcmp(MyParameter, "KPInternal") == 0)
                 {
                     PReadWrite->ReadNumber(X+3, i, KPInternal);
@@ -166,6 +212,10 @@ void TCrestumaLeverPhytoplankton2DVIntLim::BuildCrestumaLeverPhyto2DVIntLim()
                 else if (strcmp(MyParameter, "KNInternal") == 0)
                 {
                     PReadWrite->ReadNumber(X+3, i, KNInternal);
+                }
+                else if (strcmp(MyParameter, "KSiInternal") == 0)
+                {
+                    PReadWrite->ReadNumber(X+3, i, KSiInternal);
                 }
                 else if (strcmp(MyParameter, "SettlingSpeed") == 0)
                 {
@@ -194,6 +244,10 @@ void TCrestumaLeverPhytoplankton2DVIntLim::BuildCrestumaLeverPhyto2DVIntLim()
                 else if (strcmp(MyParameter, "Phosphorus limitation") == 0)
                 {
                     PReadWrite->ReadNumber(X+3, i, PhosphorusLimitation);
+                }
+                else if (strcmp(MyParameter, "SilicaLimitation limitation") == 0)
+                {
+                    PReadWrite->ReadNumber(X+3, i, SilicaLimitation);
                 }
             }
         }
@@ -238,6 +292,14 @@ void TCrestumaLeverPhytoplankton2DVIntLim::BuildCrestumaLeverPhyto2DVIntLim()
                         PCellQuota[j] = MyValue;
                     }
                 }
+                else if (strcmp(MyVariable, "SiCellQuota") == 0)
+                {
+                   PReadWrite->ReadNumber(X + 2 + i, Y + 1, MyValue);
+                    for (int j = 0; j < NumberOfBoxes; j++)
+                    {
+                        SiCellQuota[j] = MyValue;
+                    }
+                }
                 // More variables here
             }
         }
@@ -270,25 +332,30 @@ void TCrestumaLeverPhytoplankton2DVIntLim::PreBuildCrestumaLeverPhyto2DVIntLim()
 {
     NCellQuota = new double[NumberOfBoxes];
     PCellQuota = new double[NumberOfBoxes];
+    SiCellQuota = new double[NumberOfBoxes];
     NPhyto = new double[NumberOfBoxes];
     PPhyto = new double[NumberOfBoxes];
+    SiPhyto = new double[NumberOfBoxes];
     NCellFlux = new double[NumberOfBoxes];
     PCellFlux = new double[NumberOfBoxes];
+    SiCellFlux = new double[NumberOfBoxes];
     NUptake = new double[NumberOfBoxes];
     PUptake = new double[NumberOfBoxes];
+    SiUptake = new double[NumberOfBoxes];
     PhytoNLoad = new double[NumberOfBoxes];
     PhytoPLoad = new double[NumberOfBoxes];
+    PhytoSiLoad = new double[NumberOfBoxes];
     DailyMeanGPP = new double[NumberOfBoxes];
     ADay = new int[NumberOfBoxes];
     NumberOfParcels = new double[NumberOfBoxes];
     SettlingLoss = new double[NumberOfBoxes];
     for (int i = 0; i < NumberOfBoxes; i++)
     {
-   	    NCellQuota[i] = 0.0; PCellQuota[i] = 0.0;
-        NPhyto[i] = 0.0; PPhyto[i] = 0.0;
-        NCellFlux[i] = 0.0; PCellFlux[i] = 0.0;
-        NUptake[i] = 0.0; PUptake[i] = 0.0;
-        PhytoNLoad[i] = 0.0; PhytoPLoad[i] = 0.0;
+   	NCellQuota[i] = 0.0; PCellQuota[i] = 0.0;SiCellQuota[i] = 0.0;
+        NPhyto[i] = 0.0; PPhyto[i] = 0.0; SiPhyto[i] = 0.0;
+        NCellFlux[i] = 0.0; PCellFlux[i] = 0.0;SiCellFlux[i] = 0.0;
+        NUptake[i] = 0.0; PUptake[i] = 0.0;SiUptake[i] = 0.0;
+        PhytoNLoad[i] = 0.0; PhytoPLoad[i] = 0.0;PhytoSiLoad[i] = 0.0;
         DailyMeanGPP[i] = 0.0;  ADay[i] = MyPEcoDynClass->GetJulianDay();
         NumberOfParcels[i] = 0.0; SettlingLoss[i] = 0.0;
     }
@@ -331,10 +398,12 @@ void TCrestumaLeverPhytoplankton2DVIntLim::PosBuildCrestumaLeverPhyto2DVIntLim()
 {
     for (int i = 0; i < NumberOfBoxes; i++)
     {
-   	    NPhyto[i] = PhytoBiomass[i] * NCellQuota[i];
+   	NPhyto[i] = PhytoBiomass[i] * NCellQuota[i];
         PPhyto[i] = PhytoBiomass[i] * PCellQuota[i];
+        SiPhyto[i] = PhytoBiomass[i] * SiCellQuota[i];
         PhytoNLoad[i] = PhytoLoad[i] * RedfieldNFactor/ RedfieldCFactor;
         PhytoPLoad[i] = PhytoLoad[i] * RedfieldPFactor/ RedfieldCFactor;
+        PhytoSiLoad[i] = PhytoLoad[i] * RedfieldSiFactor/ RedfieldCFactor;
     }
 }
 
@@ -351,14 +420,19 @@ void TCrestumaLeverPhytoplankton2DVIntLim::freeMemory()
        {
           delete [] NCellQuota;
           delete [] PCellQuota;
+          delete [] SiCellQuota;
           delete [] NPhyto;
           delete [] PPhyto;
+          delete [] SiPhyto;
           delete [] NCellFlux;
           delete [] PCellFlux;
+          delete [] SiCellFlux;
           delete [] PhytoNLoad;
           delete [] PhytoPLoad;
+          delete [] PhytoSiLoad;
           delete [] NUptake;
           delete [] PUptake;
+          delete [] SiUptake; 
           delete [] DailyMeanGPP;
           delete [] NumberOfParcels;
           delete [] SettlingLoss;
@@ -497,6 +571,10 @@ double TCrestumaLeverPhytoplankton2DVIntLim::GetParameterValue(char* MyParameter
     {
         value = RedfieldPFactor;
     }
+    else if (strcmp(MyParameter, "RedfieldSiFactor") == 0)
+    {
+        value = RedfieldSiFactor;
+    }
     else if (strcmp(MyParameter, "TemperatureAugmentationRate") == 0)
     {
         value = TemperatureAugmentationRate;
@@ -606,6 +684,30 @@ double TCrestumaLeverPhytoplankton2DVIntLim::GetParameterValue(char* MyParameter
     else if (strcmp(MyParameter, "Productivity") == 0)
     {
         value = Productivity;
+    }
+    else if (strcmp(MyParameter, "Silica limitation") == 0)
+    {
+        value = SilicaLimitation;
+    }
+    else if (strcmp(MyParameter, "MaxSiCellQuota") == 0)
+    {
+        value = MaxSiCellQuota;
+    }
+    else if (strcmp(MyParameter, "MinNSiRatio") == 0)
+    {
+        value = MinNSiRatio;
+    }
+    else if (strcmp(MyParameter, "SiMaxUptake") == 0)
+    {
+        value = SiMaxUptake;
+    }
+    else if (strcmp(MyParameter, "KSi") == 0)
+    {
+        value = KSi;
+    }
+    else if (strcmp(MyParameter, "KSiInternal") == 0)
+    {
+        value = KSiInternal;
     }
     else
         value = 0.0;
@@ -771,6 +873,10 @@ bool TCrestumaLeverPhytoplankton2DVIntLim::SetParameterValue(char* MyParameter, 
     {
         MinNCellQuota = value;
     }
+    else if (strcmp(MyParameter, "MinSiCellQuota") == 0)
+    {
+        MinSiCellQuota = value;
+    }
     else if (strcmp(MyParameter, "MaxPCellQuota") == 0)
     {
         MaxPCellQuota = value;
@@ -779,11 +885,19 @@ bool TCrestumaLeverPhytoplankton2DVIntLim::SetParameterValue(char* MyParameter, 
     {
         MaxNCellQuota = value;
     }
+    else if (strcmp(MyParameter, "MaxSiCellQuota") == 0)
+    {
+        MaxSiCellQuota = value;
+    }
     else if (strcmp(MyParameter, "KPInternal") == 0)
     {
         KPInternal = value;
     }
     else if (strcmp(MyParameter, "KNInternal") == 0)
+    {
+        KNInternal = value;
+    }
+    else if (strcmp(MyParameter, "KSiInternal") == 0)
     {
         KNInternal = value;
     }
@@ -815,9 +929,41 @@ bool TCrestumaLeverPhytoplankton2DVIntLim::SetParameterValue(char* MyParameter, 
     {
         PhosphorusLimitation = value;
     }
+    else if (strcmp(MyParameter, "Phosphorus limitation") == 0)
+    {
+        SilicaLimitation = value;
+    }
     else if (strcmp(MyParameter, "Productivity") == 0)
     {
         Productivity = value;
+    }
+    else if (strcmp(MyParameter, "Silica limitation") == 0)
+    {
+        SilicaLimitation = value;
+    }
+    else if (strcmp(MyParameter, "MaxSiCellQuota") == 0)
+    {
+        MaxSiCellQuota = value;
+    }
+    else if (strcmp(MyParameter, "MinNSiRatio") == 0)
+    {
+        MinNSiRatio = value;
+    }
+    else if (strcmp(MyParameter, "SiMaxUptake") == 0)
+    {
+        SiMaxUptake = value;
+    }
+    else if (strcmp(MyParameter, "KSi") == 0)
+    {
+        KSi = value;
+    }
+    else if (strcmp(MyParameter, "KSiInternal") == 0)
+    {
+        KSiInternal = value;
+    }
+    else if (strcmp(MyParameter, "RedfieldSiFactor") == 0)
+    {
+        RedfieldSiFactor = value;
     }
     else
         rc = false;
@@ -842,6 +988,8 @@ void TCrestumaLeverPhytoplankton2DVIntLim::Inquiry(char* srcName, double &Value,
 		Value = NPhyto[MyBoxNumber];
     else if (strcmp(MyParameter, "Phytoplankton P biomass") == 0)
 		Value = PPhyto[MyBoxNumber];
+    else if (strcmp(MyParameter, "Phytoplankton Si biomass") == 0)
+		Value = SiPhyto[MyBoxNumber];
     else if (strcmp(MyParameter, "NCellQuota") == 0)
 		Value = NCellQuota[MyBoxNumber];
     else if (strcmp(MyParameter, "PCellQuota") == 0)
@@ -1128,6 +1276,10 @@ bool TCrestumaLeverPhytoplankton2DVIntLim::SaveParameters()
         {
             PReadWrite->WriteCell(PhosphorusLimitation, 6);
         }
+        else if (strcmp(ParametersNameArray[i], "Silicate limitation") == 0)
+        {
+            PReadWrite->WriteCell(SilicaLimitation, 6);
+        }
         PReadWrite->WriteSeparator(true);
     }
     PReadWrite->WriteSeparator(true);
@@ -1331,6 +1483,8 @@ void TCrestumaLeverPhytoplankton2DVIntLim::Go()
              	NitrogenUptake(ABoxNumber);
             if (PhosphorusLimitation == 1)
              	PhosphorusUptake(ABoxNumber);
+            if (SilicaLimitation == 1)
+             	SilicaUptake(ABoxNumber);
 #endif
             Mortality(ABoxNumber);
             Settling(i,j);
@@ -1402,15 +1556,24 @@ void TCrestumaLeverPhytoplankton2DVIntLim::Integrate()
                              OceanPhyto * RedfieldPFactor/ RedfieldCFactor);
    }
 #endif
-
+   Integration(SiPhyto, SiCellFlux);
+#ifndef _PORT_FORTRAN_
+   if (MyTransportPointer != NULL)
+   {
+		MyTransportPointer->Go(SiPhyto, GenericProduct2, //zeros
+                             RiverPhyto * RedfieldSiFactor/ RedfieldCFactor,
+                             OceanPhyto * RedfieldSiFactor/ RedfieldCFactor);
+   }
+#endif
    for (int i = 0; i < NumberOfBoxes; i++)
    {
-   	NCellFlux[i] = 0.0; PCellFlux[i] = 0.0;
+   	NCellFlux[i] = 0.0; PCellFlux[i] = 0.0;SiCellFlux[i] = 0.0;
       if (PhytoBiomass[i] > 0.0)
       {
       	NCellQuota[i] = NPhyto[i] / PhytoBiomass[i];
       	PCellQuota[i] = PPhyto[i] / PhytoBiomass[i];
-   	}
+        SiCellQuota[i] = SiPhyto[i] / PhytoBiomass[i];
+      }
    }
 #ifndef _PORT_FORTRAN_
    Loads();
@@ -1671,6 +1834,54 @@ void TCrestumaLeverPhytoplankton2DVIntLim::PhosphorusUptake(int ABoxNumber, doub
    PCellFlux[i] = PCellFlux[i] + PUptake[i] / HOURSTOSECONDS/** DAYSTOHOURS*/;  //mg P m-3 d-1
 }
 
+
+#ifndef _PORT_FORTRAN_
+void TCrestumaLeverPhytoplankton2DVIntLim::SilicaUptake(int ABoxNumber)
+{
+	TEcoDynClass* MyNutrientPointer = MyPEcoDynClass->GetNutrientPointer();
+#else
+void TCrestumaLeverPhytoplankton2DVIntLim::SilicaUptake(int ABoxNumber, double Silica)
+{
+#endif
+   int i = ABoxNumber;
+#ifndef _PORT_FORTRAN_ 
+	if (MyNutrientPointer != NULL)
+	{
+		// the limitation is based on umol l-1 values passed from the
+		// communicate method
+      double Silica;
+      //No caso de a classe ser invocada a partir do EcoDynamo...
+      MyNutrientPointer->Inquiry(GetEcoDynClassName(), Silica,
+												 i,
+												 "Silica",
+												 ObjectCode);
+      //...
+#endif
+   	if (
+            (SiCellQuota[i] > MaxSiCellQuota) ||
+            (NCellQuota[i] / SiCellQuota[i] <= MinNSiRatio)
+         )
+         SiUptake[i] = 0.0;
+      else
+      {
+         SiUptake[i] = SiMaxUptake *  Silica / ( Silica + KSi) * SiPhyto[i];
+         //No caso de a classe ser invocada a partir do EcoDynamo...
+#ifndef _PORT_FORTRAN_ 
+         MyNutrientPointer->Update(GetEcoDynClassName(), -SiUptake[i] / HOURSTOSECONDS/** DAYSTOHOURS*/ * CUBIC / SILICAATOMICWEIGHT,
+                                        i,
+                                        "Silica",
+                                        ObjectCode);
+         //...    
+#endif                           
+    	}
+#ifndef _PORT_FORTRAN_ 
+   }
+   else
+      SiUptake[i] = 0.0;
+#endif
+   SiCellFlux[i] = SiCellFlux[i] + SiUptake[i] / HOURSTOSECONDS/** DAYSTOHOURS*/;  //mg Si m-3 d-1
+}
+
 void TCrestumaLeverPhytoplankton2DVIntLim::NutrientLimitation(int ABoxNumber)
 {
    //No caso de a classe ser invocada a partir do EcoDynamo...
@@ -1680,7 +1891,7 @@ void TCrestumaLeverPhytoplankton2DVIntLim::NutrientLimitation(int ABoxNumber)
    if (MyNutrientPointer != NULL)
    {
 #endif
-	int i = ABoxNumber;  double NLimitation, PLimitation;
+	int i = ABoxNumber;  double NLimitation, PLimitation, SiLimitation;
 
    if (PhosphorusLimitation == 1) {
      if (PCellQuota[i] < MinPCellQuota)
@@ -1699,10 +1910,20 @@ void TCrestumaLeverPhytoplankton2DVIntLim::NutrientLimitation(int ABoxNumber)
    else
       NLimitation = 1.0;
 
-   if ((PLimitation == 0.0) || (NLimitation == 0.0))
+   if (SilicaLimitation == 1) {
+     if (SiCellQuota[i] < MinSiCellQuota)
+          SiLimitation = 0.0;
+     else
+          SiLimitation = SiCellQuota[i] / (SiCellQuota[i] + KSiInternal);
+   }
+   else
+      SiLimitation = 1.0;
+
+   if ((PLimitation == 0.0) || (NLimitation == 0.0) || (SiLimitation == 0.0))
    	Productivity = 0.0;
    else
-   	Productivity = Productivity * MIN(PLimitation,NLimitation);
+   	Productivity = Productivity * MIN(MIN(PLimitation,NLimitation),SiLimitation);
+
 #ifndef _PORT_FORTRAN_
    }
 #endif
@@ -1887,6 +2108,7 @@ void TCrestumaLeverPhytoplankton2DVIntLim::Mortality(int ABoxNumber)
 												ObjectCode);      //Return as umol P / m3
 #endif
          PCellFlux[MyBoxNumber] = PCellFlux[MyBoxNumber] - Release * PCellQuota[MyBoxNumber];
+         SiCellFlux[MyBoxNumber] = SiCellFlux[MyBoxNumber] - Release * SiCellQuota[MyBoxNumber];
 #ifdef _PORT_FORTRAN_
       }
 #endif
@@ -1903,7 +2125,7 @@ double TCrestumaLeverPhytoplankton2DVIntLim::TemperatureArrheniusExponentialLimi
 
 void TCrestumaLeverPhytoplankton2DVIntLim::Settling(int ALine, int AColumn)
 {
-	double MyDepth, MyUpperDepth, MyLowerDepth, NLoss, PLoss, MySettlingSpeed;
+	double MyDepth, MyUpperDepth, MyLowerDepth, NLoss, PLoss, SiLoss, MySettlingSpeed;
    int MyBoxNumber, MyUpperBoxNumber;
    MySettlingSpeed = SettlingSpeed / DAYSTOSECONDS; //m/s
    MyBoxNumber = ALine * GridColumns + AColumn;
@@ -1929,6 +2151,9 @@ void TCrestumaLeverPhytoplankton2DVIntLim::Settling(int ALine, int AColumn)
 
       PLoss = MySettlingSpeed * PPhyto[MyBoxNumber] / MyDepth;
       PCellFlux[MyBoxNumber] = PCellFlux[MyBoxNumber] - PLoss;
+
+      SiLoss = MySettlingSpeed * SiPhyto[MyBoxNumber] / MyDepth;
+      SiCellFlux[MyBoxNumber] = SiCellFlux[MyBoxNumber] - SiLoss; 
 
       if (
             (MyNutrientPointer != NULL) &&
@@ -1957,6 +2182,7 @@ void TCrestumaLeverPhytoplankton2DVIntLim::Settling(int ALine, int AColumn)
       	PhytoFlux[MyBoxNumber] = PhytoFlux[MyBoxNumber] + MySettlingSpeed * PhytoBiomass[MyUpperBoxNumber] / MyUpperDepth;
         NCellFlux[MyBoxNumber] = NCellFlux[MyBoxNumber] + MySettlingSpeed * NPhyto[MyUpperBoxNumber] / MyUpperDepth;
         PCellFlux[MyBoxNumber] = PCellFlux[MyBoxNumber] + MySettlingSpeed * PPhyto[MyUpperBoxNumber] / MyUpperDepth;
+        SiCellFlux[MyBoxNumber] = SiCellFlux[MyBoxNumber] + MySettlingSpeed * SiPhyto[MyUpperBoxNumber] / MyUpperDepth;
       }
    }
 }

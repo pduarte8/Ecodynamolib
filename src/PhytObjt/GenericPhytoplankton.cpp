@@ -172,8 +172,9 @@ void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, doubl
                             double* deathLoss, double* redfieldCFactor, double* redfieldNFactor,double* redfieldPFactor, double* temperatureAugmentationRate,
                             double* ratioLightDarkRespiration, double* minNPRatio,double* maxNPRatio, double* pMaxUptake, double* nMaxUptake, double* kP,double* kNO3, 
                             double* kNH4, double* minPCellQuota, double* maxPCellQuota,double* minNCellQuota, double* maxNCellQuota, double* kPInternal,double* kNInternal, 
-                            double* settlingSpeed, double* carbonToOxygenProd,double* carbonToOxygenResp, double* tminRespiration,double* tminPhotosynthesis, 
-                            int* nitrogenLimitation, int* phosphorusLimitation)
+                            double* maxSiCellQuota, double* minNSiRatio, double* siMaxUptake, double* kSi, double* kSiInternal,double* redfieldSiFactor, 
+                            double* settlingSpeed, double* carbonToOxygenProd,double* carbonToOxygenResp, double* tminRespiration,double* tminPhotosynthesis,
+                            int* nitrogenLimitation, int* phosphorusLimitation, int* silicaLimitation)
 {
         TPhytoplanktonGeneric* ptr;
         //***Grid dimensions set to "ones" because this is for usage of EcoDynamo functions from ROMS (or other software) and the functions remain agnostic about grid details***/
@@ -223,8 +224,18 @@ void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, doubl
         ptr->SetParameterValue("Carbon to Oxygen in respiration",*carbonToOxygenResp);
         ptr->SetParameterValue("TminPhotosynthesis",*tminPhotosynthesis);
         ptr->SetParameterValue("TminRespiration",*tminRespiration);
+
+        ptr->SetParameterValue("MaxSiCellQuota",*maxSiCellQuota);
+        ptr->SetParameterValue("MinNSiRatio",*minNSiRatio);
+        ptr->SetParameterValue("SiMaxUptake",*siMaxUptake);
+        ptr->SetParameterValue("KSi",*kSi);
+        ptr->SetParameterValue("KSiInternal",*kSiInternal);
+        ptr->SetParameterValue("RedfieldSiFactor",*redfieldSiFactor);
+
         ptr->SetParameterValue("Nitrogen limitation",*nitrogenLimitation);
         ptr->SetParameterValue("Phosphorus limitation",*phosphorusLimitation);
+        ptr->SetParameterValue("Silica limitation",*silicaLimitation);
+        
         ptr->ExudatedFlux = 0.0;
         ptr->MyDay = 0;
         ptr->aMin = 0.00000000001;
@@ -426,6 +437,30 @@ void phytoplankton_phosphorus_uptake__(long* PPhytoplankton, double* Phosphate,d
    else
       *cffPO4 = 0.0;
    //cout << "Phosphorus uptake end" << endl;
+}
+
+void phytoplankton_silica_uptake__(long* PPhytoplankton, double* Silicate,double* cffSiOH4, double *siPhyto, double* biomass)
+{
+   double MyBiomass, MySiPhyto, MySiCellQuota;
+   //cout << "Phosphorus uptake start" << endl;
+   TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
+
+   MyBiomass = *biomass * CARBONATOMICWEIGHT; //Conversions from mmol/m3 to mg / m3
+   ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
+   MySiPhyto = *siPhyto * SILICAATOMICWEIGHT;
+   if (MyBiomass > ptr->aMin)MySiCellQuota = MySiPhyto / MyBiomass; 
+   else MySiCellQuota = 0.0;
+   ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
+   ptr->SetVariableValue("Fortran", MySiCellQuota,0,"SiCellQuota");
+   ptr->SetVariableValue("Fortran", MySiPhyto,0,"PPhyto");
+
+   if (ptr->GetParameterValue("Silica limitation") == 1)
+      ptr->SilicaUptake(0, *Silicate);
+   if (*Silicate > ptr->aMin)
+      *cffSiOH4 = ptr->SiUptake[0] / SILICAATOMICWEIGHT / HOURSTOSECONDS /*/ *Silicate*/;
+   else
+      *cffSiOH4 = 0.0;
+   //cout << "Silicate uptake end" << endl;
 }
 
 void phytoplankton_mortality__(long* PPhytoplankton, double* nCellQuota, double* pCellQuota,
