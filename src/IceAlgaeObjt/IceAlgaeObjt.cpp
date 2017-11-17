@@ -16,13 +16,192 @@
 #endif  // __BORLANDC__
 #include "ecodyn.rh"
 #include "IceAlgaeObjt.h"
-#include "params.h"
+//#include "params.h"
 #include "EcoDynClass.h"
 #include "iodll.h"
 
+
+#ifdef _PORT_FORTRAN_
+/*
+ * singleton provider - TPhytoplanktonGeneric class method
+ */
+
+TIceAlgae* TIceAlgae::getIceAlgae()
+{
+   TIceAlgae* PIceAlgae = new TIceAlgae("TIceAlgae");
+   return PIceAlgae;
+}
+
+
+TIceAlgae::TIceAlgae(char* className)
+        :TProdutor(className)
+{
+    MyPEcoDynClass = (TEcoDynClass*)this;
+}
+
+void icealgae_new__(long* PIceAlgae, int* piCurveOption, char* limitationType, 
+                    double* pmax, double* slope, double* beta,double* tminPhotosynthesis,double* tempCoefPhotosynthesis, double* carbonToOxygenProd,
+                    double* respirationCoefficient,double* maintenanceRespiration, double* ratioLightDarkRespiration,double* tminRespiration, double* tempCoefRespiration,
+                    double* tminMortality, double* tempCoefMortality,double* mortalityAtZeroDegres, 
+                    double* maxNPRatio, double* minNPRatio,double* minNSiRatio,double* kNH4, double* kNO3,double* kP,double* kSi, 
+                    double* nMaxUptake, double* pMaxUptake, double* siMaxUptake,double* kNInternal,double* kPInternal,double* kSiInternal,  
+                    double* kNO3External,double* kNH4External,double* kPExternal, double* kSiExternal, double* phi,
+                    double* docStressLoss,
+                    double* seeding, double* integrationSteps,double* nutLimitation,double*salLimitation,double*tempLimitation,
+                    double* maxNCellQuota,double* maxPCellQuota,double* maxSiCellQuota,
+                    double* minNCellQuota,double* minPCellQuota,double* minSiCellQuota,
+                    double* lightThreshold, double* winterResp)
+{
+        TIceAlgae* ptr;
+        //***Grid dimensions set to "ones" because this is for usage of EcoDynamo functions from ROMS (or other software) and the functions remain agnostic about grid details***/
+        ptr = TIceAlgae::getIceAlgae();
+        *PIceAlgae = (long)ptr;
+        ptr->SetNumberOfLines(1);
+        ptr->SetNumberOfColumns(1);
+        ptr->SetNumberOfLayers(1);
+        ptr->SetNumberOfBoxes(1); 
+        ptr->SetNumberOfBoxesWithIce(1);
+        ptr->SetNumberOfIceClasses(1);
+        /*********************************************Variable declaration and zero initialization and parameter declaration and initialization*********************************/
+        ptr->InitializeVariables("TIceAlgae");
+        /****************************************************************Parameters values imported from Fortran program used to redefine intial parameter value****************/
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*pmax,0,"Pmax");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*slope,0,"Slope");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*beta,0,"beta");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*tminPhotosynthesis,0,"TminPhotosynthesis");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*tempCoefPhotosynthesis,0,"TempCoefPhotosynthesis");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*carbonToOxygenProd,0,"CarbonToOxygenProd");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*respirationCoefficient,0,"RespirationCoefficient");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*maintenanceRespiration,0,"R0");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*ratioLightDarkRespiration,0,"RatioLightDarkRespiratio");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*tminRespiration,0,"TminRespiration");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*tempCoefRespiration,0,"TempCoefRespiration");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*tminMortality,0,"TminMortality");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*tempCoefMortality,0,"TempCoefMortality"); 
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*mortalityAtZeroDegres,0,"MortalityAtZeroDegres"); 
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*maxNPRatio,0,"MaxNPRatio"); 
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*minNPRatio,0,"MinNPRatio"); 
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*minNSiRatio,0,"MinNSiRatio"); 
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*kNH4,0,"KNH4"); 
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*kNH4,0,"KNO3"); 
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*kP,0,"KP"); 
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*kSi,0,"KSi"); 
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*nMaxUptake,0,"NMaxUptake"); 
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*pMaxUptake,0,"PMaxUptake"); 
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*siMaxUptake,0,"SiMaxUptake"); 
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*kNInternal,0,"KNInternal"); 
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*kPInternal,0,"KPInternal");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*kSiInternal,0,"KSiInternal");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*kNO3External,0,"KNO3External");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*kPExternal,0,"KPExternal");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*kSiExternal,0,"KSiExternal");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*phi,0,"Phi"); 
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*docStressLoss,0,"DocStressLoss");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*seeding,0,"Seeding");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*integrationSteps,0,"IntegrationSteps"); 
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*nutLimitation,0,"NutLimitation"); 
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*salLimitation,0,"SalLimitation"); 
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*tempLimitation,0,"TempLimitation"); 
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*maxNCellQuota,0,"MaxNCellQuota");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*maxPCellQuota,0,"MaxPCellQuota");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*maxSiCellQuota,0,"MaxSiCellQuota");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*minNCellQuota,0,"MinNCellQuota");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*minPCellQuota,0,"MinPCellQuota");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*minSiCellQuota,0,"MinSiCellQuota");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*lightThreshold,0,"LightThreshold");
+        ptr->SetVariableValue(ptr->GetEcoDynClassName(),*winterResp,0,"WinterResp");
+}
+//-----------------------------------------------
+void icealgae_go__(long* PiceAlgae, double* layerThickness, double* timeStep)
+{
+   TIceAlgae* ptr = (TIceAlgae*) *PiceAlgae;
+   /********Time step is reseted every "go". This is not necessary for CICE but it may become necessary for other variable time step application******************/
+   ptr->SetTimeStep(*timeStep);
+   /*********************SetABoxDepth resets layer thickness. This is mostly necessary for surface layers*8******************************************************/
+   ptr->SetABoxDepth(*layerThickness);
+   /********************************************Resetes box number to zero....just in case....*******************************************************************/
+   ptr->SetABoxNumber(0);
+   //cout<< "Pmax= "<< ptr->Pmax[0] << endl;
+}
+//-----------------------------------------------
+void icealgae_production__(long* PIceAlgae, double* lightAtTop, double* lightAtBottom, double* kValue,double* iceTemperature,
+                               int* piCurveOption, double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass, 
+                               double *TIC, double *Slope, double* Chl2Carbon, double *OxygenProduction)
+{
+   double Productivity, MyBiomass, MyNPhyto, MyPPhyto, MyNCellQuota, MyPCellQuota, MyChl2Carbon, FromChl2Carbon, CarbonOxygenRatio;
+   double Tmin, TCoef;
+   TIceAlgae* ptr = (TIceAlgae*) *PIceAlgae;
+   /**********************PAR light intensity reseting at the the topo and the bottom of a model cell**************************************************************/
+   ptr->SetLightAtTop(*lightAtTop);
+   ptr->SetLightAtBottom(*lightAtBottom);
+   /********************************************Reseting of the light extinction coefficient for proper primary production vertical integration********************/
+   ptr->SetVariableValue(ptr->GetEcoDynClassName(),*kValue,0,"KForIceAlgae");
+   /***********Reseting of the slope of the P-I curve, just in case this is to be recalculated as a function of chlorophyll:carbon or something else...************/
+   ptr->SetVariableValue(ptr->GetEcoDynClassName(),*Slope,0,"Slope");
+   /********************************************Reseting of water temperature to account for corresponding limitation of photosynthesis****************************/
+   ptr->SetIceTemperature(*iceTemperature);
+   /********************************************Conversions from mmol/m3 (ROMS units) to mg / m3 (EcoDynamo units)*************************************************/                            
+   MyBiomass = *biomass * CARBONATOMICWEIGHT; 
+   MyNPhyto =  *nPhyto * NITROGENATOMICWEIGHT;
+   MyPPhyto = *pPhyto * PHOSPHORUSATOMICWEIGHT;
+   /*********************************************Reseting of the chlorophyll / carbon ratio************************************************************************/
+   MyChl2Carbon = *Chl2Carbon;
+   FromChl2Carbon = 1.0 / MyChl2Carbon; 
+   /*******************************************Calculation of cell quotas for usage in the calculation of internal nutrient limitation*****************************/ 
+   if (MyBiomass > ptr->aMin)
+   {
+       MyNCellQuota = MyNPhyto / MyBiomass;
+       MyPCellQuota = MyPPhyto / MyBiomass; 
+   }
+   else
+   {
+       MyNCellQuota = 0.0;
+       MyPCellQuota = 0.0;
+   }
+   /******************************************Reseting of variable values in the phytoplankton pointer in the units of EcoDynamo************************************/
+   ptr->SetVariableValue("Fortran", MyBiomass,0,"Ice algae C");
+   ptr->SetVariableValue("Fortran", FromChl2Carbon,0,"ChlToCarbon");
+   ptr->SetVariableValue("Fortran", MyNCellQuota,0,"NCellQuota");
+   ptr->SetVariableValue("Fortran", MyPCellQuota,0,"PCellQuota");
+   ptr->SetVariableValue("Fortran", MyNPhyto,0,"Ice algae N");
+   ptr->SetVariableValue("Fortran", MyPPhyto,0,"Ice algae P");
+   /*****************************************Selection of a P-I function depending on the option "piCurveOption" in the arguments above*****************************/
+   switch (*piCurveOption)
+   {
+      case 1: /*STEELE*/ // add a list item
+         ptr->Productivity = ptr->PlattPIFunction(0);
+         break;
+      case 2: /*MICHAELIS_MENTEN*/	// add a list item
+         ptr->Productivity = ptr->SteelePIFunction(0);
+         break;
+   }
+   /***************************************Light limited productivity calculated in mg C / m3**********************************************************************/
+   Productivity = ptr->GetParameterValue("Productivity"); 
+   /***************************************Calculation of temperature limitation***********************************************************************************/
+   Tmin = ptr->GetParameterValue("TminPhotosynthesis");
+   TCoef= ptr->GetParameterValue("TempCoefPhotosynthesis");
+   Productivity = ptr->GetParameterValue("Productivity") * ptr->TemperatureArrheniusExponentialLimitation(TCoef, *iceTemperature, Tmin);
+   ptr->SetParameterValue("Productivity", Productivity);
+   //cout<< "Productivity temp limited = "<< Productivity << endl;
+   /***************************************Calculation of nutrient limitation**************************************************************************************/
+   ptr->NutrientLimitation(0,0,0,0);
+   //Productivity = ptr->GetParameterValue("Productivity");
+   //cout<< "Productivity nut limited = "<< Productivity << endl;
+   /***************************************Productivity recalculated in mmol C/m3/s*******************************************************************************/
+   *GrossProduction = ptr->GetParameterValue("Productivity") / CARBONATOMICWEIGHT; //Return value in mmolC/m3/s for compatibility with ROMS
+   *Slope = ptr->GetParameterValue("Slope"); //Return value in [s-1/(micro mol photons m-2 s-1)]
+   /**************************************This was to calculate average daily production which is not being calculated now****************************************/
+    ptr->SetJulianDay(*julianDay);
+   //ptr->DailyAverageProduction();
+   /*************************************Productivity expressed in oxygen units to feedback oxygen biogeochemical cycling****************************************/ 
+   CarbonOxygenRatio = ptr->GetParameterValue("CarbonToOxygenProd");
+   *OxygenProduction = ptr->GetParameterValue("Productivity") / CarbonOxygenRatio / (2.0 * OXYGENATOMICWEIGHT); //OxygenProduction in mmol O2 m-3 s-1 
+}
+//----------------------------------------------- 
+#else
 // Constructors invoked outside EcoDyn shell...
 
-TIceAlgae::TIceAlgae(char* className,
+/*TIceAlgae::TIceAlgae(char* className,
         float timeStep, int nLines, int nColumns, double aDepth[],
         double aLength[], double aWidth[], double aElevation[], int aType[],
         int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[],
@@ -50,13 +229,15 @@ TIceAlgae::TIceAlgae(char* className, float timeStep, char* morphologyFilename,
         InitializeVariables(className);
         ReadVariablesAndParameters(className);
     }
-}
+}*/
 // ...
 
 TIceAlgae::TIceAlgae(TEcoDynClass* APEcoDynClass, char* className): TProdutor(APEcoDynClass, className)
 {
     // Receive pointer to integrate
     MyPEcoDynClass = APEcoDynClass;
+    ObjectCode = ICEALGAEOBJECTCODE;
+    NumberOfIceClasses = MyPEcoDynClass->GetNumberOfIceClasses();
     bool AIceRecord;
     AIceRecord = MyPEcoDynClass->HasAIceRecord();
     if (!AIceRecord)
@@ -68,7 +249,7 @@ TIceAlgae::TIceAlgae(TEcoDynClass* APEcoDynClass, char* className): TProdutor(AP
     if (AIceRecord)
     {
        MyIceRecord = MyPEcoDynClass->GetAIceRecord();
-       NumberOfBoxesWithIce = MyPEcoDynClass->GetNumberOfCellsWithIce();
+       NumberOfHorizontalCells = MyPEcoDynClass->GetNumberOfCellsWithIce();
        NumberOfCongelationLayers = MyIceRecord->CongelationIceLayers;
        NumberOfSkeletalLayers = MyIceRecord->SkeletalIceLayers;
        NumberOfPlateletLayers = MyIceRecord->PlateletIceLayers;
@@ -78,102 +259,91 @@ TIceAlgae::TIceAlgae(TEcoDynClass* APEcoDynClass, char* className): TProdutor(AP
     else
     {
 #ifdef __BORLANDC__
-        MessageBox(0, "Ice record missing in TIce.", "EcoDynamo alert", MB_OK);
+        MessageBox(0, "Ice record missing in TIceAlgae.", "EcoDynamo alert", MB_OK);
 #else  // __BORLANDC__
-        cerr << "TIceAlgae::TIceAlgae - Ice record missing in TIce." << endl;
+        cerr << "TIceAlgae::TIceAlgae - Ice record missing in TIceAlgae." << endl;
 #endif  // __BORLANDC__
     }
+    NumberOfBoxesWithIce = MyPEcoDynClass->GetIceGridSize();
     InitializeVariables(className);
     ReadVariablesAndParameters(className);
 }
 
+#endif  //_PORT_FORTRAN_
+
 void TIceAlgae::InitializeVariables(char* className)
 {
-    ObjectCode = ICEALGAEOBJECTCODE;
     strcpy(EcoDynClassName, className);
+#ifndef _PORT_FORTRAN_
     NumberOfLines = MyPEcoDynClass->GetNumberOfLines();
     NumberOfColumns = MyPEcoDynClass->GetNumberOfColumns();
-    NumberOfLayers =  MyPEcoDynClass->GetNumberOfLayers();
-    // Get array size
-    NumberOfBoxes = MyPEcoDynClass->GetGridSize(); // Size of array - i.e. number of model boxes
     TimeStep = MyPEcoDynClass->GetTimeStep();
+
     // Initialise pointers
     if (NumberOfBoxesWithIce > 0)                       // Initialise arrays for variable pairs - one
     {
-        IceAlgaeChl = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        IceAlgaeC = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        IceAlgaeN = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        IceAlgaeP = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        IceAlgaeSi = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        NCellQuota = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        PCellQuota = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        SiCellQuota = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        IceAlgaeChlFlux = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        IceAlgaeCFlux = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        IceAlgaeNFlux = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        IceAlgaePFlux = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        IceAlgaeSiFlux = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        KForIceAlgae = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        IceAlgaeLayerThickness = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        OxygenNetProduction = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        IceAlgaeChlInBox = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        IceAlgaeCInBox = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        IceAlgaeNInBox = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        IceAlgaePInBox = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        IceAlgaeSiInBox = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        DailyMeanGPP = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        NUptake = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        PUptake = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        SiUptake = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        NCellFlux = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        PCellFlux = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        SiCellFlux = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        NLimitation = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        PLimitation = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        SiLimitation = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        NPSLimitation = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        LightLimitation = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        TemperatureLimitation = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        SaltLimitation = (double*) calloc(NumberOfBoxesWithIce, sizeof(double));
-        /*for (int i = 0; i < NumberOfBoxesWithIce; i++)
+#endif //_PORT_FORTRAN_
+        IceAlgaeChl = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        IceAlgaeC = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        IceAlgaeN = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        IceAlgaeP = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        IceAlgaeSi = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        NCellQuota = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        PCellQuota = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        SiCellQuota = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        IceAlgaeChlFlux = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        IceAlgaeCFlux = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        IceAlgaeNFlux = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        IceAlgaePFlux = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        IceAlgaeSiFlux = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        KForIceAlgae = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        IceAlgaeLayerThickness = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        OxygenNetProduction = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        IceAlgaeChlInBox = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        IceAlgaeCInBox = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        IceAlgaeNInBox = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        IceAlgaePInBox = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        IceAlgaeSiInBox = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        DailyMeanGPP = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        NUptake = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        PUptake = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        SiUptake = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        NCellFlux = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        PCellFlux = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        SiCellFlux = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        NLimitation = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        PLimitation = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        SiLimitation = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        NPSLimitation = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        LightLimitation = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        TemperatureLimitation = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        SaltLimitation = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        ChlToCarbonIceAlgae = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        RespirationRate = (double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        MortalityAtZeroDegres =(double*) calloc(NumberOfBoxesWithIce*NumberOfIceClasses, sizeof(double));
+        SnowMeltingCLosseRate =(double*) calloc(NumberOfLines * NumberOfColumns *NumberOfIceClasses, sizeof(double));
+        SnowMeltingNLosseRate =(double*) calloc(NumberOfLines * NumberOfColumns *NumberOfIceClasses, sizeof(double));
+        SnowMeltingPLosseRate =(double*) calloc(NumberOfLines * NumberOfColumns *NumberOfIceClasses, sizeof(double));
+        SnowMeltingSiLosseRate =(double*) calloc(NumberOfLines * NumberOfColumns *NumberOfIceClasses, sizeof(double));
+        IceMeltingCLosseRate =(double*) calloc(NumberOfLines * NumberOfColumns *NumberOfIceClasses, sizeof(double));
+        IceMeltingNLosseRate =(double*) calloc(NumberOfLines * NumberOfColumns *NumberOfIceClasses, sizeof(double));
+        IceMeltingPLosseRate =(double*) calloc(NumberOfLines * NumberOfColumns *NumberOfIceClasses, sizeof(double));
+        IceMeltingSiLosseRate =(double*) calloc(NumberOfLines * NumberOfColumns *NumberOfIceClasses, sizeof(double));
+        GPP = new double [NumberOfBoxesWithIce*NumberOfIceClasses];
+        NPP = new double [NumberOfBoxesWithIce*NumberOfIceClasses];
+
+        Pmax = new double [NumberOfBoxesWithIce*NumberOfIceClasses];
+        Slope = new double [NumberOfBoxesWithIce*NumberOfIceClasses];
+        beta = new double [NumberOfBoxesWithIce*NumberOfIceClasses];
+        Iopt = new double [NumberOfBoxesWithIce*NumberOfIceClasses];
+        MaintenanceRespiration = new double [NumberOfBoxesWithIce*NumberOfIceClasses];
+
+        for (int i = 0; i < NumberOfBoxesWithIce*NumberOfIceClasses; i++)
         {
-      	    IceAlgaeChl[i] = 0.0;
-            IceAlgaeC[i] = 0.0;
-            IceAlgaeN[i] = 0.0;
-            IceAlgaeP[i] = 0.0;
-            IceAlgaeSi[i] = 0.0;
-            NCellQuota[i] = 0.0;
-            PCellQuota[i] = 0.0;
-            SiCellQuota[i] = 0.0;
-            IceAlgaeChlFlux[i] = 0.0;
-            IceAlgaeCFlux[i] = 0.0;
-            IceAlgaeNFlux[i] = 0.0;
-            IceAlgaePFlux[i] = 0.0;
-            IceAlgaeSiFlux[i] = 0.0;
-            KForIceAlgae[i] = 0.0;
-            IceAlgaeLayerThickness[i] = 0.0;
-            OxygenNetProduction[i] = 0.0;
-            IceAlgaeChlInBox[i] = 0.0;
-            IceAlgaeCInBox[i] = 0.0;
-            IceAlgaeNInBox[i] = 0.0;
-            IceAlgaePInBox[i] = 0.0;
-            IceAlgaeSiInBox[i] = 0.0;
-            DailyMeanGPP[i] = 0.0;
-            ChlToCarbon[i] = 50.0;
-            NUptake[i] = 0.0;
-            PUptake[i] = 0.0;
-            SiUptake[i] = 0.0;
-            NCellFlux[i] = 0.0;
-            PCellFlux[i] = 0.0;
-            SiCellFlux[i] = 0.0;
-            NLimitation[i] = 0.0;
-            PLimitation[i] = 0.0;
-            SiLimitation[i] = 0.0;
-            NPSLimitation[i] = 0.0;
-            LightLimitation[i] = 0.0;
-            TemperatureLimitation[i] = 0.0;
-            SaltLimitation[i] = 0.0;
-        } */
+           GPP[i] = 0.0; NPP[i] = 0.0;
+           Pmax[i] = 0.0; Slope[i] = 0.0; beta[i] = 0.0; Iopt[i] = 0.0;
+           MaintenanceRespiration[i] = 0.0;
+        }
         MaxCCellQuota = 0.0;
         MaxNCellQuota = 0.0;
         MaxPCellQuota = 0.0;
@@ -188,11 +358,12 @@ void TIceAlgae::InitializeVariables(char* className)
         MaxNPRatio = 291.0;
         MinNPRatio = 4.0;
         MinNSiRatio = 0.06;
-        CarbonToOxygenProd = 2.666667;
+        NRedfieldQuota = 0.176, PRedfieldQuota = 0.024; SiRedfieldQuota = 0.176;
         CarbonToOxygenResp = 0.0;
         LightAtTop = 0.0;
         LightAtBottom = 0.0;
         WaterTemperature = 0.0;
+        IceTemperature = 0.0;
         TminPhotosynthesis = 0.0;
         TINNY = 0.0000000001;
         IntegrationSteps = 10.0;
@@ -205,12 +376,13 @@ void TIceAlgae::InitializeVariables(char* className)
         TempCoefRespiration = 0.0663;      //Jin et al (2006) - Annals of Glaciology 44 2006
         TempCoefPhotosynthesis = 0.0663;   //Jin et al (2006) - Annals of Glaciology 44 2006
         TempCoefMortality = 0.03;          //Jin et al (2006) - Annals of Glaciology 44 2006
-        MortalityAtZeroDegres = 0.000923; //Jin et al (2006) - Annals of Glaciology 44 2006
+        //MortalityAtZeroDegres = 0.000923; //Jin et al (2006) - Annals of Glaciology 44 2006
         KNH4 = 2.94;                      //Duarte et al. (2007) - Transitional Waters Monographs 1: 13-51
         KNO3 = 30.0;                      //Duarte et al. (2007) - Transitional Waters Monographs 1: 13-51
         KP = 2.0;                         //Duarte et al. (2007) - Transitional Waters Monographs 1: 13-51
         KSi = 30.0;        //Check????????????????
         NMaxUptake = 1.08;                //Duarte et al. (2007) - Transitional Waters Monographs 1: 13-51
+        NutrientReleaseRatio = 1.0;       //d-1
         PMaxUptake = 1.08;                //Duarte et al. (2007) - Transitional Waters Monographs 1: 13-51
         SiMaxUptake = 1.08;               //Assumed the same as N and PMaxUptakes
         MaxNPRatio = 291.0;               //Duarte et al. (2007) - Transitional Waters Monographs 1: 13-51
@@ -223,14 +395,21 @@ void TIceAlgae::InitializeVariables(char* className)
         Phi = 1.46;                       //[micromol Si-1 l]  Jin et al (2006) - Annals of Glaciology 44 2006
         DocStressLoss = 0.0;
         FreezingPointOfSeawater = -1.86;
+        IceMeltAmplificationFactor = 1.0;  
         Seeding = 50.0; //mg C / m2  Value assumed as a minimum to restart ice algal growth
         strcpy(PIfunction, "Platt");
         strcpy(LimitationType, "External");
         ADay = MyPEcoDynClass->GetJulianDay();
-        NutLimitation = true; SalLimitation = true; TempLimitation = true;
-
+        NutLimitation = true; SalLimitation = true; TempLimitation = true; TransportInIce = true; ArealBiomassCorrection = false;
+        UpperLayer = 0;
+        LowerLayerForChlExchange = 0;
+        LightThreshold = 0.0;
+        WinterResp = 0.0;
+        aMin = 0.00000000001;
+#ifndef _PORT_FORTRAN_
     }
     else
+#endif //_PORT_FORTRAN_
 #ifdef __BORLANDC__
 				MessageBox(0,"Ice algae object array not dimensioned","EcoDynamo alert",MB_OK | MB_ICONHAND);
 #else  // __BORLANDC__
@@ -241,7 +420,7 @@ void TIceAlgae::InitializeVariables(char* className)
 
 void TIceAlgae::ReadVariablesAndParameters(char* className)
 {
-   char MyVariable[65];
+   char MyVariable[65], MyName[65];
    double Value;
    //Read Variables file
    TReadWrite* PReadWrite = (TReadWrite*)MyPEcoDynClass->OpenVariablesFile("IceAlgae");
@@ -266,95 +445,70 @@ void TIceAlgae::ReadVariablesAndParameters(char* className)
              PReadWrite->ReadString(X + 2 + i, Y, VariableNameArray[i]);
              //MessageBox(0, VariableNameArray[i], "EcoDynamo alert", MB_OK);
           }
+          if (NumberOfIceClasses > 1)
+          {
+             //Debugger(NumberOfVariables); Debugger(NumberOfIceClasses);
+             BuildClassVariableNames(NumberOfVariables,NumberOfIceClasses);
+          }
           for (int i = 0; i < NumberOfVariables; i++)
           {
-             if (strcmp(VariableNameArray[i], "Ice algae chl") == 0)
+             //MessageBox(0, VariableNameArray[i], "EcoDynamo alert", MB_OK);
+             PReadWrite->ReadString(X+2+i, Y, MyVariable);
+             if (strcmp(MyVariable, "Ice algae chl") == 0)
              {
-                if (!PReadWrite->FindString("Ice algae chl values", XV, YV))
+                for (int j = 0; j < NumberOfBoxesWithIce * NumberOfIceClasses; j++)
                 {
-                    XV = X + 2 + i;
-                    YV = Y;
-                }
-                for (int j = 0; j < NumberOfBoxesWithIce; j++)
-                {
-                   PReadWrite->ReadNumber(XV, YV + 1 + j, IceAlgaeChl[j]);
+                   PReadWrite->ReadNumber(X+2+i, Y+1+j, IceAlgaeChl[j]);
+                   //if (j == NumberOfBoxesWithIce * NumberOfIceClasses-1) Debugger(IceAlgaeChl[j]);
                 }
              }
-             if (strcmp(VariableNameArray[i], "Ice algae C") == 0)
+             if (strcmp(MyVariable, "Ice algae C") == 0)
              {
-                if (!PReadWrite->FindString("Ice algae C values", XV, YV))
+                for (int j = 0; j < NumberOfBoxesWithIce * NumberOfIceClasses; j++)
                 {
-                    XV = X + 2 + i;
-                    YV = Y;
-                }
-                for (int j = 0; j < NumberOfBoxesWithIce; j++)
-                {
-                   PReadWrite->ReadNumber(XV, YV + 1 + j, IceAlgaeC[j]);
+                   PReadWrite->ReadNumber(X+2+i, Y+1+j, IceAlgaeC[j]);
                 }
              }
-             if (strcmp(VariableNameArray[i], "Ice algae N") == 0)
+             if (strcmp(MyVariable, "Ice algae N") == 0)
              {
-                if (!PReadWrite->FindString("Ice algae N values", XV, YV))
+                for (int j = 0; j < NumberOfBoxesWithIce * NumberOfIceClasses; j++)
                 {
-                    XV = X + 2 + i;
-                    YV = Y;
-                }
-                for (int j = 0; j < NumberOfBoxesWithIce; j++)
-                {
-                   PReadWrite->ReadNumber(XV, YV + 1 + j, IceAlgaeN[j]);
+                   PReadWrite->ReadNumber(X+2+i, Y+1+j, IceAlgaeN[j]);
                 }
              }
-             if (strcmp(VariableNameArray[i], "Ice algae P") == 0)
+             if (strcmp(MyVariable, "Ice algae P") == 0)
              {
-                if (!PReadWrite->FindString("Ice algae P values", XV, YV))
+                for (int j = 0; j < NumberOfBoxesWithIce * NumberOfIceClasses; j++)
                 {
-                    XV = X + 2 + i;
-                    YV = Y;
-                }
-                for (int j = 0; j < NumberOfBoxesWithIce; j++)
-                {
-                   PReadWrite->ReadNumber(XV, YV + 1 + j, IceAlgaeP[j]);
+                   PReadWrite->ReadNumber(X+2+i, Y+1+j, IceAlgaeP[j]);
                 }
              }
-             if (strcmp(VariableNameArray[i], "Ice algae Si") == 0)
+             if (strcmp(MyVariable, "Ice algae Si") == 0)
              {
-                if (!PReadWrite->FindString("Ice algae Si values", XV, YV))
+                for (int j = 0; j < NumberOfBoxesWithIce * NumberOfIceClasses; j++)
                 {
-                    XV = X + 2 + i;
-                    YV = Y;
-                }
-                for (int j = 0; j < NumberOfBoxesWithIce; j++)
-                {
-                   PReadWrite->ReadNumber(XV, YV + 1 + j, IceAlgaeSi[j]);
+                   PReadWrite->ReadNumber(X+2+i, Y+1+j, IceAlgaeSi[j]);
                 }
              }
-             if (strcmp(VariableNameArray[i], "ChlToCarbon") == 0)
+             if (strcmp(MyVariable, "ChlToCarbon") == 0)
              {
-                if (!PReadWrite->FindString("ChlToCarbon values", XV, YV))
+                for (int j = 0; j < NumberOfBoxesWithIce * NumberOfIceClasses; j++)
                 {
-                    XV = X + 2 + i;
-                    YV = Y;
-                }
-                for (int j = 0; j < NumberOfBoxesWithIce; j++)
-                {
-                   PReadWrite->ReadNumber(XV, YV + 1 + j, ChlToCarbon[j]);
+                   PReadWrite->ReadNumber(X+2+i, Y+1+j, ChlToCarbonIceAlgae[j]);
+                   //Debugger(ChlToCarbonIceAlgae[j]);
                 }
              }
-             if (strcmp(VariableNameArray[i], "IceAlgaeLayerThickness") == 0)
+             if (strcmp(MyVariable, "IceAlgaeLayerThickness") == 0)
              {
-                if (!PReadWrite->FindString("IceAlgaeLayerThickness values", XV, YV))
+                for (int j = 0; j < NumberOfBoxesWithIce * NumberOfIceClasses; j++)
                 {
-                    XV = X + 2 + i;
-                    YV = Y;
-                }
-                for (int j = 0; j < NumberOfBoxesWithIce; j++)
-                {
-                   PReadWrite->ReadNumber(XV, YV + 1 + j, IceAlgaeLayerThickness[j]);
+                   PReadWrite->ReadNumber(X+2+i, Y+1+j, IceAlgaeLayerThickness[j]);
                 }
                 //Debugger(IceAlgaeLayerThickness[NumberOfBoxesWithIce-1]);
              }
           }
           CloseDataFile((void*)PReadWrite);
+          NumberOfVariables =  NumberOfVariables * NumberOfIceClasses;
        }
        else
 #ifdef __BORLANDC__
@@ -363,8 +517,8 @@ void TIceAlgae::ReadVariablesAndParameters(char* className)
 					cerr << "TIceAlgae::ReadVariablesAndParameters - variables: undefined object TIceAlgae" << endl;
 #endif  // __BORLANDC__
    }
-   for (int j = 0; j < NumberOfBoxesWithIce; j++)
-      ChlExtinctionCoefficient(j);
+   /*for (int j = 0; j < NumberOfBoxesWithIce; j++)
+      ChlExtinctionCoefficient(j);*/
    PReadWrite = (TReadWrite*)MyPEcoDynClass->OpenParametersFile("IceAlgae");
    if (PReadWrite == NULL) 
 #ifdef __BORLANDC__
@@ -372,10 +526,12 @@ void TIceAlgae::ReadVariablesAndParameters(char* className)
 #else  // __BORLANDC__
 			cerr << "TIceAlgae::ReadVariablesAndParameters - Parameters file missing." << endl;
 #endif  // __BORLANDC__
-
+#ifdef __BORLANDC__
+   if (PReadWrite == NULL) MessageBox(0, "TIceAlgae parameters file missing.", "EcoDynamo alert", MB_OK);
+#endif  // __BORLANDC__
    if (PReadWrite != NULL)
    {
-       int X, Y;
+       int X, Y; double AValue;
        if (PReadWrite->FindString("Ice algae", X, Y))
        {
           //Debugger(X); Debugger(Y);
@@ -395,9 +551,15 @@ void TIceAlgae::ReadVariablesAndParameters(char* className)
              {
                 PReadWrite->ReadString(X + i + 2, Y + 1, LimitationType);
              }
+             if (strcmp(MyVariable, "TransportInIce") == 0)
+             {
+                PReadWrite->ReadNumber(X + i + 2, Y + 1, AValue);
+                if (AValue == 0) TransportInIce = false;
+                else TransportInIce = true;
+             }
              if (strcmp(MyVariable, "Pmax") == 0)
              {
-                for (int j = 0; j < NumberOfBoxesWithIce; j++)
+                for (int j = 0; j < NumberOfBoxesWithIce * NumberOfIceClasses; j++)
                 {
                    PReadWrite->ReadNumber(X + i + 2, Y + 1 + j, Pmax[j]);
                 }
@@ -405,7 +567,7 @@ void TIceAlgae::ReadVariablesAndParameters(char* className)
              }
              if (strcmp(MyVariable, "Slope") == 0)
              {
-                for (int j = 0; j < NumberOfBoxesWithIce; j++)
+                for (int j = 0; j < NumberOfBoxesWithIce * NumberOfIceClasses; j++)
                 {
                    PReadWrite->ReadNumber(X + i + 2, Y + 1 + j, Slope[j]);
                 }
@@ -413,7 +575,7 @@ void TIceAlgae::ReadVariablesAndParameters(char* className)
              }
              if (strcmp(MyVariable, "beta") == 0)
              {
-                for (int j = 0; j < NumberOfBoxesWithIce; j++)
+                for (int j = 0; j < NumberOfBoxesWithIce * NumberOfIceClasses; j++)
                 {
                    PReadWrite->ReadNumber(X + i + 2, Y + 1 + j, beta[j]);
                 }
@@ -429,10 +591,9 @@ void TIceAlgae::ReadVariablesAndParameters(char* className)
              }
              if (strcmp(MyVariable, "R0") == 0)
              {
-                   double AValue;
                    PReadWrite->ReadNumber(X + i + 2, Y + 1, AValue); //Debugger(AValue);
-                   for (int i = 0; i < NumberOfBoxesWithIce; i++)
-                      MaintenanceRespiration[i] = AValue;
+                   for (int j = 0; j < NumberOfBoxesWithIce * NumberOfIceClasses; j++)
+                      MaintenanceRespiration[j] = AValue;
              }
              if (strcmp(MyVariable, "RatioLightDarkRespiration") == 0)
              {
@@ -464,7 +625,13 @@ void TIceAlgae::ReadVariablesAndParameters(char* className)
              }
              if (strcmp(MyVariable, "MortalityAtZeroDegres") == 0)
              {
-                   PReadWrite->ReadNumber(X + i + 2, Y + 1, MortalityAtZeroDegres); //Debugger(MortalityAtZeroDegres);
+                   //PReadWrite->ReadNumber(X + i + 2, Y + 1, MortalityAtZeroDegres); //Debugger(MortalityAtZeroDegres);
+
+                   for (int j = 0; j < NumberOfBoxesWithIce * NumberOfIceClasses; j++)
+                   {
+                      PReadWrite->ReadNumber(X + i + 2, Y + 1 + j, AValue); //Debugger(AValue);
+                      MortalityAtZeroDegres[j] = AValue;  //Debugger(MortalityAtZeroDegres[j]);
+                   }
              }
              if (strcmp(MyVariable, "MaxNPRatio") == 0)
              {
@@ -477,6 +644,38 @@ void TIceAlgae::ReadVariablesAndParameters(char* className)
              if (strcmp(MyVariable, "MinNSiRatio") == 0)
              {
                    PReadWrite->ReadNumber(X + i + 2, Y + 1, MinNSiRatio); //Debugger(MinNSiRatio);
+             }
+             if (strcmp(MyVariable, "MaxCCellQuota") == 0)
+             {
+                   PReadWrite->ReadNumber(X + i + 2, Y + 1, MaxCCellQuota); //Debugger(MaxCCellQuota);
+             }
+             if (strcmp(MyVariable, "MaxNCellQuota") == 0)
+             {
+                   PReadWrite->ReadNumber(X + i + 2, Y + 1, MaxNCellQuota); //Debugger(MaxNCellQuota);
+             }
+             if (strcmp(MyVariable, "MaxPCellQuota") == 0)
+             {
+                   PReadWrite->ReadNumber(X + i + 2, Y + 1, MaxPCellQuota); //Debugger(MaxPCellQuota);
+             }
+             if (strcmp(MyVariable, "MaxSiCellQuota") == 0)
+             {
+                   PReadWrite->ReadNumber(X + i + 2, Y + 1, MaxSiCellQuota); //Debugger(MaxSiCellQuota);
+             }
+             if (strcmp(MyVariable, "MinCCellQuota") == 0)
+             {
+                   PReadWrite->ReadNumber(X + i + 2, Y + 1, MinCCellQuota); //Debugger(MinCCellQuota);
+             }
+             if (strcmp(MyVariable, "MinNCellQuota") == 0)
+             {
+                   PReadWrite->ReadNumber(X + i + 2, Y + 1, MinNCellQuota); //Debugger(MinNCellQuota);
+             }
+             if (strcmp(MyVariable, "MinPCellQuota") == 0)
+             {
+                   PReadWrite->ReadNumber(X + i + 2, Y + 1, MinPCellQuota); //Debugger(MinPCellQuota);
+             }
+             if (strcmp(MyVariable, "MinSiCellQuota") == 0)
+             {
+                   PReadWrite->ReadNumber(X + i + 2, Y + 1, MinSiCellQuota); //Debugger(MinSiCellQuota);
              }
              if (strcmp(MyVariable, "KNH4") == 0)
              {
@@ -538,13 +737,25 @@ void TIceAlgae::ReadVariablesAndParameters(char* className)
              {
                    PReadWrite->ReadNumber(X + i + 2, Y + 1, Phi); //Debugger(Phi);
              }
+             if (strcmp(MyVariable, "DocLoss") == 0)
+             {
+                   PReadWrite->ReadNumber(X + i + 2, Y + 1, DocLoss); //Debugger(DocStressLoss);
+             }            
              if (strcmp(MyVariable, "DocStressLoss") == 0)
              {
                    PReadWrite->ReadNumber(X + i + 2, Y + 1, DocStressLoss); //Debugger(DocStressLoss);
              }
+             if (strcmp(MyVariable, "NutrientReleaseRatio") == 0)
+             {
+                   PReadWrite->ReadNumber(X + i + 2, Y + 1, NutrientReleaseRatio); //Debugger(NutrientReleaseRatio);
+             }
              if (strcmp(MyVariable, "FreezingPointOfSeawater") == 0)
              {
                    PReadWrite->ReadNumber(X + i + 2, Y + 1, FreezingPointOfSeawater); //Debugger(FreezingPointOfSeawater);
+             }
+             if (strcmp(MyVariable, "IceMeltAmplificationFactor") == 0)
+             {
+                   PReadWrite->ReadNumber(X + i + 2, Y + 1, IceMeltAmplificationFactor); //Debugger(IceMeltAmplificationFactor);
              }
              if (strcmp(MyVariable, "Seeding") == 0)
              {
@@ -558,16 +769,31 @@ void TIceAlgae::ReadVariablesAndParameters(char* className)
              {
                 PReadWrite->ReadNumber(X + i + 2, Y + 1, Value);
                 if (Value > 0) NutLimitation = true;
+                else NutLimitation = false; 
              }
              if (strcmp(MyVariable, "SalLimitation") == 0)
              {
                 PReadWrite->ReadNumber(X + i + 2, Y + 1, Value);
                 if (Value > 0) SalLimitation = true;
+                else SalLimitation = false; 
              }
              if (strcmp(MyVariable, "TempLimitation") == 0)
              {
                 PReadWrite->ReadNumber(X + i + 2, Y + 1, Value);
                 if (Value > 0) TempLimitation = true;
+                else TempLimitation = false;
+             }
+             if (strcmp(MyVariable, "LowerLayerForChlExchange") == 0)
+             {
+                   PReadWrite->ReadNumber(X + i + 2, Y + 1, LowerLayerForChlExchange); //Debugger(LowerLayerForChlExchange);
+             }
+             if (strcmp(MyVariable, "LightThreshold") == 0)
+             {
+                   PReadWrite->ReadNumber(X + i + 2, Y + 1, LightThreshold); //Debugger(LightThreshold);
+             }
+             if (strcmp(MyVariable, "WinterResp") == 0)
+             {
+                   PReadWrite->ReadNumber(X + i + 2, Y + 1, WinterResp); //Debugger(WinterResp);
              }
           }
           CloseDataFile((void*)PReadWrite);
@@ -584,6 +810,7 @@ void TIceAlgae::ReadVariablesAndParameters(char* className)
 TIceAlgae::~TIceAlgae()
 {
     freeMemory();
+    if (NumberOfVariables > 0) delete VariableNameArray;
 }
 
 void TIceAlgae::freeMemory()
@@ -607,7 +834,6 @@ void TIceAlgae::freeMemory()
             free(KForIceAlgae);
             free(IceAlgaeLayerThickness);
             free(OxygenNetProduction);
-            free(VariableNameArray);
             free(IceAlgaeChlInBox);
             free(IceAlgaeCInBox);
             free(IceAlgaeNInBox);
@@ -627,6 +853,17 @@ void TIceAlgae::freeMemory()
             free(LightLimitation);
             free(TemperatureLimitation);
             free(SaltLimitation);
+            free(ChlToCarbonIceAlgae);
+            free(RespirationRate);
+            free(MortalityAtZeroDegres);
+            free(SnowMeltingCLosseRate);
+            free(SnowMeltingNLosseRate);
+            free(SnowMeltingPLosseRate);
+            free(SnowMeltingSiLosseRate);
+            free(IceMeltingCLosseRate);
+            free(IceMeltingNLosseRate);
+            free(IceMeltingPLosseRate);
+            free(IceMeltingSiLosseRate);
         }
     }
 #ifdef __BORLANDC__
@@ -644,7 +881,11 @@ void TIceAlgae::freeMemory()
 VNA* TIceAlgae::InquiryIce(char* srcName,int &IceLayers, int &IceVariables)
 {
     VNA* MyVarNameArray;
+#ifdef __BORLANDC__
     IceLayers = NumberOfIceLayers;
+#else
+    IceLayers = 0;
+#endif
     IceVariables = NumberOfVariables;
     MyVarNameArray = new VNA[IceVariables];
     for (int i = 0; i < IceVariables; i++)
@@ -658,9 +899,11 @@ VNA* TIceAlgae::InquiryIce(char* srcName,int &IceLayers, int &IceVariables)
 
 void TIceAlgae::Inquiry(char* srcName, double &Value,int BoxNumber,char* ParameterName,int AnObjectCode)
 {
-   char MyParameter[65]; // 64 characters (max) for parameter name
+   char MyParameter[65], MyName[65]; // 64 characters (max) for parameter name
    int MyBoxNumber = BoxNumber;
    strcpy(MyParameter, ParameterName);
+   if (NumberOfIceClasses == 1)
+   {
    if (strcmp(MyParameter, "Ice algae chl") == 0)
 		Value = IceAlgaeChl[MyBoxNumber];    //mg / m2
    else if (strcmp(MyParameter, "Ice algae C") == 0)
@@ -688,9 +931,9 @@ void TIceAlgae::Inquiry(char* srcName, double &Value,int BoxNumber,char* Paramet
    else if (strcmp(MyParameter, "SiCellQuota") == 0)
 		Value = SiCellQuota[MyBoxNumber];
    else if (strcmp(MyParameter, "IceAlgaeNPP") == 0)
-              Value = NPP[MyBoxNumber] * HOURSTOSECONDS;
+              Value = NPP[MyBoxNumber] * HOURSTOSECONDS;  //mg C / mg Chl / h
    else if (strcmp(MyParameter, "IceAlgaeGPP") == 0)
-              Value = GPP[MyBoxNumber] * HOURSTOSECONDS;
+              Value = GPP[MyBoxNumber] * HOURSTOSECONDS;  //mg C / mg Chl / h
    else if (strcmp(MyParameter, "Pmax") == 0)
       Value = Pmax[MyBoxNumber];                //mg C / mg Chl / h
    else if (strcmp(MyParameter, "beta") == 0)
@@ -704,7 +947,7 @@ void TIceAlgae::Inquiry(char* srcName, double &Value,int BoxNumber,char* Paramet
    else if (strcmp(MyParameter, "DailyMeanGPP") == 0)
       Value = DailyMeanGPP[MyBoxNumber] * HOURSTOSECONDS; //mg C / mg Chl / h
    else if (strcmp(MyParameter, "ChlToCarbon") == 0)
-      Value = ChlToCarbon[MyBoxNumber];
+      Value = ChlToCarbonIceAlgae[MyBoxNumber];
    else if (strcmp(MyParameter, "NLimitation") == 0)
       Value = NLimitation[MyBoxNumber];
    else if (strcmp(MyParameter, "PLimitation") == 0)
@@ -719,6 +962,12 @@ void TIceAlgae::Inquiry(char* srcName, double &Value,int BoxNumber,char* Paramet
       Value = TemperatureLimitation[MyBoxNumber];
    else if (strcmp(MyParameter, "SaltLimitation") == 0)
       Value = SaltLimitation[MyBoxNumber];
+   else if (strcmp(MyParameter, "NUptake ice") == 0)
+      Value = NUptake[MyBoxNumber];
+   else if (strcmp(MyParameter, "PUptake ice") == 0)
+      Value = PUptake[MyBoxNumber];
+   else if (strcmp(MyParameter, "RespirationRate") == 0)
+      Value = RespirationRate[MyBoxNumber] * HOURSTOSECONDS; //mmol O2 / mg Chl / h
    else
    {
       Value = 0;
@@ -744,79 +993,958 @@ void TIceAlgae::Inquiry(char* srcName, double &Value,int BoxNumber,char* Paramet
 #endif  // __BORLANDC__
       }
    }
+   }
+   else
+   {
+   if (strstr(MyParameter, "Ice algae chl") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Ice algae chl %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = IceAlgaeChl[NumberOfBoxesWithIce * Class + MyBoxNumber];  //mg / m2
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "Ice algae C") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Ice algae C %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = IceAlgaeC[NumberOfBoxesWithIce * Class + MyBoxNumber];  //mg / m2
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "Ice algae N") != NULL)
+   {		
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Ice algae N %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = IceAlgaeN[NumberOfBoxesWithIce * Class + MyBoxNumber];  //mg / m2
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "Ice algae P") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Ice algae P %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = IceAlgaeP[NumberOfBoxesWithIce * Class + MyBoxNumber];  //mg / m2
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "Ice algae Si") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Ice algae Si %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = IceAlgaeSi[NumberOfBoxesWithIce * Class + MyBoxNumber];  //mg / m2
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "Box ice algae chl") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Box ice algae chl %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = IceAlgaeChlInBox[NumberOfBoxesWithIce * Class + MyBoxNumber];  //mg / m2
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "Box ice algae C") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Box ice algae C %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = IceAlgaeCInBox[NumberOfBoxesWithIce * Class + MyBoxNumber];  //mg / m2
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "Box ice algae N") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Box ice algae N %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = IceAlgaeNInBox[NumberOfBoxesWithIce * Class + MyBoxNumber];  //mg / m2
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "Box ice algae P") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Box ice algae P %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = IceAlgaePInBox[NumberOfBoxesWithIce * Class + MyBoxNumber];  //mg / m2
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "Box ice algae Si") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Box ice algae Si %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = IceAlgaeSiInBox[NumberOfBoxesWithIce * Class + MyBoxNumber];  //mg / m2
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "NCellQuota") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "NCellQuota %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = NCellQuota[NumberOfBoxesWithIce * Class + MyBoxNumber];
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "PCellQuota") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "PCellQuota %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = PCellQuota[NumberOfBoxesWithIce * Class + MyBoxNumber];
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "SiCellQuota") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "SiCellQuota %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = SiCellQuota[NumberOfBoxesWithIce * Class + MyBoxNumber];
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "IceAlgaeNPP") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "IceAlgaeNPP %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = NPP[NumberOfBoxesWithIce * Class + MyBoxNumber] * HOURSTOSECONDS;  //mg C / mg Chl / h
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "IceAlgaeGPP") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "IceAlgaeGPP %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = GPP[NumberOfBoxesWithIce * Class + MyBoxNumber];  //mg C / mg Chl / h
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "Pmax") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Pmax %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = Pmax[NumberOfBoxesWithIce * Class + MyBoxNumber];  //mg C / mg Chl / h
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "beta") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "beta %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = beta[NumberOfBoxesWithIce * Class + MyBoxNumber];  //mg C mg Ch1-1 h -1 (microE m -2 s-l) -1
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "Slope") != NULL)
+   {   
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Slope %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = Slope[NumberOfBoxesWithIce * Class + MyBoxNumber];  //mg C mg Ch1-1 h -1 (microE m -2 s-l) -1
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "KForIceAlgae") != NULL)
+   {   
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "KForIceAlgae %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = KForIceAlgae[NumberOfBoxesWithIce * Class + MyBoxNumber];   //m-1
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "IceAlgaeLayerThickness") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "IceAlgaeLayerThickness %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = IceAlgaeLayerThickness[NumberOfBoxesWithIce * Class + MyBoxNumber];   //m
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "DailyMeanGPP") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "DailyMeanGPP %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = DailyMeanGPP[NumberOfBoxesWithIce * Class + MyBoxNumber];   //mg C / mg Chl / h
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "ChlToCarbon") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "ChlToCarbon %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = ChlToCarbonIceAlgae[NumberOfBoxesWithIce * Class + MyBoxNumber];
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "NLimitation") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "NLimitation %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = NLimitation[NumberOfBoxesWithIce * Class + MyBoxNumber];
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "PLimitation") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "PLimitation %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = PLimitation[NumberOfBoxesWithIce * Class + MyBoxNumber];
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "SiLimitation") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "SiLimitation %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = SiLimitation[NumberOfBoxesWithIce * Class + MyBoxNumber];
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "NPSLimitation") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "NPSLimitation %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = NPSLimitation[NumberOfBoxesWithIce * Class + MyBoxNumber];
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "LightLimitation") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "LightLimitation %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = LightLimitation[NumberOfBoxesWithIce * Class + MyBoxNumber];
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "TemperatureLimitation") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "TemperatureLimitation %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = TemperatureLimitation[NumberOfBoxesWithIce * Class + MyBoxNumber];
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "SaltLimitation") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "SaltLimitation %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = SaltLimitation[NumberOfBoxesWithIce * Class + MyBoxNumber];
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "NUptake ice") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "NUptake ice %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = NUptake[NumberOfBoxesWithIce * Class + MyBoxNumber];
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "PUptake ice") != NULL)
+   {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "PUptake ice %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = PUptake[NumberOfBoxesWithIce * Class + MyBoxNumber];
+               break;
+            }
+         }
+   }
+   else if (strstr(MyParameter, "RespirationRate") != NULL)
+   {    
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "RespirationRate %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Value = RespirationRate[NumberOfBoxesWithIce * Class + MyBoxNumber];  //mmol O2 / mg Chl / h
+               break;
+            }
+         }
+   }
+   else
+   {
+      Value = 0;
+      int j;
+      for (j = 0; j < NumberOfVariables; j++)
+      {
+          if (strcmp(MyParameter, VariableNameArray[j]) == 0)
+              break;
+      }
+#ifdef __BORLAND
+      if (j == NumberOfVariables)
+      {
+          char Caption[129];
+          strcpy(Caption, MyParameter);
+          strcat(Caption, " does not exist in ");
+          strcat(Caption, GetEcoDynClassName());
+          MessageBox(0,
+                    Caption,
+                    "EcoDynamo Alert - Inquiry 1",
+                    MB_OK | MB_ICONHAND);
+      }
+#endif
+   }
+   }
    LogMessage("Inquiry", srcName, MyParameter, Value, MyBoxNumber);
 }
 
 bool TIceAlgae::SetVariableValue(char* srcName, double Value,int BoxNumber,char* VariableName)
 {
+    char MyParameter[65], MyName[65]; // 64 characters (max) for parameter name
+    strcpy(MyParameter, VariableName);
     bool rc = true;
     LogMessage("SetVariableValue", srcName, VariableName, Value, BoxNumber);
-    if (strcmp(VariableName, "Ice algae chl") == 0)
-    IceAlgaeChl[BoxNumber] = Value;
-    else if (strcmp(VariableName, "Ice algae C") == 0)
-    IceAlgaeC[BoxNumber] = Value;
-    else if (strcmp(VariableName, "Ice algae N") == 0)
-    IceAlgaeN[BoxNumber] = Value;
-    else if (strcmp(VariableName, "Ice algae P") == 0)
-    IceAlgaeP[BoxNumber] = Value;
-    else if (strcmp(VariableName, "Ice algae Si") == 0)
-    IceAlgaeSi[BoxNumber] = Value;
-    else if (strcmp(VariableName, "NCellQuota") == 0)
-    NCellQuota[BoxNumber] = Value;
-    else if (strcmp(VariableName, "PCellQuota") == 0)
-    PCellQuota[BoxNumber] = Value;
-    else if (strcmp(VariableName, "SiCellQuota") == 0)
-    SiCellQuota[BoxNumber] = Value;
-    else if (strcmp(VariableName, "IceAlgaeNPP") == 0)
-    NPP[BoxNumber] = Value;
-    else if (strcmp(VariableName, "IceAlgaeGPP") == 0)
-    GPP[BoxNumber] = Value;
-    else if (strcmp(VariableName, "Pmax") == 0)
-    Pmax[BoxNumber] = Value;
-    else if (strcmp(VariableName, "beta") == 0)
-    beta[BoxNumber] = Value;
-    else if (strcmp(VariableName, "Slope") == 0)
-    Slope[BoxNumber] = Value;
-    else if (strcmp(VariableName, "KForIceAlgae") == 0)
-    KForIceAlgae[BoxNumber] = Value;
-    else if (strcmp(VariableName, "IceAlgaeLayerThickness") == 0)
-    IceAlgaeLayerThickness[BoxNumber] = Value;
-    else if (strcmp(VariableName, "DailyMeanGPP") == 0)
-    DailyMeanGPP[BoxNumber] = Value;
-    else if (strcmp(VariableName, "ChlToCarbon") == 0)
-    ChlToCarbon[BoxNumber] = Value;
-    else if (strcmp(VariableName, "NLimitation") == 0)
-    NLimitation[BoxNumber] = Value;
-    else if (strcmp(VariableName, "PLimitation") == 0)
-    PLimitation[BoxNumber] = Value;
-    else if (strcmp(VariableName, "SiLimitation") == 0)
-    SiLimitation[BoxNumber] = Value;
-    else if (strcmp(VariableName, "NPSLimitation") == 0)
-    NPSLimitation[BoxNumber] = Value;
-    else if (strcmp(VariableName, "LightLimitation") == 0)
-    LightLimitation[BoxNumber] = Value;
-    else if (strcmp(VariableName, "TemperatureLimitation") == 0)
-    TemperatureLimitation[BoxNumber] = Value;
+    if (strstr(MyParameter, "Ice algae chl") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         IceAlgaeChl[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Ice algae chl %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               IceAlgaeChl[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "Ice algae C") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         IceAlgaeC[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Ice algae C %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               IceAlgaeC[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "Ice algae N") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         IceAlgaeN[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Ice algae N %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               IceAlgaeN[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "Ice algae P") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         IceAlgaeP[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Ice algae P %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               IceAlgaeP[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "Ice algae Si") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         IceAlgaeSi[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Ice algae Si %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               IceAlgaeSi[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "NCellQuota") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         NCellQuota[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "NCellQuota %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               NCellQuota[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "PCellQuota") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         PCellQuota[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "PCellQuota %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               PCellQuota[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "SiCellQuota") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         SiCellQuota[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "SiCellQuota %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               SiCellQuota[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "IceAlgaeNPP") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         NPP[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "IceAlgaeNPP %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               NPP[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "IceAlgaeGPP") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         GPP[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "IceAlgaeGPP %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               GPP[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "Pmax") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         Pmax[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Pmax %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Pmax[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "beta") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         beta[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "beta %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               beta[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "Slope") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         Slope[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Slope %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               Slope[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "R0") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         Slope[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "R0 %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               MaintenanceRespiration[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "MortalityAtZeroDegres") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         Slope[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "MortalityAtZeroDegres %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               MortalityAtZeroDegres[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+
+    if (strstr(MyParameter, "CarbonToOxygenProd") != NULL)
+       CarbonToOxygenProd = Value;
+    if (strstr(MyParameter, "RespirationCoefficient") != NULL)
+       RespirationCoefficient = Value;
+    if (strstr(MyParameter, "RatioLightDarkRespiration") != NULL)
+       RatioLightDarkRespiration = Value;
+    if (strstr(MyParameter, "TminPhotosynthesis") != NULL)
+       TminPhotosynthesis = Value;
+    if (strstr(MyParameter, "TempCoefPhotosynthesis") != NULL)
+       TempCoefPhotosynthesis = Value;
+    if (strstr(MyParameter, "RatioLightDarkRespiration") != NULL)
+       RatioLightDarkRespiration = Value;
+    if (strstr(MyParameter, "TminRespiration") != NULL)
+       TminRespiration = Value;
+    if (strstr(MyParameter, "TempCoefRespiration") != NULL)
+       TempCoefRespiration = Value;
+    if (strstr(MyParameter, "MaxNPRatio") != NULL)
+       MaxNPRatio = Value;
+    if (strstr(MyParameter, "MinNPRatio") != NULL)
+       MinNPRatio = Value;
+    if (strstr(MyParameter, "MinNSiRatio") != NULL)
+       MinNSiRatio = Value;
+    if (strstr(MyParameter, "KNH4") != NULL)
+       KNH4 = Value; 
+    if (strstr(MyParameter, "KNO3") != NULL)
+       KNO3 = Value; 
+    if (strstr(MyParameter, "KP") != NULL)
+       KP = Value; 
+    if (strstr(MyParameter, "KSi") != NULL)
+       KSi = Value; 
+    if (strstr(MyParameter, "NMaxUptake") != NULL)
+       NMaxUptake = Value;
+    if (strstr(MyParameter, "PMaxUptake") != NULL)
+       PMaxUptake = Value;
+    if (strstr(MyParameter, "SiMaxUptake") != NULL)
+       SiMaxUptake = Value;
+    if (strstr(MyParameter, "KNInternal") != NULL)
+       KNInternal = Value;
+    if (strstr(MyParameter, "KPInternal") != NULL)
+       KPInternal = Value;
+    if (strstr(MyParameter, "KSiInternal") != NULL)
+       KSiInternal = Value;
+    if (strstr(MyParameter, "KNO3External") != NULL)
+       KNO3External = Value;
+    if (strstr(MyParameter, "KPExternal") != NULL)
+       KPExternal = Value;
+    if (strstr(MyParameter, "KSiExternal") != NULL)
+       KSiExternal = Value;
+    if (strstr(MyParameter, "Phi") != NULL)
+       Phi = Value; 
+    if (strstr(MyParameter, "DocStressLoss") != NULL)
+       DocStressLoss = Value;  
+    if (strstr(MyParameter, "Seeding") != NULL)
+       Seeding = Value; 
+    if (strstr(MyParameter, "IntegrationSteps") != NULL)
+       IntegrationSteps = Value; 
+    if (strstr(MyParameter, "NutLimitation") != NULL)
+       NutLimitation = Value; 
+    if (strstr(MyParameter, "SalLimitation") != NULL)
+       SalLimitation = Value; 
+    if (strstr(MyParameter, "TempLimitation") != NULL)
+       TempLimitation = Value;  
+    if (strstr(MyParameter, "MaxNCellQuota") != NULL)
+       MaxNCellQuota = Value;  
+    if (strstr(MyParameter, "MaxPCellQuota") != NULL)
+       MaxPCellQuota = Value; 
+    if (strstr(MyParameter, "MaxSiCellQuota") != NULL)
+       MaxSiCellQuota = Value;  
+    if (strstr(MyParameter, "LightThreshold") != NULL)
+       LightThreshold = Value;   
+    if (strstr(MyParameter, "WinterResp") != NULL)
+       WinterResp = Value;   
+
+    if (strstr(MyParameter, "KForIceAlgae") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         KForIceAlgae[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "KForIceAlgae %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               KForIceAlgae[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "IceAlgaeLayerThickness") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         IceAlgaeLayerThickness[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "IceAlgaeLayerThickness %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               IceAlgaeLayerThickness[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "DailyMeanGPP") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         DailyMeanGPP[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "DailyMeanGPP %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               DailyMeanGPP[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "ChlToCarbon") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         ChlToCarbonIceAlgae[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "ChlToCarbon %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               ChlToCarbonIceAlgae[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "NLimitation") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         NLimitation[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "NLimitation %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               NLimitation[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "PLimitation") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         PLimitation[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "PLimitation %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               PLimitation[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "SiLimitation") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         SiLimitation[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "SiLimitation %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               SiLimitation[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "NPSLimitation") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         NPSLimitation[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "NPSLimitation %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               NPSLimitation[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "LightLimitation") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         LightLimitation[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "LightLimitation %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               LightLimitation[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
+    if (strstr(MyParameter, "TemperatureLimitation") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         TemperatureLimitation[BoxNumber] = Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "TemperatureLimitation %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               TemperatureLimitation[NumberOfBoxesWithIce * Class + BoxNumber] = Value;
+               break;
+            }
+         }
+      }
+    }
     else rc = false;
     return rc;
 }
 
 void TIceAlgae::Update(char* srcName, double Value,int BoxNumber,char* ParameterName,int AnObjectCode)
 {
-    char MyParameter[65]; // 64 characters (max) for parameter name
+    char MyParameter[65], MyName[65]; // 64 characters (max) for parameter name
     int MyBoxNumber = BoxNumber;
     strcpy(MyParameter, ParameterName);
     LogMessage("Update", srcName, MyParameter, Value, MyBoxNumber);
-    if (strcmp(MyParameter, "Ice algae chl") == 0)
-        IceAlgaeChlFlux[MyBoxNumber] = IceAlgaeChlFlux[MyBoxNumber] + Value;
-    else if (strcmp(MyParameter, "Ice algae C") == 0)
-		IceAlgaeCFlux[MyBoxNumber] = IceAlgaeCFlux[MyBoxNumber] + Value;
-    else if (strcmp(MyParameter, "Ice algae N") == 0)
-		IceAlgaeNFlux[MyBoxNumber] = IceAlgaeNFlux[MyBoxNumber] + Value;
-    else if (strcmp(MyParameter, "Ice algae P") == 0)
-		IceAlgaePFlux[MyBoxNumber] = IceAlgaePFlux[MyBoxNumber] + Value;
-    else if (strcmp(MyParameter, "Ice algae Si") == 0)
-		IceAlgaeSiFlux[MyBoxNumber] = IceAlgaeSiFlux[MyBoxNumber] + Value;
+    if (strstr(MyParameter, "Ice algae chl") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+         IceAlgaeChlFlux[MyBoxNumber] = IceAlgaeChlFlux[MyBoxNumber] + Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Ice algae chl %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               IceAlgaeChlFlux[NumberOfBoxesWithIce * Class + MyBoxNumber] = IceAlgaeChlFlux[NumberOfBoxesWithIce * Class + MyBoxNumber] + Value;
+               break;
+            }
+         }
+      }
+    }
+    else if (strstr(MyParameter, "Ice algae C") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+            IceAlgaeCFlux[MyBoxNumber] = IceAlgaeCFlux[MyBoxNumber] + Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Ice algae C %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               IceAlgaeCFlux[NumberOfBoxesWithIce * Class + MyBoxNumber] = IceAlgaeCFlux[NumberOfBoxesWithIce * Class + MyBoxNumber] + Value;
+               break;
+            }
+         }
+      }
+    }
+    else if (strstr(MyParameter, "Ice algae N") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+            IceAlgaeNFlux[MyBoxNumber] = IceAlgaeNFlux[MyBoxNumber] + Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Ice algae N %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               IceAlgaeNFlux[NumberOfBoxesWithIce * Class + MyBoxNumber] = IceAlgaeNFlux[NumberOfBoxesWithIce * Class + MyBoxNumber] + Value;
+               break;
+            }
+         }
+      }
+    }
+    else if (strstr(MyParameter, "Ice algae P") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+            IceAlgaePFlux[MyBoxNumber] = IceAlgaePFlux[MyBoxNumber] + Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Ice algae P %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               IceAlgaePFlux[NumberOfBoxesWithIce * Class + MyBoxNumber] = IceAlgaePFlux[NumberOfBoxesWithIce * Class + MyBoxNumber] + Value;
+               break;
+            }
+         }
+      }
+    }
+    else if (strstr(MyParameter, "Ice algae Si") != NULL)
+    {
+      if (NumberOfIceClasses == 1)
+            IceAlgaeSiFlux[MyBoxNumber] = IceAlgaeSiFlux[MyBoxNumber] + Value;
+      else
+      {
+         for (int Class = 0; Class < NumberOfIceClasses; Class++)
+         {
+            sprintf(MyName, "Ice algae Si %i", Class + 1 );
+            if (strcmp(MyParameter, MyName) == 0) {
+               IceAlgaeSiFlux[NumberOfBoxesWithIce * Class + MyBoxNumber] = IceAlgaeSiFlux[NumberOfBoxesWithIce * Class + MyBoxNumber] + Value;
+               break;
+            }
+         }
+      }
+    }
     else
     {
 #ifdef __BORLANDC__
@@ -831,184 +1959,562 @@ void TIceAlgae::Update(char* srcName, double Value,int BoxNumber,char* Parameter
     }
 }
 
+#ifdef __BORLANDC__
+void TIceAlgae::Integrate()
+{
+    Integration(IceAlgaeChl, IceAlgaeChlFlux, IceAlgaeC, IceAlgaeCFlux, IceAlgaeN, IceAlgaeNFlux, IceAlgaeP, IceAlgaePFlux, IceAlgaeSi, IceAlgaeSiFlux, NumberOfBoxesWithIce*NumberOfIceClasses);
+
+    TEcoDynClass*  MySeaIcePointer = MyPEcoDynClass->GetSeaIcePointer();
+    int index, BottomIndex, Index3D, Index2D; double IceGrowth, LayerThickness;
+    double MyMeltingSnowFlux,SnowMeltingRate, MyMeltingSwitch, MyIceGrowth, IceMeltingRate, MyIceRelativeArea;
+    char MyName[65];
+    //if ((MyPEcoDynClass->GetJulianDay() > 91) && (MyPEcoDynClass->GetCurrTime()>4.13)) Debugger(11);
+    if (MySeaIcePointer != NULL)
+    {
+       for (int Class = 0; Class < NumberOfIceClasses; Class++)
+       {
+       for (int i = 0; i < NumberOfLines; i++)
+       {
+           for (int j = 0; j < NumberOfColumns; j++)
+           {
+              for (int k = 0; k < NumberOfIceLayers; k++)   //Conversion from M L-2 to M L-3
+              {
+                 if (k == 0)
+                 {
+                    //Debugger(IceAlgaeC[Get3DIndex(i,j,k)]);
+                    Index3D = GetIceIndex(i,j,0, Class);
+                    Index2D = Get3DIndex(i,j,0) + Class * NumberOfLines * NumberOfColumns;
+                    if (NumberOfIceClasses > 1) sprintf(MyName, "MeltingSwitch %i", Class + 1);
+                    else strcpy(MyName, "MeltingSwitch");
+                    MySeaIcePointer->Inquiry(GetEcoDynClassName(), MyMeltingSwitch,GetIceIndex(i,j,k,0),MyName,ObjectCode);
+                    if ((MyMeltingSwitch == 1.0) && (IceAlgaeLayerThickness[Index3D] > TINNY))
+                    {
+                       if (NumberOfIceClasses > 1)sprintf(MyName, "IceGrowthRate %i", Class + 1);
+                       else strcpy(MyName, "IceGrowthRate");
+                       MySeaIcePointer->Inquiry(GetEcoDynClassName(), MyIceGrowth,GetIceIndex(i,j,k,0),MyName,ObjectCode);
+                       //Debugger(MyIceGrowth);
+                       //This fluxes are used in the next Go to update water column variables from ice losses
+                       IceMeltingRate = MyIceGrowth / IceAlgaeLayerThickness[Index3D] * IceMeltAmplificationFactor;  //s-1
+                       //The multiplication by minus in the four following lines is to nulify the minus sign of Ice growth during melting
+                       //and to ensure that these fluxes are positive in the Update of Phytoplankton and Suspended matter
+                       IceMeltingCLosseRate[Index2D] = -IceMeltingRate * IceAlgaeC[Index2D]; //mg C / m2 / s-1
+                       IceMeltingNLosseRate[Index2D] = -IceMeltingRate * IceAlgaeN[Index2D]; //mg C / m2 / s-1
+                       IceMeltingPLosseRate[Index2D] = -IceMeltingRate * IceAlgaeP[Index2D]; //mg C / m2 / s-1
+                       IceMeltingSiLosseRate[Index2D] = -IceMeltingRate * IceAlgaeSi[Index2D]; //mg C / m2 / s-1
+                    }
+                    else
+                    {
+                       IceMeltingCLosseRate[Index2D] = 0.0; IceMeltingNLosseRate[Index2D] = 0.0;
+                       IceMeltingPLosseRate[Index2D] = 0.0; IceMeltingSiLosseRate[Index2D] = 0.0;
+                    }
+                    if (NumberOfIceClasses > 1)sprintf(MyName, "MeltedSnowFlux %i", Class + 1);
+                    else strcpy(MyName, "MeltedSnowFlux");
+                    MySeaIcePointer->Inquiry(GetEcoDynClassName(), MyMeltingSnowFlux,GetIceIndex(i,j,k,0),MyName,ObjectCode); //Debugger(MyMeltingSnowFlux);
+                    if (NumberOfIceClasses > 1)sprintf(MyName, "SIarea %i", Class + 1);
+                    else strcpy(MyName, "SIarea");
+                    MySeaIcePointer->Inquiry(GetEcoDynClassName(), MyIceRelativeArea, GetIceIndex(i,j,0,0),MyName, ObjectCode);
+                    if ((MyMeltingSnowFlux > 0.0) && (IceAlgaeLayerThickness[Index3D] > TINNY) && (MyIceRelativeArea > TINNY))
+                    {
+                       //This fluxes are used in the next Go to update water column variables from ice losses
+                       /*if (NumberOfIceClasses > 1)sprintf(MyName, "SIarea %i", Class + 1);
+                       else strcpy(MyName, "SIarea");
+                       MySeaIcePointer->Inquiry(GetEcoDynClassName(), MyIceRelativeArea, GetIceIndex(i,j,0,Class),MyName, ObjectCode);  */
+                       //SnowMeltingRate = MyMeltingSnowFlux / MyPEcoDynClass->GetBoxArea(Get3DIndex(i,j,0)) / IceAlgaeLayerThickness[Index3D]; //s-1
+                       SnowMeltingRate = MyMeltingSnowFlux / (MyPEcoDynClass->GetBoxArea(Get3DIndex(i,j,0)) * MyIceRelativeArea) / IceAlgaeLayerThickness[Index3D]; //s-1
+                       SnowMeltingCLosseRate[Index2D] = SnowMeltingRate * IceAlgaeC[Index2D]; //mg C / m2 / s-1
+                       SnowMeltingNLosseRate[Index2D] = SnowMeltingRate * IceAlgaeN[Index2D]; //mg C / m2 / s-1
+                       SnowMeltingPLosseRate[Index2D] = SnowMeltingRate * IceAlgaeP[Index2D]; //mg C / m2 / s-1
+                       SnowMeltingSiLosseRate[Index2D] = SnowMeltingRate * IceAlgaeSi[Index2D]; //mg C / m2 / s-1
+                    }
+                    else
+                    {
+                       SnowMeltingCLosseRate[Index2D] = 0.0; SnowMeltingNLosseRate[Index2D] = 0.0;
+                       SnowMeltingPLosseRate[Index2D] = 0.0; SnowMeltingSiLosseRate[Index2D] = 0.0;
+                    }
+
+                 }
+                 Index3D = GetIceIndex(i, j, k, Class);
+                 if (k > 0) //Bottom layer thickness is constant
+                 {
+                    if (NumberOfIceClasses > 1)sprintf(MyName, "Layer thickness %i", Class + 1);
+                    else strcpy(MyName, "Layer thickness");
+                    MySeaIcePointer->Inquiry(GetEcoDynClassName(), IceAlgaeLayerThickness[Index3D], GetIceIndex(i,j,k,0),MyName, ObjectCode);
+                 }
+                 /*if ((i == 15) && (j == 0))
+                 {
+                      Debugger(k); Debugger(Class);
+                      Debugger(Index3D);
+                      Debugger(IceAlgaeLayerThickness[Index3D]);
+                      Debugger(IceAlgaeChl[Index3D]);
+                 } */
+                 if (IceAlgaeLayerThickness[Index3D] > TINNY)    //Conversion from M L-2 to M L-3
+                 {
+                    IceAlgaeChl[Index3D] = IceAlgaeChl[Index3D] / IceAlgaeLayerThickness[Index3D];    //mg / m3
+                    IceAlgaeC[Index3D] = IceAlgaeC[Index3D] / IceAlgaeLayerThickness[Index3D];
+                    IceAlgaeN[Index3D] = IceAlgaeN[Index3D] / IceAlgaeLayerThickness[Index3D];
+                    IceAlgaeP[Index3D] = IceAlgaeP[Index3D] / IceAlgaeLayerThickness[Index3D];
+                    IceAlgaeSi[Index3D] = IceAlgaeSi[Index3D] / IceAlgaeLayerThickness[Index3D];
+                 }
+                 //else MessageBox(0, "Division by zero in TIceAlgae::Integrate.", "EcoDynamo alert", MB_OK);
+                 else
+                 {
+                    //MessageBox(0, "Division by zero in TIceAlgae::Integrate.", "EcoDynamo alert", MB_OK);
+                    IceAlgaeChl[Index3D] = 0.0;    //mg / m3
+                    IceAlgaeC[Index3D] = 0.0;
+                    IceAlgaeN[Index3D] = 0.0;
+                    IceAlgaeP[Index3D] = 0.0;
+                    IceAlgaeSi[Index3D] = 0.0;
+                 }
+              }
+              if (TransportInIce)
+              {
+                  //MySeaIcePointer->UpdateLayerProperties(i,j,LowerLayerForChlExchange,IceAlgaeChl);
+                  //MySeaIcePointer->UpdateLayerProperties(i,j,LowerLayerForChlExchange,IceAlgaeC);
+                  //MySeaIcePointer->UpdateLayerProperties(i,j,LowerLayerForChlExchange,IceAlgaeN);
+                  //MySeaIcePointer->UpdateLayerProperties(i,j,LowerLayerForChlExchange,IceAlgaeP);
+                  //MySeaIcePointer->UpdateLayerProperties(i,j,LowerLayerForChlExchange,IceAlgaeSi);
+
+                  //Debugger(IceAlgaeC[Get3DIndex(i,j,0)]);
+
+                  for (int Class = 0; Class < NumberOfIceClasses; Class++)
+                  {
+                     MySeaIcePointer->UpdateLayerPropertiesForPhytoplankton(i,j,Class,IceAlgaeChl);
+                     MySeaIcePointer->UpdateLayerPropertiesForPhytoplankton(i,j,Class,IceAlgaeC);
+                     //if (MyPEcoDynClass->GetJulianDay() == 173) Debugger(173);
+                     MySeaIcePointer->UpdateLayerPropertiesForPhytoplankton(i,j,Class,IceAlgaeN);
+                     MySeaIcePointer->UpdateLayerPropertiesForPhytoplankton(i,j,Class,IceAlgaeP);
+                     MySeaIcePointer->UpdateLayerPropertiesForPhytoplankton(i,j,Class,IceAlgaeSi);
+                  }
+
+                  //Debugger(IceAlgaeC[Get3DIndex(i,j,0)]);
+              }
+              //Here the above losses are integrated in the ice algal variables but they are integrated in the water column variables of suspended matter
+              //and phytoplankton only during the next Go, when SeaIceTransfer is called. THis integration is done using the SnowMeltingLosses calculated above.
+             //Debugger(IceAlgaeChl[0]);
+
+              MySeaIcePointer->SnowMeltTransport(i,j,IceAlgaeChl,0.0);
+              MySeaIcePointer->SnowMeltTransport(i,j,IceAlgaeC,0.0);
+              MySeaIcePointer->SnowMeltTransport(i,j,IceAlgaeN,0.0);
+              MySeaIcePointer->SnowMeltTransport(i,j,IceAlgaeP,0.0);
+              MySeaIcePointer->SnowMeltTransport(i,j,IceAlgaeSi,0.0);
+
+              //Debugger(IceAlgaeC[Get3DIndex(i,j,0)]);
+
+              for (int k = 0; k < NumberOfIceLayers; k++)  //Conversion from M L-3 to M L-2
+              {
+                 Index3D = GetIceIndex(i,j,k,Class);
+                 IceAlgaeChl[Index3D] = IceAlgaeChl[Index3D] * IceAlgaeLayerThickness[Index3D];
+                 IceAlgaeC[Index3D] = IceAlgaeC[Index3D] * IceAlgaeLayerThickness[Index3D];
+                 IceAlgaeN[Index3D] = IceAlgaeN[Index3D] * IceAlgaeLayerThickness[Index3D];
+                 IceAlgaeP[Index3D] = IceAlgaeP[Index3D] * IceAlgaeLayerThickness[Index3D];
+                 IceAlgaeSi[Index3D] = IceAlgaeSi[Index3D] * IceAlgaeLayerThickness[Index3D];
+              }
+
+              //Debugger(IceAlgaeC[Get3DIndex(i,j,0)]);
+           }
+       }
+       }
+    }
+    //if ((MyPEcoDynClass->GetJulianDay() > 91) && (MyPEcoDynClass->GetCurrTime()>4.13)) Debugger(12);
+    if (MySeaIcePointer != NULL)
+    {
+      double TotalC, MyIceGrowthRate, LayerSeeding;
+
+      for (int Class = 0; Class < NumberOfIceClasses; Class++)
+      {
+      //if ((MyPEcoDynClass->GetJulianDay() > 91) && (MyPEcoDynClass->GetCurrTime()>4.13)) Debugger(Class);
+      for (int i = 0; i < NumberOfLines; i++)
+      {
+         //if ((MyPEcoDynClass->GetJulianDay() > 91) && (MyPEcoDynClass->GetCurrTime()>4.13)) Debugger(i);
+         for (int j = 0; j < NumberOfColumns; j++)
+         {
+            int Count,Layer;
+            Count = 0;
+            //try
+            //{
+            Index2D = GetIceIndex(i,j,0,Class);
+            if (NumberOfIceClasses > 1) sprintf(MyName, "IceGrowthRate %i", Class + 1);
+            else strcpy(MyName, "IceGrowthRate");
+            MySeaIcePointer->Inquiry(GetEcoDynClassName(), MyIceGrowthRate,GetIceIndex(i,j,0,0),MyName,ObjectCode);
+            TotalC = 0.0;
+            for (int k = 0; k < NumberOfIceLayers; k++)
+               TotalC = TotalC + IceAlgaeC[GetIceIndex(i,j,k,Class)];
+            Count = 1;
+            for (int k = 0; k < NumberOfIceLayers; k++)
+            {
+                Layer = k;
+                Index3D = GetIceIndex(i,j,k,Class);
+
+                if (MySeaIcePointer != NULL)
+                {
+                   if (k > 0)  //Bottom layer thickness is constant
+                   {
+                      if (NumberOfIceClasses > 1)sprintf(MyName, "Layer thickness %i", Class + 1);
+                      else strcpy(MyName, "Layer thickness");
+                      MySeaIcePointer->Inquiry(GetEcoDynClassName(), IceAlgaeLayerThickness[Index3D], GetIceIndex(i,j,k,0),MyName, ObjectCode);
+                   }
+                   if (IceAlgaeLayerThickness[GetIceIndex(i,j,0,Class)] > TINNY)
+                      LayerSeeding = Seeding / IceAlgaeLayerThickness[GetIceIndex(i,j,0,Class)] * IceAlgaeLayerThickness[Index3D];  //Seeding per unit of volume is the same for skeletal and congelation layers
+                   else
+                      LayerSeeding = 0.0;
+                   Count = 2;
+                   if ((TotalC <= LayerSeeding) && (k == 0) && (MyIceGrowthRate > 0.0))
+                   {
+                       if (TotalC > 0.0) LayerSeeding =  LayerSeeding - TotalC;
+
+                       if (ChlToCarbonIceAlgae[Index3D] > TINNY) IceAlgaeChl[Index3D] = MAX(IceAlgaeChl[Index3D],0.0) + LayerSeeding / ChlToCarbonIceAlgae[Index3D];  //Seeding only the bottom layer
+                       IceAlgaeC[Index3D] = MAX(IceAlgaeC[Index3D],0.0) + LayerSeeding;
+
+                       if (NCellQuota[Index3D] > TINNY)
+                          IceAlgaeN[Index3D] = IceAlgaeC[Index3D] * NCellQuota[Index3D];
+                       else
+                          IceAlgaeN[Index3D] = IceAlgaeC[Index3D] * NRedfieldQuota;
+                       if (PCellQuota[Index3D] > TINNY)
+                          IceAlgaeP[Index3D] = IceAlgaeC[Index3D] * PCellQuota[Index3D];
+                       else
+                          IceAlgaeP[Index3D] = IceAlgaeC[Index3D] * PRedfieldQuota;
+                       if (SiCellQuota[Index3D] > TINNY)
+                          IceAlgaeSi[Index3D] = IceAlgaeC[Index3D] * SiCellQuota[Index3D];
+                       else
+                          IceAlgaeSi[Index3D] = IceAlgaeC[Index3D] * SiRedfieldQuota;
+                   }
+                   Count = 3;
+
+                   if (NumberOfIceClasses > 1)sprintf(MyName, "SIarea %i", Class + 1);
+                   else strcpy(MyName, "SIarea");
+                   MySeaIcePointer->Inquiry(GetEcoDynClassName(), MyIceRelativeArea, GetIceIndex(i,j,0,0),MyName, ObjectCode);
+                   Count = 4;
+                   //MyArea = MyPEcoDynClass->GetChannelWidth(GetBoxIndex(j,i)) * MyPEcoDynClass->GetBoxLength(GetBoxIndex(j,i));
+                   if ((MyIceRelativeArea <= TINNY) || (IceAlgaeC[Index3D] < 0.0))
+                   {
+                      IceAlgaeChl[Index3D] = 0.0;
+                      IceAlgaeC[Index3D] = 0.0;
+                      IceAlgaeN[Index3D] = 0.0;
+                      IceAlgaeP[Index3D] = 0.0;
+                      IceAlgaeSi[Index3D] = 0.0;
+                      IceAlgaeChlInBox[Index3D] = 0.0;
+                      IceAlgaeCInBox[Index3D] = 0.0;
+                      IceAlgaeNInBox[Index3D] = 0.0;
+                      IceAlgaePInBox[Index3D] = 0.0;
+                      IceAlgaeSiInBox[Index3D] = 0.0;
+                   }
+                   else
+                   {
+                      Count = 5;
+                      IceAlgaeChlInBox[Index3D] = IceAlgaeChl[Index3D] * MyIceRelativeArea;
+                      IceAlgaeCInBox[Index3D] = IceAlgaeC[Index3D] * MyIceRelativeArea;
+                      IceAlgaeNInBox[Index3D] = IceAlgaeN[Index3D] * MyIceRelativeArea;
+                      IceAlgaePInBox[Index3D] = IceAlgaeP[Index3D] * MyIceRelativeArea;
+                      IceAlgaeSiInBox[Index3D] = IceAlgaeSi[Index3D] * MyIceRelativeArea;
+                   }
+                }
+                Count = 6;
+                if (IceAlgaeC[Index3D] > TINNY)
+                {
+                   NCellQuota[Index3D] = IceAlgaeN[Index3D] / IceAlgaeC[Index3D];
+                   PCellQuota[Index3D] = IceAlgaeP[Index3D] / IceAlgaeC[Index3D];
+                   SiCellQuota[Index3D] = IceAlgaeSi[Index3D] / IceAlgaeC[Index3D];
+                }
+                else
+                {
+                   NCellQuota[Index3D] = 0.0;
+                   PCellQuota[Index3D] = 0.0;
+                   SiCellQuota[Index3D] = 0.0;
+                }
+            }
+            //}
+            /*catch (EAccessViolation &e)
+            {
+               char MyText1[10],MyText2[10],MyText3[10],MyText4[10], MyText5[10],MyWholeText[50];
+               sprintf(MyText1," Class %i",Class);
+               sprintf(MyText2," Line %i",i);
+               sprintf(MyText3," Column %i",j);
+               sprintf(MyText4," Layer %i",Layer);
+               sprintf(MyText5," Count %i",Count);
+               strcpy(MyWholeText,MyText1);
+               strcat(MyWholeText,MyText2);
+               strcat(MyWholeText,MyText3);
+               strcat(MyWholeText,MyText4);
+               strcat(MyWholeText,MyText5);
+               ShowMessage(e.Message + MyWholeText);
+            }
+            catch (Exception &exception) {
+               char MyText1[10],MyText2[10],MyText3[10],MyText4[10], MyText5[10],MyWholeText[50];
+               sprintf(MyText1," Class %i",Class);
+               sprintf(MyText2," Line %i",i);
+               sprintf(MyText3," Column %i",j);
+               sprintf(MyText4," Layer %i",Layer);
+               sprintf(MyText5," Count %i",Count);
+               strcpy(MyWholeText,MyText1);
+               strcat(MyWholeText,MyText2);
+               strcat(MyWholeText,MyText3);
+               strcat(MyWholeText,MyText4);
+               strcat(MyWholeText,MyText5);
+               ShowMessage(AnsiString(exception.ClassName())+ " "+exception.Message);
+               ShowMessage(MyWholeText);
+               Debugger(IceAlgaeChl[Index3D]); Debugger(Index3D); Debugger(GetIceIndex(i,j,0,Class));
+               Debugger(MyIceRelativeArea);
+               Debugger(IceAlgaeCInBox[Index3D]); Debugger(IceAlgaeNInBox[Index3D]); Debugger(IceAlgaePInBox[Index3D]);
+            }
+            catch (...) {
+               char MyText1[10],MyText2[10],MyText3[10],MyText4[10], MyText5[10],MyWholeText[50];
+               sprintf(MyText1," Class %i",Class);
+               sprintf(MyText2," Line %i",i);
+               sprintf(MyText3," Column %i",j);
+               sprintf(MyText4," Layer %i",Layer);
+               sprintf(MyText5," Count %i",Count);
+               strcpy(MyWholeText,MyText1);
+               strcat(MyWholeText,MyText2);
+               strcat(MyWholeText,MyText3);
+               strcat(MyWholeText,MyText4);
+               strcat(MyWholeText,MyText5);
+               ShowMessage(MyWholeText);
+            } */
+         }
+      }
+      }
+   }
+}
+#endif  // __BORLANDC__
+
+/*
+//Integrate to use with simulations with fixed biomass
+void TIceAlgae::Integrate()
+{
+
+    int Index3D, Index2D;
+
+    for (int i = 0; i < NumberOfLines; i++)
+    {
+       for (int j = 0; j < NumberOfColumns; j++)
+       {
+          for (int k = 0; k < NumberOfIceLayers; k++)
+          {
+              Index3D = Get3DIndex(i,j,k);
+              if (IceAlgaeC[Index3D] > TINNY)
+              {
+                 NCellQuota[Index3D] = IceAlgaeN[Index3D] / IceAlgaeC[Index3D];
+                 PCellQuota[Index3D] = IceAlgaeP[Index3D] / IceAlgaeC[Index3D];
+                 SiCellQuota[Index3D] = IceAlgaeSi[Index3D] / IceAlgaeC[Index3D];
+              }
+              else
+              {
+                 NCellQuota[Index3D] = 0.0;
+                 PCellQuota[Index3D] = 0.0;
+                 SiCellQuota[Index3D] = 0.0;
+              }
+          }
+       }
+    }
+}  */
+
+
 void TIceAlgae::Go()
 {
-   double MyIceDepth;
+  #ifdef __BORLAND
+   double MyIceDepth, AValue, AverageLight;
+   AverageLight = 0.0;
+   int Index3D;
+   char MyName[65];
    TEcoDynClass * MySeaIcePointer = MyPEcoDynClass->GetSeaIcePointer();
+   TEcoDynClass* MyTransportPointer = MyPEcoDynClass->GetTransportPointer();
+   TEcoDynClass* MyIceLightPointer = MyPEcoDynClass->GetIceLightPointer();
+
+
    if (MySeaIcePointer != NULL)
    {
+       //This is for GPP daily averaging**********************************************************************************
        if (MyPEcoDynClass->GetJulianDay() != ADay)
        {
           NumberOfParcels = 0.0;
           ADay = ADay + 1;
        }
-       for (int i = 0; i < NumberOfBoxesWithIce; i++)
+       //*****************************************************************************************************************
+       for (int Class = 0; Class < NumberOfIceClasses; Class++)
        {
-          MySeaIcePointer->Inquiry(GetEcoDynClassName(), MyIceDepth, i,"SIheff", ObjectCode);
-          MySeaIcePointer->Inquiry(GetEcoDynClassName(), BrineFractionalVolume, i,"BrineFractionalVolume", ObjectCode);
-          //Debugger(BrineFractionalVolume);
-          if (
-               (IceAlgaeC[i] > TINNY) && (IceAlgaeLayerThickness[i] > TINNY) &&
-               (MyPEcoDynClass->GetBoxDepth(i) > TINNY) && (MyIceDepth > IceAlgaeLayerThickness[i])
-             )
+       for (int i = 0; i < NumberOfLines; i++)
+       {
+          for (int j = 0; j < NumberOfColumns; j++)
           {
-             if (NumberOfParcels == 0.0) DailyMeanGPP[i] = 0.0;
-             ChlExtinctionCoefficient(i);
-             Production(i);
-             Respiration(i);
-             Exudation(i);
-             NitrogenUptake(i);
-             PhosphorusUptake(i);
-             SilicaUptake(i);
-             Mortality(i); 
-             IceSeaTransfer(i);
-             IceAlgaeChlFlux[i] = IceAlgaeCFlux[i] / ChlToCarbon[i];  //mg Chl m-2 s-1
+             //if ((Class == 1) && (i == 0) && (j >= 13)) Debugger(1);
+             IceSeaTransfer(i,j,Class);
+             //if ((Class == 1) && (i == 0) && (j >= 13)) Debugger(j);
+             if (MyTransportPointer != NULL)
+             {
+                MyTransportPointer->Inquiry(GetEcoDynClassName(), AValue, Get3DIndex(i,j,0),"UpperLayer",ObjectCode);
+                UpperLayer = ceil(AValue);
+             }
+             else
+                UpperLayer = MyPEcoDynClass->GetNumberOfLayers()- 1;
+
+             for (int k = 0; k < NumberOfIceLayers; k++)
+             {
+                //if ((Class == 1) && (i == 0) && (j >= 13)) Debugger(k);
+                Index3D = GetIceIndex(i,j,k,Class);
+                if (NumberOfIceClasses > 1) sprintf(MyName, "Layer depth %i", Class + 1);
+                else strcpy(MyName, "Layer depth");
+                MySeaIcePointer->Inquiry(GetEcoDynClassName(), MyIceDepth, GetIceIndex(i,j,k,0),MyName, ObjectCode);
+                if (NumberOfIceClasses > 1) sprintf(MyName, "BrineFractionalVolume %i", Class + 1);
+                else strcpy(MyName, "BrineFractionalVolume");
+                MySeaIcePointer->Inquiry(GetEcoDynClassName(), BrineFractionalVolume, GetIceIndex(i,j,k,0),MyName, ObjectCode);
+                if (NumberOfIceLayers > 1)
+                {
+                   if (NumberOfIceClasses > 1) sprintf(MyName, "Layer thickness %i", Class + 1);
+                   else strcpy(MyName, "Layer thickness");
+                   MySeaIcePointer->Inquiry(GetEcoDynClassName(), IceAlgaeLayerThickness[Index3D], GetIceIndex(i,j,k,0),MyName, ObjectCode);
+                }
+                if (NumberOfIceClasses > 1) sprintf(MyName, "BrineTemperatureIce %i", Class + 1);
+                else strcpy(MyName, "BrineTemperatureIce");
+                MySeaIcePointer->Inquiry(GetEcoDynClassName(), IceTemperature,GetIceIndex(i,j,k,0),MyName,ObjectCode);
+                if (NumberOfIceClasses > 1) sprintf(MyName, "Ice visible average light above chl layer %i", Class + 1);
+                else strcpy(MyName, "Ice visible average light above chl layer");
+                MyIceLightPointer->Inquiry(GetEcoDynClassName(), AverageLight,GetIceIndex(i,j,k,0),MyName,ObjectCode);
+                /*if ((i == 20) && (j == 2) && (Class == 0))
+                     {
+                       Debugger(222);
+                       Debugger(IceAlgaeLayerThickness[Index3D]); Debugger(BrineFractionalVolume);
+                       Debugger(AverageLight);
+                     } */
+                if (AverageLight * WATTSTOMICROEINSTEINS >= LightThreshold)
+                {
+                  if ((IceAlgaeC[Index3D] > TINNY) && (IceAlgaeLayerThickness[Index3D] > TINNY) && (BrineFractionalVolume > TINNY))
+                  {
+                     if (NumberOfParcels == 0.0) DailyMeanGPP[Index3D] = 0.0;
+                     ChlExtinctionCoefficient(Index3D);
+                     Production(i,j,k,Class); //if ((i == 0) && (j == 0) && (k == 19)) {Debugger(115); Debugger(Index3D); }
+
+                     Respiration(i,j,k,Class); //if ((i == 0) && (j == 0) && (k == 19)) Debugger(116);
+
+                     Exudation(i,j,k,Class); //if ((i == 0) && (j == 0) && (k == 19)) Debugger(117);
+
+                     NitrogenUptake(i,j,k,Class); //if ((i == 0) && (j == 0) && (k == 19)) Debugger(118);
+                     PhosphorusUptake(i,j,k,Class);  //if ((i == 0) && (j == 0) && (k == 19)) Debugger(119);
+                     SilicaUptake(i,j,k,Class); //if ((i == 0) && (j == 0) && (k == 19)) Debugger(120);
+                     Mortality(i,j,k,Class); //if ((i == 0) && (j == 0) && (k == 19)) Debugger(121);
+                  }
+                  else
+                  {
+                     GPP[Index3D] = 0.0;
+                     NPP[Index3D] = 0.0;
+                     DailyMeanGPP[Index3D] = 0.0;
+                     OxygenNetProduction[Index3D] = 0.0;
+                     NUptake[Index3D] = 0.0; PUptake[Index3D] = 0.0; SiUptake[Index3D] = 0.0;
+                     NPSLimitation[Index3D] = 0.0; SaltLimitation[Index3D] = 0.0;
+                     TemperatureLimitation[Index3D] = 0.0;LightLimitation[Index3D] = 0.0;
+                  }
+                }
+                else if ((IceAlgaeC[Index3D] > TINNY) && (IceAlgaeLayerThickness[Index3D] > TINNY) && (BrineFractionalVolume > TINNY))
+                {
+                   WinterLosses(i,j,k,Class);
+                   GPP[Index3D] = 0.0;
+                   NPSLimitation[Index3D] = 0.0; SaltLimitation[Index3D] = 0.0;
+                   TemperatureLimitation[Index3D] = 0.0; LightLimitation[Index3D] = 0.0;
+                }
+                if (ChlToCarbonIceAlgae[Index3D] > TINNY)
+                    IceAlgaeChlFlux[Index3D] = IceAlgaeCFlux[Index3D] / ChlToCarbonIceAlgae[Index3D];  //mg Chl m-2 s-1
+                else
+                    IceAlgaeChlFlux[Index3D] = 0.0;
+                
+             }
           }
+       }
        }
    }
    else
-#ifdef __BORLANDC__
-      MessageBox(0, "SeaIceObject not available - TIceAlgae::Go", "EcoDynamo alert", MB_OK);
-#else  // __BORLANDC__
-			cerr << "TIceAlgae::Go - SeaIceObject not available" << endl;
-#endif  // __BORLANDC__
-   NumberOfParcels = NumberOfParcels + 1.0;
+   MessageBox(0, "SeaIceObject not available - TIceAlgae::Go", "EcoDynamo alert", MB_OK);
+#endif //__BORLAND
 }
 
-void TIceAlgae::Integrate()
+
+
+void TIceAlgae::Production(int LineNumber, int ColumnNumber, int LayerNumber, int ClassNumber)
 {
-    Integration(IceAlgaeChl, IceAlgaeChlFlux, IceAlgaeC, IceAlgaeCFlux, IceAlgaeN, IceAlgaeNFlux, IceAlgaeP, IceAlgaePFlux, IceAlgaeSi, IceAlgaeSiFlux);
-    TEcoDynClass*  MySeaIcePointer = MyPEcoDynClass->GetSeaIcePointer();
-    for (int i = 0; i < NumberOfBoxesWithIce; i++)
+    int index1, index2;
+    char MyName[65];
+#ifndef _PORT_FORTRAN_
+    TEcoDynClass* MyIceLightPointer = MyPEcoDynClass->GetIceLightPointer();
+    index1 = GetIceIndex(LineNumber,ColumnNumber,LayerNumber,ClassNumber);
+    index2 = GetIceIndex(LineNumber,ColumnNumber,LayerNumber,0);
+
+    if (MyIceLightPointer != NULL)
     {
-        if (IceAlgaeChl[i] <= Seeding / ChlToCarbon[i]) IceAlgaeChl[i] = Seeding / ChlToCarbon[i];
-        if (IceAlgaeC[i] <= Seeding) IceAlgaeC[i] = Seeding;
-        if (IceAlgaeN[i] <= Seeding * NCellQuota[i]) IceAlgaeN[i] = Seeding * NCellQuota[i];
-        if (IceAlgaeP[i] <= Seeding * PCellQuota[i]) IceAlgaeP[i] = Seeding * PCellQuota[i];
-        if (IceAlgaeSi[i] <= Seeding * SiCellQuota[i]) IceAlgaeSi[i] = Seeding * SiCellQuota[i];
-        if (MySeaIcePointer != NULL)
-        {
-           double MyIceRelativeArea, MyArea;
-           MySeaIcePointer->Inquiry(GetEcoDynClassName(), MyIceRelativeArea, i,"SIarea", ObjectCode);
-           MyArea = MyPEcoDynClass->GetChannelWidth(i) * MyPEcoDynClass->GetBoxLength(i);
-           if (MyIceRelativeArea <= TINNY)
-           {
-              IceAlgaeChl[i] = 0.0;
-              IceAlgaeC[i] = 0.0;
-              IceAlgaeN[i] = 0.0;
-              IceAlgaeP[i] = 0.0;
-              IceAlgaeSi[i] = 0.0;
-           }
-           else
-           {
-              IceAlgaeChlInBox[i] = IceAlgaeChl[i] / MyArea;
-              IceAlgaeCInBox[i] = IceAlgaeC[i] / MyArea;
-              IceAlgaeNInBox[i] = IceAlgaeN[i] / MyArea;
-              IceAlgaePInBox[i] = IceAlgaeP[i] / MyArea;
-              IceAlgaeSiInBox[i] = IceAlgaeSi[i] / MyArea;
-           }
-        }
-        if (IceAlgaeC[i] > TINNY)
-        {
-           NCellQuota[i] = IceAlgaeN[i] / IceAlgaeC[i];
-           PCellQuota[i] = IceAlgaeP[i] / IceAlgaeC[i];
-           SiCellQuota[i] = IceAlgaeSi[i] / IceAlgaeC[i];
-        }
-        else
-        {
-           NCellQuota[i] = 0.0;
-           PCellQuota[i] = 0.0;
-           SiCellQuota[i] = 0.0;
-        }
-    }
-}
-
-void TIceAlgae::Production(int ABoxNumber)
-{
-    //double MyKforVisibleLightInICE;
-    int MyBoxNumber;
-    MyBoxNumber = ABoxNumber;
-    TEcoDynClass* MyLightPointer = MyPEcoDynClass->GetLightPointer(),
-    * MySeaIcePointer = MyPEcoDynClass->GetSeaIcePointer(),
-    * MyWaterTemperaturePointer = MyPEcoDynClass->GetWaterTemperaturePointer();
-
-    if (MyLightPointer != NULL)
-    {
-
-       MyLightPointer->Inquiry(GetEcoDynClassName(), LightAtTop,MyBoxNumber,"Ice visible light above chl layer",ObjectCode);
-       MyLightPointer->Inquiry(GetEcoDynClassName(), LightAtBottom,MyBoxNumber,"Ice visible light at bottom",ObjectCode);
+       if (NumberOfIceClasses > 1) sprintf(MyName, "Ice visible light above chl layer %i", ClassNumber + 1);
+       else strcpy(MyName, "Ice visible light above chl layer");
+       MyIceLightPointer->Inquiry(GetEcoDynClassName(), LightAtTop,index2,MyName,ObjectCode);
+       if (NumberOfIceClasses > 1) sprintf(MyName, "Ice visible light at bottom %i", ClassNumber + 1);
+       else strcpy(MyName, "Ice visible light at bottom");
+       MyIceLightPointer->Inquiry(GetEcoDynClassName(), LightAtBottom,index2,MyName,ObjectCode);
+#endif
        LightAtTop = LightAtTop * WATTSTOMICROEINSTEINS;
        LightAtBottom = LightAtBottom * WATTSTOMICROEINSTEINS;
-       if (LightAtTop > 0.0)
+       if (LightAtTop > TINNY)
        {
-          /*if (KForIceAlgae[MyBoxNumber] < TINNY)
-          {
-             MessageBox(0,"KForIceAlgae to low in TIceAlgae::Production","EcoDynamo alert",MB_OK | MB_ICONHAND);
-             Debugger(MyBoxNumber);
-          }  */
           if (strcmp(PIfunction, "Platt") == 0)
-          {
-             GPP[MyBoxNumber] = PlattPIFunction(MyBoxNumber);
-          }
+             GPP[index1] = PlattPIFunction(index1);
           else
           if (strcmp(PIfunction, "Steele") == 0)
-          {
-             GPP[MyBoxNumber] = SteelePIFunction(MyBoxNumber);
-          }
-          if ((MyWaterTemperaturePointer != NULL) && (TempLimitation))
-          {
-             MyWaterTemperaturePointer->Inquiry(GetEcoDynClassName(), WaterTemperature,MyBoxNumber,"Water temperature",ObjectCode);
-             TemperatureLimitation[MyBoxNumber] = TemperatureArrheniusExponentialLimitation(TempCoefPhotosynthesis, WaterTemperature, TminPhotosynthesis);
-             Productivity = Productivity *  TemperatureLimitation[MyBoxNumber];
-          }
-          if (NutLimitation) NutrientLimitation(MyBoxNumber);
-          if (SalLimitation) SalinityLimitation(MyBoxNumber);
+             GPP[index1] = SteelePIFunction(index1);
+          TemperatureLimitation[index1] = TemperatureArrheniusExponentialLimitation(TempCoefPhotosynthesis, IceTemperature, TminPhotosynthesis);
+          GPP[index1] = GPP[index1] * TemperatureLimitation[index1];
+          if (NutLimitation) NutrientLimitation(LineNumber, ColumnNumber, LayerNumber, ClassNumber);
+          if (SalLimitation) SalinityLimitation(LineNumber, ColumnNumber, LayerNumber, ClassNumber);
        }
-       else GPP[MyBoxNumber] = 0.0;
+       else
+       {
+          GPP[index1] = 0.0;
+          LightLimitation[index1] = 0.0;
+       } 
+#ifndef _PORT_FORTRAN_  
     }
     else
-    {
-       GPP[MyBoxNumber] = 0.0;
-       //MessageBox(0,"Light object not available in TIceAlgae::Production","EcoDynamo alert",MB_OK | MB_ICONHAND);
-    }
-    OxygenNetProduction[MyBoxNumber] = GPP[MyBoxNumber] / CarbonToOxygenProd; //mg O2 /mgChl /s
-    IceAlgaeCFlux[MyBoxNumber] = IceAlgaeCFlux[MyBoxNumber] + GPP[MyBoxNumber] * IceAlgaeChl[MyBoxNumber];  //mg C m-2 s-1
-    DailyMeanGPP[MyBoxNumber] = (
-                                   DailyMeanGPP[MyBoxNumber] * NumberOfParcels + GPP[MyBoxNumber]
-                                )  / (NumberOfParcels + 1);  //mg C / mg Chla / s
+       GPP[index1] = 0.0;
+#endif
+    OxygenNetProduction[index1] = GPP[index1] / CarbonToOxygenProd; //mg O2 /mgChl /s
+    IceAlgaeCFlux[index1] = IceAlgaeCFlux[index1] + GPP[index1] * IceAlgaeChl[index1];  //mg C m-2 s-1
+    DailyMeanGPP[index1] = (DailyMeanGPP[index1] * NumberOfParcels + GPP[index1])  / (NumberOfParcels + 1);  //mg C / mg Chla / s
 }
 
 void TIceAlgae::ChlExtinctionCoefficient(int ABoxNumber)
 {
    int MyBoxNumber;
-   double AnArgument;
+   double Transmittance;
    MyBoxNumber = ABoxNumber;
-   if (IceAlgaeLayerThickness[MyBoxNumber] < TINNY)
+   /*if (IceAlgaeLayerThickness[MyBoxNumber] < TINNY)
       KForIceAlgae[MyBoxNumber] = 0.0;
    else
-   {
-      AnArgument = 1.102-0.196*log(IceAlgaeChl[MyBoxNumber]);
-      if (AnArgument <= 0.0) AnArgument = TINNY; //This is logarithms of a quantity <= 0
-      KForIceAlgae[MyBoxNumber] = MAX(0.0,-log(AnArgument) / IceAlgaeLayerThickness[MyBoxNumber]);
-   }
+   {  */
+      if (IceAlgaeChl[MyBoxNumber] <= TINNY) KForIceAlgae[MyBoxNumber] = 0.0;
+      else
+      {
+         Transmittance = MIN(1.0, 1.102-0.196*log(IceAlgaeChl[MyBoxNumber])); //The formula for tranmittance was taken from Cota et al. (1991) - Journal of Marine Systems 2: 257-277.
+                                                                              //However, it is necessary to guarantte that the result is <= 1, which may not be the case if Chl is to low. This is why I use the MIN function
+         KForIceAlgae[MyBoxNumber] = MAX(0.0,(1.0 - Transmittance) / IceAlgaeLayerThickness[MyBoxNumber]);
+      }
+   //}
 }
 
 double TIceAlgae::PlattPIFunction(int ABoxNumber)
 {
    TEcoDynClass* MyLightPointer = MyPEcoDynClass->GetLightPointer();
-   double DeltaZ, Soma, MyLightAtTop;
+   double DeltaZ, Soma, MyLightAtTop, MyK;
    int MyBoxNumber;
    MyBoxNumber = ABoxNumber;
    MyLightAtTop = LightAtTop;
    DeltaZ = IceAlgaeLayerThickness[MyBoxNumber] / IntegrationSteps;
    Soma = 0.0;
-   for (int Step = 1; Step <= IntegrationSteps; Step++)    //Eiler integration as a function of depth
-   {
-      Soma = Soma + /*Pmax[MyBoxNumber] * */(1 - exp(-Slope[MyBoxNumber] * MyLightAtTop / Pmax[MyBoxNumber])) * exp(-beta[MyBoxNumber] * MyLightAtTop / Pmax[MyBoxNumber]) * DeltaZ;
-      MyLightPointer->Inquiry(GetEcoDynClassName(),MyLightAtTop,MyLightAtTop,DeltaZ,KForIceAlgae[MyBoxNumber],MyBoxNumber,"Sub-surface irradiance",ObjectCode);
-   }
-   LightLimitation[MyBoxNumber] = Soma / IceAlgaeLayerThickness[MyBoxNumber];
-   //return (Soma / IceAlgaeLayerThickness[MyBoxNumber]) / HOURSTOSECONDS; //mg C mg Chl s-1
+   MyK = KForIceAlgae[MyBoxNumber];
+   //if (IceAlgaeLayerThickness[MyBoxNumber] > TINNY)
+   //{
+     for (int Step = 1; Step <= IntegrationSteps; Step++)    //Eiler integration as a function of depth
+     {
+        Soma = Soma + (1 - exp(-Slope[MyBoxNumber] * MyLightAtTop / Pmax[MyBoxNumber])) * exp(-beta[MyBoxNumber] * MyLightAtTop / Pmax[MyBoxNumber]) * DeltaZ;
+
+        MyLightPointer->Inquiry(GetEcoDynClassName(),MyLightAtTop,MyLightAtTop,DeltaZ,MyK,0,"Sub-surface irradiance",ObjectCode);
+     }
+     LightLimitation[MyBoxNumber] = Soma / IceAlgaeLayerThickness[MyBoxNumber];
+   //}
+   //else
+   //  LightLimitation[MyBoxNumber] = 0.0;
    return Pmax[MyBoxNumber] * LightLimitation[MyBoxNumber] / HOURSTOSECONDS; //mg C mg Chl s-1
 }
 
@@ -1016,117 +2522,180 @@ double TIceAlgae::SteelePIFunction(int ABoxNumber)
 {
    int MyBoxNumber;
    MyBoxNumber = ABoxNumber;
-   LightLimitation[MyBoxNumber] =  2.718282 / ( KForIceAlgae[MyBoxNumber] * IceAlgaeLayerThickness[MyBoxNumber])
+   if /*(*/(Iopt[MyBoxNumber] > TINNY) //&& (IceAlgaeLayerThickness[MyBoxNumber] > TINNY))
+      LightLimitation[MyBoxNumber] =  2.718282 / ( KForIceAlgae[MyBoxNumber] * IceAlgaeLayerThickness[MyBoxNumber])
                                      * (
                                          exp( -LightAtBottom / Iopt[MyBoxNumber] )
                                          -exp( -LightAtTop / Iopt[MyBoxNumber])
                                        );
+   else
+      LightLimitation[MyBoxNumber] = 0.0;
    return Pmax[MyBoxNumber] * LightLimitation[MyBoxNumber] / HOURSTOSECONDS;  //mg C mg Chl s-1
 }
 
-void TIceAlgae::Respiration(int ABoxNumber)
-{
-    double Resp, WaterTemperature, AverageOxygenProduction;
-    int MyBoxNumber;
-    double const OxygenMolecularWeight = 32.0;
-    MyBoxNumber = ABoxNumber;
-    TEcoDynClass* MySeaIcePointer = MyPEcoDynClass->GetSeaIcePointer();
-    TEcoDynClass* MyWaterTemperaturePointer = MyPEcoDynClass->GetWaterTemperaturePointer();
 
-    AverageOxygenProduction = DailyMeanGPP[MyBoxNumber] / CarbonToOxygenProd / OxygenMolecularWeight;  //mmol O2 / mg Chla / s
-    Resp = MaintenanceRespiration[MyBoxNumber] / HOURSTOSECONDS;    //mmol O2 / mgChl / s
-    if (MyWaterTemperaturePointer != NULL)
-       MyWaterTemperaturePointer->Inquiry(GetEcoDynClassName(), WaterTemperature,MyBoxNumber,"Water temperature",ObjectCode);
-    else
-       WaterTemperature = 0.0;
-    if (GPP[MyBoxNumber] <= 0.0)
+void TIceAlgae::Respiration(int LineNumber, int ColumnNumber, int LayerNumber, int ClassNumber)
+{
+    double Resp, AverageOxygenProduction;
+    double const OxygenMolecularWeight = 32.0;
+    int index1, index2;
+    char MyName[65];
+    TEcoDynClass * MySeaIcePointer = MyPEcoDynClass->GetSeaIcePointer();
+    index1 = GetIceIndex(LineNumber,ColumnNumber,LayerNumber,ClassNumber);
+    index2 = GetIceIndex(LineNumber,ColumnNumber,LayerNumber,0);
+    AverageOxygenProduction = /*DailyMeanGPP[Index3D]*/GPP[index1] / CarbonToOxygenProd / (2.0 * OXYGENATOMICWEIGHT);  //mmol O2 / mg Chla / s
+    Resp = MaintenanceRespiration[index1] / HOURSTOSECONDS * TemperatureArrheniusExponentialLimitation(TempCoefRespiration,IceTemperature, TminRespiration);    //mmol O2 / mgChl / s
+    if (GPP[index1] <= 0.0)
        Resp = Resp + RespirationCoefficient * AverageOxygenProduction
-                     * TemperatureArrheniusExponentialLimitation(TempCoefRespiration,WaterTemperature, TminRespiration) / HOURSTOSECONDS;
+                     * TemperatureArrheniusExponentialLimitation(TempCoefRespiration,IceTemperature, TminRespiration) / HOURSTOSECONDS;
     else
        Resp = Resp + RatioLightDarkRespiration * RespirationCoefficient * AverageOxygenProduction
-                     * TemperatureArrheniusExponentialLimitation(TempCoefRespiration, WaterTemperature, TminRespiration) / HOURSTOSECONDS;
-          //Resp in //mmol O2 / mg Chl / s
-    //Debugger(TemperatureArrheniusExponentialLimitation(TempCoefRespiration, WaterTemperature, TminRespiration));
-    //Debugger(RespirationCoefficient);
-    OxygenNetProduction[MyBoxNumber] = OxygenNetProduction[MyBoxNumber] - Resp * OXYGENATOMICWEIGHT;
+                     * TemperatureArrheniusExponentialLimitation(TempCoefRespiration, IceTemperature, TminRespiration) / HOURSTOSECONDS;
+    RespirationRate[index1] = Resp;//Resp in //mmol O2 / mg Chl / s
+    OxygenNetProduction[index1] = OxygenNetProduction[index1] - Resp * 2.0 * OXYGENATOMICWEIGHT;  //mg O2 /mg Chl /s
     double RespInCarbonUnits;
-    RespInCarbonUnits = Resp * OxygenMolecularWeight * CarbonToOxygenProd;
-    NPP[MyBoxNumber] = GPP[MyBoxNumber] - RespInCarbonUnits;
-    Resp = RespInCarbonUnits * IceAlgaeChl[MyBoxNumber];
-          //Resp in //mg C /m2 / s
-    //Debugger(Resp);
-
-    IceAlgaeCFlux[MyBoxNumber] = IceAlgaeCFlux[MyBoxNumber] - Resp;
-
-
+    RespInCarbonUnits = Resp * 2.0 * OXYGENATOMICWEIGHT * CarbonToOxygenProd;   //mg C /mg Chl / s
+    NPP[index1] = GPP[index1] - RespInCarbonUnits; //Debugger(NPP[Index3D]);
+    /*if ((LineNumber == 9) && (ColumnNumber == 2) && (LayerNumber == 4) && (ClassNumber == 0))
+    {
+      Debugger(10101); Debugger(AverageOxygenProduction); Debugger(Resp); Debugger(GPP[index1]); Debugger(NPP[index1]);
+      Debugger(MaintenanceRespiration[index1]); Debugger(TemperatureArrheniusExponentialLimitation(TempCoefRespiration,IceTemperature, TminRespiration));
+      Debugger(IceTemperature);
+    } */
+    Resp = RespInCarbonUnits * IceAlgaeChl[index1]; //Resp in //mg C /m2 / s
+    if ((NPP[index1] < 0.0) && ((NCellQuota[index1] > MaxNCellQuota) || (PCellQuota[index1] > MaxPCellQuota)))
+    {
+       IceAlgaeCFlux[index1] = IceAlgaeCFlux[index1] - Resp;
+       IceAlgaeNFlux[index1] = IceAlgaeNFlux[index1] - Resp * NCellQuota[index1]; //mg N / m2 / s
+       IceAlgaePFlux[index1] = IceAlgaePFlux[index1] - Resp * PCellQuota[index1]; //mg P / m2 / s
+       if (MySeaIcePointer != NULL)
+       {
+          if (NumberOfIceClasses > 1) sprintf(MyName, "BrineNH4Ice %i", ClassNumber + 1);
+          else strcpy(MyName, "BrineNH4Ice");
+          MySeaIcePointer->Update(GetEcoDynClassName(), Resp * NCellQuota[index1] / NITROGENATOMICWEIGHT / IceAlgaeLayerThickness[index1] / BrineFractionalVolume,index2,MyName,ObjectCode); //microM/L/s
+          if (NumberOfIceClasses > 1) sprintf(MyName, "BrinePhosphateIce %i", ClassNumber + 1);
+          else strcpy(MyName, "BrinePhosphateIce");
+          MySeaIcePointer->Update(GetEcoDynClassName(), Resp * PCellQuota[index1] / PHOSPHORUSATOMICWEIGHT / IceAlgaeLayerThickness[index1] / BrineFractionalVolume,index2,MyName,ObjectCode); //microM/L/s
+       }
+    }
+    else
+       IceAlgaeCFlux[index1] = IceAlgaeCFlux[index1] - Resp;
     if (MySeaIcePointer != NULL)
     {
-       MySeaIcePointer->Update(GetEcoDynClassName(), OxygenNetProduction[MyBoxNumber] / IceAlgaeLayerThickness[MyBoxNumber] / CUBIC / BrineFractionalVolume, MyBoxNumber,"BrineOxygenIce", ObjectCode);//Return as mg O2 / L / s
+          if (NumberOfIceClasses > 1) sprintf(MyName, "BrineOxygenIce %i", ClassNumber + 1);
+          else strcpy(MyName, "BrineOxygenIce");
+          MySeaIcePointer->Update(GetEcoDynClassName(), OxygenNetProduction[index1] * IceAlgaeChl[index1] / IceAlgaeLayerThickness[index1] / CUBIC / BrineFractionalVolume, index2,MyName, ObjectCode);//Return as mg O2 / L / s
     }
 }
 
-void TIceAlgae::Exudation(int ABoxNumber)
+void TIceAlgae::Exudation(int LineNumber, int ColumnNumber, int LayerNumber, int ClassNumber)
 {
-    double  Exudate, ArealDOCLoss;
-    int MyBoxNumber;
+    double  Exudate, ArealDOCLoss, AmmoniaRelease, PhosphorusRelease, SilicaRelease;
+    int index1, index2;
+    char MyName[65];
+    index1 = GetIceIndex(LineNumber,ColumnNumber,LayerNumber,ClassNumber);
+    index2 = GetIceIndex(LineNumber,ColumnNumber,LayerNumber,0);
+    AmmoniaRelease = 0.0; PhosphorusRelease = 0.0;
     TEcoDynClass* MySeaIcePointer = MyPEcoDynClass->GetSeaIcePointer();
-    MyBoxNumber = ABoxNumber;
-    if (GPP[MyBoxNumber] > 0.0)
-       Exudate = GPP[MyBoxNumber] * DocStressLoss;
-    else Exudate = 0.0;
-    ArealDOCLoss = Exudate * IceAlgaeChl[MyBoxNumber];   //mg C m-2 s-1;
-    IceAlgaeCFlux[MyBoxNumber] = IceAlgaeCFlux[MyBoxNumber] - ArealDOCLoss;  //mg C m-2 s-1;
+    if ((GPP[index1] > 0.0) && (NutLimitation) && ((NCellQuota[index1] < NRedfieldQuota) || (PCellQuota[index1] < PRedfieldQuota)))
+       Exudate = GPP[index1] * DocStressLoss; //mg C mg Chl-1 s-1
+    else
+       Exudate = 0.0;
+    ArealDOCLoss = Exudate * IceAlgaeChl[index1];   //mg C m-2 s-1;
+    IceAlgaeCFlux[index1] = IceAlgaeCFlux[index1] - ArealDOCLoss;  //mg C m-2 s-1;
+
+    //When NPP is less than zero it is more likely that N/C and P/C ratios may exceed the maximum possible ratios. Therefore, in the following lines ammonia and phosphorus releases
+    //are calculated as a function of the difference between N and P cell quotas and maximum allowed quotas.
+   /* if ((NPP[MyBoxNumber] < 0.0) && (NCellQuota[MyBoxNumber] > MaxNCellQuota))
+    {
+       AmmoniaRelease =  NutrientReleaseRatio *  (NCellQuota[MyBoxNumber] - MaxNCellQuota) * IceAlgaeN[MyBoxNumber];  //mg N m-2 d-1
+       IceAlgaeNFlux[MyBoxNumber] = IceAlgaeNFlux[MyBoxNumber] - AmmoniaRelease / DAYSTOSECONDS;   //mg N m-2 s-1
+    }
+    if ((NPP[MyBoxNumber] < 0.0) && (PCellQuota[MyBoxNumber] > MaxPCellQuota))
+    {
+       PhosphorusRelease =  NutrientReleaseRatio *  (PCellQuota[MyBoxNumber] - MaxPCellQuota) * IceAlgaeP[MyBoxNumber];  //mg P m-2 d-1
+       IceAlgaePFlux[MyBoxNumber] = IceAlgaePFlux[MyBoxNumber] - PhosphorusRelease / DAYSTOSECONDS;   //mg P m-2 s-1
+    }
+    if ((NPP[MyBoxNumber] < 0.0) && (SiCellQuota[MyBoxNumber] > MaxSiCellQuota))
+    {
+       SilicaRelease =  NutrientReleaseRatio *  (SiCellQuota[MyBoxNumber] - MaxSiCellQuota) * IceAlgaeSi[MyBoxNumber];  //mg P m-2 d-1
+       IceAlgaeSiFlux[MyBoxNumber] = IceAlgaeSiFlux[MyBoxNumber] - SilicaRelease / DAYSTOSECONDS;   //mg P m-2 s-1
+    }
     if (MySeaIcePointer != NULL)
-       MySeaIcePointer->Update(GetEcoDynClassName(), ArealDOCLoss / IceAlgaeLayerThickness[MyBoxNumber] / CARBONATOMICWEIGHT / BrineFractionalVolume, MyBoxNumber,"BrineDOCIce", ObjectCode);//Return as micromol C / L / s
+    {
+        MySeaIcePointer->Update(GetEcoDynClassName(), ArealDOCLoss / IceAlgaeLayerThickness[MyBoxNumber] / CARBONATOMICWEIGHT / BrineFractionalVolume, MyBoxNumber,"BrineDOCIce", ObjectCode);//Return as micromol C / L / s
+        MySeaIcePointer->Update(GetEcoDynClassName(), AmmoniaRelease / NITROGENATOMICWEIGHT / IceAlgaeLayerThickness[MyBoxNumber] / DAYSTOSECONDS / BrineFractionalVolume,MyBoxNumber,"BrineNH4Ice",ObjectCode);   //microM/L/s
+        MySeaIcePointer->Update(GetEcoDynClassName(), PhosphorusRelease / PHOSPHORUSATOMICWEIGHT / IceAlgaeLayerThickness[MyBoxNumber] / DAYSTOSECONDS / BrineFractionalVolume,MyBoxNumber,"BrinePhosphateIce",ObjectCode); //microM/L/s
+        MySeaIcePointer->Update(GetEcoDynClassName(), SilicaRelease / SILICAATOMICWEIGHT / IceAlgaeLayerThickness[MyBoxNumber] / DAYSTOSECONDS / BrineFractionalVolume,MyBoxNumber,"BrineSilicateIce",ObjectCode); //microM/L/s
+    }  */
 }
 
-void TIceAlgae::NutrientLimitation(int ABoxNumber)
+void TIceAlgae::NutrientLimitation(int LineNumber, int ColumnNumber, int LayerNumber, int ClassNumber)
 {
-    int i;
-    //double NLimitation, PLimitation, SiLimitation;
-    i = ABoxNumber;
+    int i, index2;
+    char MyName[65];
+    i = GetIceIndex(LineNumber,ColumnNumber,LayerNumber,ClassNumber);
+    index2 = GetIceIndex(LineNumber,ColumnNumber,LayerNumber,0);
     TEcoDynClass* MySeaIcePointer = MyPEcoDynClass->GetSeaIcePointer();
     if ((MySeaIcePointer != NULL))
     {
       if (strcmp(LimitationType, "Internal") == 0)
       {
-          int i = ABoxNumber;
-          if (PCellQuota[i] < MinPCellQuota)
+          if (PCellQuota[i] <= MinPCellQuota)
              PLimitation[i] = 0.0;
           else
              PLimitation[i] = PCellQuota[i] / (PCellQuota[i] + KPInternal);
-          if (NCellQuota[i] < MinNCellQuota)
+          if (NCellQuota[i] <= MinNCellQuota)
              NLimitation[i] = 0.0;
           else
              NLimitation[i] = NCellQuota[i] / (NCellQuota[i] + KNInternal);
-          if ((PLimitation[i] == 0.0) || (NLimitation[i] == 0.0))
-             GPP[i] = 0.0;
+          if (KSiInternal == 0.0)
+             SiLimitation[i] = 1.0;
           else
-             GPP[i] = GPP[i] * MIN(PLimitation[i],NLimitation[i]);
+          {
+            if (SiCellQuota[i] <= MinSiCellQuota)
+               SiLimitation[i] = 0.0;
+            else
+               SiLimitation[i] = SiCellQuota[i] / (SiCellQuota[i] + KSiInternal);
+          }
       }
       else
       if (strcmp(LimitationType, "External") == 0)
       {
          {
              double Ammonia, Nitrate, Nitrite, Phosphate, Silicate;
-             MySeaIcePointer->Inquiry(GetEcoDynClassName(), Ammonia,i,"BrineNH4Ice",   /*micro M*/ ObjectCode);
-             MySeaIcePointer->Inquiry(GetEcoDynClassName(), Nitrate,i,"BrineNO3Ice",ObjectCode);
+             if (NumberOfIceClasses > 1) sprintf(MyName, "BrineNH4Ice %i", ClassNumber + 1);
+             else strcpy(MyName, "BrineNH4Ice");
+             MySeaIcePointer->Inquiry(GetEcoDynClassName(), Ammonia,index2,MyName,   /*micro M*/ ObjectCode);
+             if (NumberOfIceClasses > 1) sprintf(MyName, "BrineNO3Ice %i", ClassNumber + 1);
+             else strcpy(MyName, "BrineNO3Ice");
+             MySeaIcePointer->Inquiry(GetEcoDynClassName(), Nitrate,index2,MyName,ObjectCode);
              //MySeaIcePointer->Inquiry(GetEcoDynClassName(), Nitrite,i,"Nitrite",ObjectCode);
-             MySeaIcePointer->Inquiry(GetEcoDynClassName(), Phosphate,i,"BrinePhosphateIce",ObjectCode);
-             MySeaIcePointer->Inquiry(GetEcoDynClassName(), Silicate,i,"BrineSilicateIce",ObjectCode);
+             if (NumberOfIceClasses > 1) sprintf(MyName, "BrinePhosphateIce %i", ClassNumber + 1);
+             else strcpy(MyName, "BrinePhosphateIce");
+             MySeaIcePointer->Inquiry(GetEcoDynClassName(), Phosphate,index2,MyName,ObjectCode);
+             if (NumberOfIceClasses > 1) sprintf(MyName, "BrineSilicateIce %i", ClassNumber + 1);
+             else strcpy(MyName, "BrineSilicateIce");
+             MySeaIcePointer->Inquiry(GetEcoDynClassName(), Silicate,index2,MyName,ObjectCode);
              NLimitation[i] = Nitrate / (Nitrate + KNO3External) * exp(-Phi * Ammonia) + Ammonia / (Ammonia + KNH4External);
              PLimitation[i] = Phosphate / (Phosphate + KPExternal);
-             SiLimitation[i] = Silicate / (Silicate + KSiExternal);
-             NPSLimitation[i] = MIN(MIN(NLimitation[i], PLimitation[i]),SiLimitation[i]);
-             GPP[i] = GPP[i] * NPSLimitation[i];
+             if (KSiExternal == 0.0)
+                SiLimitation[i] = 1.0;
+             else
+                SiLimitation[i] = Silicate / (Silicate + KSiExternal);
          }
       }
+      NPSLimitation[i] = MIN(MIN(NLimitation[i], PLimitation[i]),SiLimitation[i]);
+      GPP[i] = GPP[i] * NPSLimitation[i];
    }
 }
 
-void TIceAlgae::NitrogenUptake(int ABoxNumber)
+void TIceAlgae::NitrogenUptake(int LineNumber, int ColumnNumber, int LayerNumber, int ClassNumber)
 {
-   int i = ABoxNumber;
+   int i, index2;
+   char MyName[65];
+   i = GetIceIndex(LineNumber,ColumnNumber,LayerNumber,ClassNumber);
+   index2 = GetIceIndex(LineNumber,ColumnNumber,LayerNumber,0);
    TEcoDynClass* MySeaIcePointer = MyPEcoDynClass->GetSeaIcePointer();
    if ((NCellQuota[i] > TINNY) && (PCellQuota[i] > TINNY) && (MySeaIcePointer != NULL))
    {
@@ -1135,9 +2704,15 @@ void TIceAlgae::NitrogenUptake(int ABoxNumber)
       // communicate method
       double Ammonia, Nitrate, Nitrite, AmmoniumUptakeLimitation;
       //No caso de a classe ser invocada a partir do EcoDynamo...
-      MySeaIcePointer->Inquiry(GetEcoDynClassName(), Ammonia,i,"BrineNH4Ice",   /*micro M*/ ObjectCode);
-      MySeaIcePointer->Inquiry(GetEcoDynClassName(), Nitrate,i,"BrineNO3Ice",ObjectCode);
-      MySeaIcePointer->Inquiry(GetEcoDynClassName(), Nitrite,i,"BrineNO2Ice",ObjectCode);
+      if (NumberOfIceClasses > 1) sprintf(MyName, "BrineNH4Ice %i", ClassNumber + 1);
+      else strcpy(MyName, "BrineNH4Ice");
+      MySeaIcePointer->Inquiry(GetEcoDynClassName(), Ammonia,index2,MyName,   /*micro M*/ ObjectCode);
+      if (NumberOfIceClasses > 1) sprintf(MyName, "BrineNO3Ice %i", ClassNumber + 1);
+      else strcpy(MyName, "BrineNO3Ice");
+      MySeaIcePointer->Inquiry(GetEcoDynClassName(), Nitrate,index2,MyName,ObjectCode);
+      if (NumberOfIceClasses > 1) sprintf(MyName, "BrineNO2Ice %i", ClassNumber + 1);
+      else strcpy(MyName, "BrineNO2Ice");
+      MySeaIcePointer->Inquiry(GetEcoDynClassName(), Nitrite,index2,MyName,ObjectCode);
       //...
       if (
             (NCellQuota[i] >= MaxNCellQuota) || (NCellQuota[i] / PCellQuota[i] > MaxNPRatio)
@@ -1155,7 +2730,9 @@ void TIceAlgae::NitrogenUptake(int ABoxNumber)
          NUptake[i] = AmmoniaUpTake;  //mg N m-2 d-1
          NMaxUptakeOfNitrate = MAX(0.0, NMaxUptake - NMaxUptake * AmmoniumUptakeLimitation); //mg N m-2 d-1
          //No caso de a classe ser invocada a partir do EcoDynamo...
-         MySeaIcePointer->Update(GetEcoDynClassName(), -AmmoniaUpTake / NITROGENATOMICWEIGHT / IceAlgaeLayerThickness[i] / DAYSTOSECONDS / BrineFractionalVolume/*microM/L/s*/,i,"BrineNH4Ice",ObjectCode);
+         if (NumberOfIceClasses > 1) sprintf(MyName, "BrineNH4Ice %i", ClassNumber + 1);
+         else strcpy(MyName, "BrineNH4Ice");
+         MySeaIcePointer->Update(GetEcoDynClassName(), -AmmoniaUpTake / NITROGENATOMICWEIGHT / IceAlgaeLayerThickness[i] / DAYSTOSECONDS / BrineFractionalVolume/*microM/L/s*/,index2,MyName,ObjectCode);
          //...
          if (Nitrate + Nitrite > TINNY)
                 NitrateAndNitriteUptake = /*NMaxUptake*/NMaxUptakeOfNitrate * (Nitrate + Nitrite) / ((Nitrate + Nitrite) + KNO3) *
@@ -1164,25 +2741,38 @@ void TIceAlgae::NitrogenUptake(int ABoxNumber)
                 NitrateAndNitriteUptake = 0.0;
          NUptake[i] = NUptake[i] + NitrateAndNitriteUptake;
 
-         if ((NitrateAndNitriteUptake > 0.0) && (IceAlgaeLayerThickness[i] > TINNY) && (BrineFractionalVolume > TINNY))
+         if ((NitrateAndNitriteUptake > TINNY) && (IceAlgaeLayerThickness[i] > TINNY) && (BrineFractionalVolume > TINNY))
          {
+            //Debugger(BrineFractionalVolume);
+
+            //Debugger(-NitrateAndNitriteUptake * Nitrate / (Nitrate + Nitrite) / NITROGENATOMICWEIGHT /IceAlgaeLayerThickness[i]/ DAYSTOSECONDS / BrineFractionalVolume);
+
+            if (NumberOfIceClasses > 1) sprintf(MyName, "BrineNO3Ice %i", ClassNumber + 1);
+            else strcpy(MyName, "BrineNO3Ice");
             MySeaIcePointer->Update(GetEcoDynClassName(), -NitrateAndNitriteUptake * Nitrate / (Nitrate + Nitrite) / NITROGENATOMICWEIGHT /
-                                    IceAlgaeLayerThickness[i]/ DAYSTOSECONDS / BrineFractionalVolume/*microM/L/s*/,i,"BrineNO3Ice",ObjectCode);
+                                    IceAlgaeLayerThickness[i]/ DAYSTOSECONDS / BrineFractionalVolume/*microM/L/s*/,index2,MyName,ObjectCode);
+
+            if (NumberOfIceClasses > 1) sprintf(MyName, "BrineNO2Ice %i", ClassNumber + 1);
+            else strcpy(MyName, "BrineNO2Ice");
             MySeaIcePointer->Update(GetEcoDynClassName(), -NitrateAndNitriteUptake * Nitrite / (Nitrate + Nitrite) / NITROGENATOMICWEIGHT /
-                                    IceAlgaeLayerThickness[i]/ DAYSTOSECONDS / BrineFractionalVolume/*microM/L/s*/,i,"BrineNO2Ice",ObjectCode);
+                                    IceAlgaeLayerThickness[i]/ DAYSTOSECONDS / BrineFractionalVolume/*microM/L/s*/,index2,MyName,ObjectCode);
          }
           //...
       }
    }
    else
       NUptake[i] = 0.0;
-   NCellFlux[i] = NCellFlux[i] + NUptake[i] / DAYSTOSECONDS;   //mg N m-2 s-1
+   //NCellFlux[i] = NCellFlux[i] + NUptake[i] / DAYSTOSECONDS;   //mg N m-2 s-1
+   IceAlgaeNFlux[i] = IceAlgaeNFlux[i] + NUptake[i] / DAYSTOSECONDS;   //mg N m-2 s-1
 
 }
 
-void TIceAlgae::PhosphorusUptake(int ABoxNumber)
+void TIceAlgae::PhosphorusUptake(int LineNumber, int ColumnNumber, int LayerNumber, int ClassNumber)
 {
-   int i = ABoxNumber;
+   int i, index2;
+   char MyName[65];
+   i = GetIceIndex(LineNumber,ColumnNumber,LayerNumber,ClassNumber);
+   index2 = GetIceIndex(LineNumber,ColumnNumber,LayerNumber,0);
    TEcoDynClass* MySeaIcePointer = MyPEcoDynClass->GetSeaIcePointer();
    if ((NCellQuota[i] > TINNY) && (PCellQuota[i] > TINNY) && (MySeaIcePointer != NULL))
    {
@@ -1191,7 +2781,9 @@ void TIceAlgae::PhosphorusUptake(int ABoxNumber)
       // communicate method
       double Phosphate;
       //No caso de a classe ser invocada a partir do EcoDynamo...
-      MySeaIcePointer->Inquiry(GetEcoDynClassName(), Phosphate,i,"BrinePhosphateIce",ObjectCode);
+      if (NumberOfIceClasses > 1) sprintf(MyName, "BrinePhosphateIce %i", ClassNumber + 1);
+      else strcpy(MyName, "BrinePhosphateIce");
+      MySeaIcePointer->Inquiry(GetEcoDynClassName(), Phosphate,index2,MyName,ObjectCode);
       //...
       if (
             (PCellQuota[i] > MaxPCellQuota) ||
@@ -1205,19 +2797,26 @@ void TIceAlgae::PhosphorusUptake(int ABoxNumber)
          else
                 PUptake[i] = 0.0;
          //No caso de a classe ser invocada a partir do EcoDynamo...
+         //Debugger(11);Debugger(PUptake[i]);
          if ((IceAlgaeLayerThickness[i] > TINNY) && (BrineFractionalVolume > TINNY))
-            MySeaIcePointer->Update(GetEcoDynClassName(), -PUptake[i] / DAYSTOSECONDS / PHOSPHORUSATOMICWEIGHT / IceAlgaeLayerThickness[i] / BrineFractionalVolume,i,"BrinePhosphateIce",ObjectCode);
+         {
+            MySeaIcePointer->Update(GetEcoDynClassName(), -PUptake[i] / DAYSTOSECONDS / PHOSPHORUSATOMICWEIGHT / IceAlgaeLayerThickness[i] / BrineFractionalVolume,index2,MyName,ObjectCode);
+         }
          //...
       }
    }
    else
       PUptake[i] = 0.0;
-   PCellFlux[i] = PCellFlux[i] + PUptake[i] / DAYSTOSECONDS;  //mg P m-2 s-1
+   //PCellFlux[i] = PCellFlux[i] + PUptake[i] / DAYSTOSECONDS;  //mg P m-2 s-1
+   IceAlgaePFlux[i] = IceAlgaePFlux[i] + PUptake[i] / DAYSTOSECONDS;   //mg P m-2 s-1
 }
 
-void TIceAlgae::SilicaUptake(int ABoxNumber)
+void TIceAlgae::SilicaUptake(int LineNumber, int ColumnNumber, int LayerNumber, int ClassNumber)
 {
-   int i = ABoxNumber;
+   int i, index2;
+   char MyName[65];
+   i = GetIceIndex(LineNumber,ColumnNumber,LayerNumber,ClassNumber);
+   index2 = GetIceIndex(LineNumber,ColumnNumber,LayerNumber,0);
    TEcoDynClass* MySeaIcePointer = MyPEcoDynClass->GetSeaIcePointer();
    if ((NCellQuota[i] > TINNY) && (PCellQuota[i] > TINNY) && (MySeaIcePointer != NULL))
    {
@@ -1226,10 +2825,12 @@ void TIceAlgae::SilicaUptake(int ABoxNumber)
       // communicate method
       double Silicate;
       //No caso de a classe ser invocada a partir do EcoDynamo...
-      MySeaIcePointer->Inquiry(GetEcoDynClassName(), Silicate,i,"BrineSilicateIce",ObjectCode);
+      if (NumberOfIceClasses > 1) sprintf(MyName, "BrineSilicateIce %i", ClassNumber + 1);
+      else strcpy(MyName, "BrineSilicateIce");
+      MySeaIcePointer->Inquiry(GetEcoDynClassName(), Silicate,index2,MyName,ObjectCode);
       //...
       if (
-            (SiCellQuota[i] > MaxPCellQuota) ||
+            (SiCellQuota[i] > MaxSiCellQuota) ||
             (NCellQuota[i] / SiCellQuota[i] <= MinNSiRatio)
          )
          SiUptake[i] = 0.0;
@@ -1241,47 +2842,55 @@ void TIceAlgae::SilicaUptake(int ABoxNumber)
                 SiUptake[i] = 0.0;
          //No caso de a classe ser invocada a partir do EcoDynamo...
          if ((IceAlgaeLayerThickness[i] > TINNY) && (BrineFractionalVolume > TINNY))
-            MySeaIcePointer->Update(GetEcoDynClassName(), -SiUptake[i] / DAYSTOSECONDS / SILICAATOMICWEIGHT / IceAlgaeLayerThickness[i] / BrineFractionalVolume, i,"BrineSilicateIce",ObjectCode);
+            MySeaIcePointer->Update(GetEcoDynClassName(), -SiUptake[i] / DAYSTOSECONDS / SILICAATOMICWEIGHT / IceAlgaeLayerThickness[i] / BrineFractionalVolume, index2,MyName,ObjectCode);
          //...
       }
    }
    else
       SiUptake[i] = 0.0;
-   SiCellFlux[i] = SiCellFlux[i] + SiUptake[i] / DAYSTOSECONDS;  //mg P m-2 s-1
+   //SiCellFlux[i] = SiCellFlux[i] + SiUptake[i] / DAYSTOSECONDS;  //mg Si m-2 s-1
+   IceAlgaeSiFlux[i] = IceAlgaeSiFlux[i] + SiUptake[i] / DAYSTOSECONDS;   //mg Si m-2 s-1
 }
 
-void TIceAlgae::SalinityLimitation(int ABoxNumber)   //According with equation 36 of Arrigo et al (1993) - Journal of Geophysical Research 98: 6929-6946
+void TIceAlgae::SalinityLimitation(int LineNumber, int ColumnNumber, int LayerNumber, int ClassNumber)   //According with equation 36 of Arrigo et al (1993) - Journal of Geophysical Research 98: 6929-6946
 {
-   int MyBoxNumber = ABoxNumber;
+   int index1, index2;
+   char MyName[65];
+   index1 = GetIceIndex(LineNumber,ColumnNumber,LayerNumber,ClassNumber);
+   index2 = GetIceIndex(LineNumber,ColumnNumber,LayerNumber,0);
    double MySalinity;
    double const alfa1 = 0.011, alfa2 = 0.03012, alfa3 = 0.0010342,
                 alfa4 = -4.6033e-5, alfa5 = 4.926e-7, alfa6 = -1.659e-9;
    TEcoDynClass* MySeaIcePointer = MyPEcoDynClass->GetSeaIcePointer();
    if (MySeaIcePointer != NULL)
    {
-      MySeaIcePointer->Inquiry(GetEcoDynClassName(),MySalinity,MyBoxNumber,"BrineSalinityIce",ObjectCode);
-      SaltLimitation[MyBoxNumber] = alfa1 + alfa2 * MySalinity + alfa3 * pow(MySalinity, 2.0) + alfa4 * pow(MySalinity, 3.0) +
+      if (NumberOfIceClasses > 1) sprintf(MyName, "BrineSalinityIce %i", ClassNumber + 1);
+      else strcpy(MyName, "BrineSalinityIce");
+      MySeaIcePointer->Inquiry(GetEcoDynClassName(),MySalinity,index2,MyName,ObjectCode);
+      SaltLimitation[index1] = alfa1 + alfa2 * MySalinity + alfa3 * pow(MySalinity, 2.0) + alfa4 * pow(MySalinity, 3.0) +
                                     alfa5 * pow(MySalinity, 4.0) + alfa6 * pow(MySalinity, 5.0);
-      SaltLimitation[MyBoxNumber] = MAX(SaltLimitation[MyBoxNumber],0.0);  //To prevent negative values
-      SaltLimitation[MyBoxNumber] = MIN(SaltLimitation[MyBoxNumber],1.0);  //To prevent values slightly above 1
+      SaltLimitation[index1] = MAX(SaltLimitation[index1],0.0);  //To prevent negative values
+      SaltLimitation[index1] = MIN(SaltLimitation[index1],1.0);  //To prevent values slightly above 1
 
    }
    else
-      SaltLimitation[MyBoxNumber] = 1.0;
-   GPP[MyBoxNumber] = GPP[MyBoxNumber] * SaltLimitation[MyBoxNumber];
+      SaltLimitation[index1] = 1.0;
+   GPP[index1] = GPP[index1] * SaltLimitation[index1];
 }
 
-void TIceAlgae::IceSeaTransfer(int ABoxNumber)
+void TIceAlgae::IceSeaTransfer(int LineNumber, int ColumnNumber, int ClassNumber)
 {
-   int MyBoxNumber = ABoxNumber, Index, UpperLayer, MyLine, MyColumn;
-   double MyIceGrowthRate, MyBrineFlux, MyTemperature, MyDepth, AValue;
+   int MyBoxNumber, Index, UpperLayer, MyLine, MyColumn, MyClass,Index2D;
+   double MyDepth, AValue, MyMeltingSwitch, MyMeltingSnowFlux, MyIceRelativeArea;
+   char MyName[65];
    TEcoDynClass* MySeaIcePointer = MyPEcoDynClass->GetSeaIcePointer(),
                * MySPMPointer = MyPEcoDynClass->GetSPMPointer(),
                * MyPhytoplanktonPointer = MyPEcoDynClass->GetPhytoplanktonPointer(),
-               * MyWaterTemperaturePointer = MyPEcoDynClass->GetWaterTemperaturePointer(),
                * MyTransportPointer = MyPEcoDynClass->GetTransportPointer();
-   MyColumn = GetColumnIndex(MyBoxNumber);
-   MyLine = GetLineIndex(MyBoxNumber);
+   MyColumn = ColumnNumber;
+   MyLine = LineNumber;
+   MyClass = ClassNumber;
+   MyMeltingSwitch = 0.0;
    if (MyTransportPointer != NULL)
    {
       MyTransportPointer->Inquiry(GetEcoDynClassName(), AValue, 0,"UpperLayer",ObjectCode);
@@ -1294,50 +2903,50 @@ void TIceAlgae::IceSeaTransfer(int ABoxNumber)
       Index = Get3DIndex(MyLine,MyColumn,MyPEcoDynClass->GetNumberOfLayers()-1);
       MyDepth = MyPEcoDynClass->GetBoxDepth(Index);
    }
-   //Debugger(MyDepth);
-   if ((NCellQuota[MyBoxNumber] > TINNY) && (PCellQuota[MyBoxNumber] > TINNY) && (MySeaIcePointer != NULL) && (MyWaterTemperaturePointer != NULL))
+   Index2D = Get3DIndex(MyLine,MyColumn,0) + MyClass * NumberOfLines * NumberOfColumns;
+   if (NumberOfIceClasses > 1)sprintf(MyName, "SIarea %i", MyClass + 1);
+   else strcpy(MyName, "SIarea");
+   MySeaIcePointer->Inquiry(GetEcoDynClassName(), MyIceRelativeArea, GetIceIndex(MyLine,MyColumn,0,MyClass),MyName, ObjectCode);
+   if ((MySPMPointer != NULL) && (MyDepth > TINNY))
    {
-      MySeaIcePointer->Inquiry(GetEcoDynClassName(), MyIceGrowthRate,MyBoxNumber,"IceGrowthRate",ObjectCode);
-      MyWaterTemperaturePointer->Inquiry(GetEcoDynClassName(), MyTemperature,MyBoxNumber,"Water temperature",ObjectCode);
-      if ((MyIceGrowthRate < 0.0) && (MyTemperature > FreezingPointOfSeawater))
-      {
-         MySeaIcePointer->Inquiry(GetEcoDynClassName(), MyBrineFlux,MyBoxNumber,"Brine flux",ObjectCode);
-         if (IceAlgaeLayerThickness[MyBoxNumber] > TINNY)
-         {
-            IceAlgaeCFlux[MyBoxNumber] = IceAlgaeCFlux[MyBoxNumber] + MyIceGrowthRate / IceAlgaeLayerThickness[MyBoxNumber] * IceAlgaeC[MyBoxNumber];
-            IceAlgaeNFlux[MyBoxNumber] = IceAlgaeNFlux[MyBoxNumber] + MyIceGrowthRate /IceAlgaeLayerThickness[MyBoxNumber] * IceAlgaeN[MyBoxNumber];
-            IceAlgaePFlux[MyBoxNumber] = IceAlgaePFlux[MyBoxNumber] + MyIceGrowthRate / IceAlgaeLayerThickness[MyBoxNumber] * IceAlgaeP[MyBoxNumber];
-            IceAlgaeSiFlux[MyBoxNumber] = IceAlgaeSiFlux[MyBoxNumber] + MyIceGrowthRate / IceAlgaeLayerThickness[MyBoxNumber] * IceAlgaeSi[MyBoxNumber];
-         }
-         if ((MySPMPointer != NULL) && (MyDepth > TINNY))
-         {
-            MySPMPointer->Update(GetEcoDynClassName(), IceAlgaeCFlux[MyBoxNumber] / MyDepth / CUBIC/*mg L-1 s-1*/, MyBoxNumber,"LiveC",ObjectCode);
-            MySPMPointer->Update(GetEcoDynClassName(), IceAlgaeNFlux[MyBoxNumber] / MyDepth / CUBIC/*mg L-1 s-1*/, MyBoxNumber,"LiveN",ObjectCode);
-            MySPMPointer->Update(GetEcoDynClassName(), IceAlgaePFlux[MyBoxNumber] / MyDepth / CUBIC/*mg L-1 s-1*/, MyBoxNumber,"LiveP",ObjectCode);
-            MySPMPointer->Update(GetEcoDynClassName(), IceAlgaeSiFlux[MyBoxNumber] / MyDepth / CUBIC/*mg L-1 s-1*/, MyBoxNumber,"LiveSi",ObjectCode);
-         }
-         if ((MyPhytoplanktonPointer != NULL) && (MyDepth > TINNY))
-         {
-            MyPhytoplanktonPointer->Update(GetEcoDynClassName(), IceAlgaeCFlux[MyBoxNumber] / MyDepth/*mg m-3 s-1*/, MyBoxNumber,"Phytoplankton biomass",ObjectCode);
-            MyPhytoplanktonPointer->Update(GetEcoDynClassName(), IceAlgaeNFlux[MyBoxNumber] / MyDepth/*mg m-3 s-1*/, MyBoxNumber,"Phytoplankton N biomass",ObjectCode);
-            MyPhytoplanktonPointer->Update(GetEcoDynClassName(), IceAlgaePFlux[MyBoxNumber] / MyDepth/*mg m-3 s-1*/, MyBoxNumber,"Phytoplankton P biomass",ObjectCode);
-            MyPhytoplanktonPointer->Update(GetEcoDynClassName(), IceAlgaeSiFlux[MyBoxNumber] / MyDepth/*mg m-3 s-1*/, MyBoxNumber,"Phytoplankton Si biomass",ObjectCode);
-         }
-      }
+
+            MySPMPointer->Update(GetEcoDynClassName(), (IceMeltingCLosseRate[Index2D] + SnowMeltingCLosseRate[Index2D]) * MyIceRelativeArea/ MyDepth / CUBIC/*mg L-1 s-1*/, Index,"LiveC",ObjectCode);
+            MySPMPointer->Update(GetEcoDynClassName(), (IceMeltingNLosseRate[Index2D] + SnowMeltingNLosseRate[Index2D]) * MyIceRelativeArea/ MyDepth / CUBIC/*mg L-1 s-1*/, Index,"LiveN",ObjectCode);
+            MySPMPointer->Update(GetEcoDynClassName(), (IceMeltingPLosseRate[Index2D] + SnowMeltingPLosseRate[Index2D]) * MyIceRelativeArea/ MyDepth / CUBIC/*mg L-1 s-1*/, Index,"LiveP",ObjectCode);
+            MySPMPointer->Update(GetEcoDynClassName(), (IceMeltingSiLosseRate[Index2D] + SnowMeltingSiLosseRate[Index2D]) * MyIceRelativeArea/ MyDepth / CUBIC/*mg L-1 s-1*/, Index,"LiveSi",ObjectCode);
+            //Snow and ice melting losses losses are integrated in ice algal variables in the integrate of the previous time step, when SnowMeltTransport is called.
+            //Therefore, here they will add to phytoplankton variables in the water
+            //but they will not add to ice algal losses accounted for in the previous time step.
+            //The reason for doing this update of phytoplankton gains in "this" time step it is because these gains are known only at the "integrate" time of
+            //the previous time step.
    }
+   if ((MyPhytoplanktonPointer != NULL) && (MyDepth > TINNY))
+   {
+            MyPhytoplanktonPointer->Update(GetEcoDynClassName(), (IceMeltingCLosseRate[Index2D] + SnowMeltingCLosseRate[Index2D]) * MyIceRelativeArea/ MyDepth/*mg m-3 s-1*/, Index,"Phytoplankton biomass",ObjectCode);
+            MyPhytoplanktonPointer->Update(GetEcoDynClassName(), (IceMeltingNLosseRate[Index2D] + SnowMeltingNLosseRate[Index2D]) * MyIceRelativeArea/ MyDepth/*mg m-3 s-1*/, Index,"Phytoplankton N biomass",ObjectCode);
+            MyPhytoplanktonPointer->Update(GetEcoDynClassName(), (IceMeltingPLosseRate[Index2D] + SnowMeltingPLosseRate[Index2D]) * MyIceRelativeArea/ MyDepth/*mg m-3 s-1*/, Index,"Phytoplankton P biomass",ObjectCode);
+            MyPhytoplanktonPointer->Update(GetEcoDynClassName(), (IceMeltingSiLosseRate[Index2D] + SnowMeltingSiLosseRate[Index2D]) * MyIceRelativeArea/ MyDepth/*mg m-3 s-1*/, Index,"Phytoplankton Si biomass",ObjectCode);
+            //Snow and ice melting losses losses are integrated in ice algal variables in the integrate of the previous time step, when SnowMeltTransport is called.
+            //Therefore, here they will add to phytoplankton variables in the water
+            //but they will not add to ice algal losses accounted for in the previous time step.
+            //The reason for doing this update of phytoplankton gains in "this" time step it is because these gains are known only at the "integrate" time of
+            //the previous time step.
+   }
+      //}
+   //}
 }
 
 double TIceAlgae::TemperatureArrheniusExponentialLimitation(double TemperatureAugmentationRate, double ATemperature, double AReferenceTemperature)
 {
     //Default values according to Paul Tett (see reference below)
-   //TemperatureAugmentationRate = 0.069ºC-1, AReferenceTemperature = 20 ºC
+   //TemperatureAugmentationRate = 0.069ÂºC-1, AReferenceTemperature = 20 ÂºC
    //Default values according to Jin et al (see reference below)
-   //TemperatureAugmentationRate = 0.0633ºC-1 for photosynthesis and respiration and 0.03 for motality, AReferenceTemperature = 0 ºC
+   //TemperatureAugmentationRate = 0.0633ÂºC-1 for photosynthesis and respiration and 0.03 for motality, AReferenceTemperature = 0 ÂºC
    return exp(TemperatureAugmentationRate * (ATemperature - AReferenceTemperature));
    //Tett, P., 2000. Parameterising a microplankton model.
    //Department of Biological Sciences, Napier University,
    // Edinburgh EH10 5DT.
-   //Jin, M., et al., 2006. Controls of the landfast ice–ocean ecosystem offshore
+   //Jin, M., et al., 2006. Controls of the landfast iceâ€“ocean ecosystem offshore
    //Barrow, Alaska. Annals of Glaciology 44: 63-72.
    //Jin, M., et al., 2006. A coupled ice-ocean ecosystem model for I-D and 3-D applications
    //in the Bering and Chukchi Seas. Chinese Journal of Polar Science, Vol. 19, No.2, 218 - 229.
@@ -1367,25 +2976,82 @@ bool TIceAlgae::SaveVariables()
     return true;
 }
 
-void TIceAlgae::Mortality(int ABoxNumber)
+void TIceAlgae::Mortality(int LineNumber, int ColumnNumber, int LayerNumber, int ClassNumber)
 {
    double Mortality;
-   int MyBoxNumber;
-   MyBoxNumber = ABoxNumber;
-   Mortality = MortalityAtZeroDegres * TemperatureArrheniusExponentialLimitation(TempCoefMortality,WaterTemperature, TminMortality) / HOURSTOSECONDS;
-   IceAlgaeCFlux[MyBoxNumber] = IceAlgaeCFlux[MyBoxNumber] - Mortality * IceAlgaeC[MyBoxNumber];
-   IceAlgaeNFlux[MyBoxNumber] = IceAlgaeNFlux[MyBoxNumber] - Mortality * IceAlgaeN[MyBoxNumber];
-   IceAlgaePFlux[MyBoxNumber] = IceAlgaePFlux[MyBoxNumber] - Mortality * IceAlgaeP[MyBoxNumber];
-   IceAlgaeSiFlux[MyBoxNumber] = IceAlgaeSiFlux[MyBoxNumber] - Mortality * IceAlgaeSi[MyBoxNumber];
+   int index1, index2;
+   char MyName[65];
+   index1 = GetIceIndex(LineNumber,ColumnNumber,LayerNumber,ClassNumber);
+   index2 = GetIceIndex(LineNumber,ColumnNumber,LayerNumber,0);
+   Mortality = MortalityAtZeroDegres[index1] * TemperatureArrheniusExponentialLimitation(TempCoefMortality,IceTemperature, TminMortality) / HOURSTOSECONDS;
+   IceAlgaeCFlux[index1] = IceAlgaeCFlux[index1] - Mortality * IceAlgaeC[index1];
+   IceAlgaeNFlux[index1] = IceAlgaeNFlux[index1] - Mortality * IceAlgaeN[index1];
+   IceAlgaePFlux[index1] = IceAlgaePFlux[index1] - Mortality * IceAlgaeP[index1];
+   IceAlgaeSiFlux[index1] = IceAlgaeSiFlux[index1] - Mortality * IceAlgaeSi[index1];
    TEcoDynClass* MySeaIcePointer = MyPEcoDynClass->GetSeaIcePointer();
-   if ((MySeaIcePointer != NULL) && (IceAlgaeLayerThickness[MyBoxNumber] > TINNY) && (BrineFractionalVolume > TINNY))
+   if ((MySeaIcePointer != NULL) && (IceAlgaeLayerThickness[index1] > TINNY) && (BrineFractionalVolume > TINNY))
    {
-      MySeaIcePointer->Update(GetEcoDynClassName(), IceAlgaeCFlux[MyBoxNumber] / IceAlgaeLayerThickness[MyBoxNumber] / CUBIC / BrineFractionalVolume/*mg L-1 s-1*/, MyBoxNumber,"BrineDetritalIceC",ObjectCode);
-      MySeaIcePointer->Update(GetEcoDynClassName(), IceAlgaeNFlux[MyBoxNumber] / IceAlgaeLayerThickness[MyBoxNumber] / CUBIC / BrineFractionalVolume/*mg L-1 s-1*/, MyBoxNumber,"BrineDetritalIceN",ObjectCode);
-      MySeaIcePointer->Update(GetEcoDynClassName(), IceAlgaePFlux[MyBoxNumber] / IceAlgaeLayerThickness[MyBoxNumber] / CUBIC / BrineFractionalVolume/*mg L-1 s-1*/, MyBoxNumber,"BrineDetritalIceP",ObjectCode);
-      MySeaIcePointer->Update(GetEcoDynClassName(), IceAlgaeSiFlux[MyBoxNumber] / IceAlgaeLayerThickness[MyBoxNumber] / CUBIC / BrineFractionalVolume/*mg L-1 s-1*/, MyBoxNumber,"BrineDetritalIceSi",ObjectCode);
+      if (NumberOfIceClasses > 1) sprintf(MyName, "BrineDetritalIceC %i", ClassNumber + 1);
+      else strcpy(MyName, "BrineDetritalIceC");
+      MySeaIcePointer->Update(GetEcoDynClassName(), Mortality * IceAlgaeC[index1] / IceAlgaeLayerThickness[index1] / CUBIC / BrineFractionalVolume/*mg L-1 s-1*/, index2,MyName,ObjectCode);
+      if (NumberOfIceClasses > 1) sprintf(MyName, "BrineDetritalIceN %i", ClassNumber + 1);
+      else strcpy(MyName, "BrineDetritalIceN");
+      MySeaIcePointer->Update(GetEcoDynClassName(), Mortality * IceAlgaeN[index1] / IceAlgaeLayerThickness[index1] / CUBIC / BrineFractionalVolume/*mg L-1 s-1*/, index2,MyName,ObjectCode);
+      if (NumberOfIceClasses > 1) sprintf(MyName, "BrineDetritalIceP %i", ClassNumber + 1);
+      else strcpy(MyName, "BrineDetritalIceP");
+      MySeaIcePointer->Update(GetEcoDynClassName(), Mortality * IceAlgaeP[index1] / IceAlgaeLayerThickness[index1] / CUBIC / BrineFractionalVolume/*mg L-1 s-1*/, index2,MyName,ObjectCode);
+      if (NumberOfIceClasses > 1) sprintf(MyName, "BrineDetritalIceSi %i", ClassNumber + 1);
+      else strcpy(MyName, "BrineDetritalIceSi");
+      MySeaIcePointer->Update(GetEcoDynClassName(), Mortality * IceAlgaeSi[index1] / IceAlgaeLayerThickness[index1] / CUBIC / BrineFractionalVolume/*mg L-1 s-1*/, index2,MyName,ObjectCode);
    }
 }
 
 
+void TIceAlgae::WinterLosses(int LineNumber, int ColumnNumber, int LayerNumber, int ClassNumber)
+{
+    double Resp, AverageOxygenProduction;
+    int index1, index2;
+    char MyName[65];
+    index1 = GetIceIndex(LineNumber,ColumnNumber,LayerNumber,ClassNumber);
+    index2 = GetIceIndex(LineNumber,ColumnNumber,LayerNumber,0);
+    TEcoDynClass * MySeaIcePointer = MyPEcoDynClass->GetSeaIcePointer();
+
+    if (IceAlgaeChl[index1] > TINNY)
+    {
+       Resp = WinterResp / DAYSTOSECONDS * IceAlgaeC[index1];    //mg C / m2 / s
+       OxygenNetProduction[index1] = - Resp / CarbonToOxygenProd / IceAlgaeChl[index1];   //mg O2/ mg Chl / s
+       RespirationRate[index1] = Resp / CarbonToOxygenProd / (2.0 * OXYGENATOMICWEIGHT) / IceAlgaeChl[index1];  //mmol O2 / mg Chla / s
+       NPP[index1] = - Resp / IceAlgaeChl[index1]; //mg C / mg Chl / s
+    }
+    else
+    {
+       Resp = 0.0;
+       OxygenNetProduction[index1] = 0.0;
+       RespirationRate[index1] = 0.0;
+       NPP[index1] = 0.0;
+    }
+
+    if ((NPP[index1] < 0.0) && ((NCellQuota[index1] > MaxNCellQuota) || (PCellQuota[index1] > MaxPCellQuota)))
+    {
+       IceAlgaeCFlux[index1] = IceAlgaeCFlux[index1] - Resp;
+       IceAlgaeNFlux[index1] = IceAlgaeNFlux[index1] - Resp * NCellQuota[index1]; //mg N / m2 / s
+       IceAlgaePFlux[index1] = IceAlgaePFlux[index1] - Resp * PCellQuota[index1]; //mg P / m2 / s
+       if (MySeaIcePointer != NULL)
+       {
+          if (NumberOfIceClasses > 1) sprintf(MyName, "BrineNH4Ice %i", ClassNumber + 1);
+          else strcpy(MyName, "BrineNH4Ice");
+          MySeaIcePointer->Update(GetEcoDynClassName(), Resp * NCellQuota[index1] / NITROGENATOMICWEIGHT / IceAlgaeLayerThickness[index1] / BrineFractionalVolume,index2,MyName,ObjectCode); //microM/L/s
+          if (NumberOfIceClasses > 1) sprintf(MyName, "BrinePhosphateIce %i", ClassNumber + 1);
+          else strcpy(MyName, "BrinePhosphateIce");
+          MySeaIcePointer->Update(GetEcoDynClassName(), Resp * PCellQuota[index1] / PHOSPHORUSATOMICWEIGHT / IceAlgaeLayerThickness[index1] / BrineFractionalVolume,index2,MyName,ObjectCode); //microM/L/s
+       }
+    }
+    else
+       IceAlgaeCFlux[index1] = IceAlgaeCFlux[index1] - Resp;
+    if (MySeaIcePointer != NULL)  {
+       if (NumberOfIceClasses > 1) sprintf(MyName, "BrineOxygenIce %i", ClassNumber + 1);
+       else strcpy(MyName, "BrineOxygenIce");
+       MySeaIcePointer->Update(GetEcoDynClassName(), OxygenNetProduction[index1] * IceAlgaeChl[index1] / IceAlgaeLayerThickness[index1] / CUBIC / BrineFractionalVolume, index2,MyName, ObjectCode);//Return as mg O2 / L / s
+   }
+}
 

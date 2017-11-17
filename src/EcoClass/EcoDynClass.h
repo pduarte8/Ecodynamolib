@@ -534,6 +534,9 @@ class _export TEcoDynClass
 
         virtual double GetParameterValue(char* parmName) {return 0.0;}
         virtual bool SetParameterValue(char* parmName, double value) {return true;}
+        virtual void UpdateLayerProperties(int Line, int Column, int ALayer, double *Concentration){}
+        virtual void UpdateLayerPropertiesForPhytoplankton(int Line, int Column, int Class, double *Concentration){}
+        virtual void SnowMeltTransport(int Line, int Column, double *Generic, double SnowConcentration){}
 
         //  24/3/2003
         bool OpenMorphology();
@@ -616,6 +619,12 @@ class _export TEcoDynClass
             {return NumberOfLines - (boxNumber - GetLayerIndex(boxNumber)* GetNumberOfLines() * GetNumberOfColumns()) / GetNumberOfColumns();}
         int GetColumnNumber3D(int boxNumber)
             {return (boxNumber - GetLayerIndex(boxNumber) * GetNumberOfLines() * GetNumberOfColumns()) % GetNumberOfColumns() + 1;}
+        int GetIceIndex(int Line, int Column, int Layer, int IceClass)
+            {
+               return (Line * GetNumberOfColumns() + Column) + Layer * (GetNumberOfLines() * GetNumberOfColumns()) +
+                     IceClass * (GetNumberOfLines() * GetNumberOfColumns() * GetNumberOfIceLayers());
+            }
+        int GetNumberOfIceLayers() {return NumberOfIceLayers;}  
         long GetAStartTime()
             {return AStartTime;}
         long GetAFinishTime()
@@ -730,6 +739,7 @@ class _export TEcoDynClass
         int NumberOfLines;
         int NumberOfColumns;
         int NumberOfLayers;
+        int NumberOfIceLayers;
 
         char modelType[16];
 
@@ -794,7 +804,12 @@ class _export TEcoDynClass
                                  double *C, double *CFlux,
                                  double *D, double *DFlux,
                                  double *E, double *EFlux);
-
+        virtual void Integration(double *A, double *AFlux,
+                                 double *B, double *BFlux,
+                                 double *C, double *CFlux,
+                                 double *D, double *DFlux,
+                                 double *E, double *EFlux,
+                                 int NumberOfBoxes);
         virtual void IntegrationTridag (/*double*, double*, double*, // tridag
                                           double*,*/ int n);
 
@@ -805,7 +820,7 @@ class _export TEcoDynClass
         virtual void Ludcmp(int n, double *, int*);
         virtual void Lubksb(int n, double *, int*, double *);
         virtual void mprovetridag(double *, double *, double *, double *, double *, int n);
-
+        virtual void BuildClassVariableNames(int NumberOfVariables, int NumberOfClasses);
         int GetDaysToMonth(int year, int month);
         int dayOfYear(int year, int month, int day);
 

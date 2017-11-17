@@ -983,6 +983,32 @@ void TEcoDynClass::Integration(double *A, double *AFlux,
 	}
 }
 
+void TEcoDynClass::Integration(double *A, double *AFlux,
+                                   double *B, double *BFlux,
+                                   double *C, double *CFlux,
+                                   double *D, double *DFlux,
+                                   double *E, double *EFlux,
+                                   int NumberOfBoxes)
+{
+	int box;
+    float timeStep = MyPEcoDynClass->GetTimeStep();
+	// Update the arrays
+	for (box = 0; box < NumberOfBoxes; box++)
+	{
+		A[box] += (AFlux[box] * timeStep);
+		B[box] += (BFlux[box] * timeStep);
+		C[box] += (CFlux[box] * timeStep);
+		D[box] += (DFlux[box] * timeStep);
+		E[box] += (EFlux[box] * timeStep);
+    	// Zero the fluxes
+		AFlux[box] = 0;
+		BFlux[box] = 0;
+		CFlux[box] = 0;
+		DFlux[box] = 0;
+		EFlux[box] = 0;
+	}
+}
+
 void TEcoDynClass::Integration(int NumberOfClasses)
 {
 	int k, index;
@@ -2592,6 +2618,37 @@ void TEcoDynClass::Debugger(double bug)
 #else //__BORLANDC__
 	cerr << "Debug " << bug << endl;
 #endif 	// __BORLANDC__
+}
+
+void TEcoDynClass::BuildClassVariableNames(int NumberOfVariables, int NumberOfClasses)
+{
+   char buffer[33];
+   int AnInteger, index;
+   VNA* MyVariableNameArray;
+   MyVariableNameArray = new VNA[NumberOfVariables * NumberOfClasses];
+   index = 0;
+   for (int i = 0; i < NumberOfVariables; i++)
+   {
+      strcat(VariableNameArray[i]," ");
+      for (int Class = 0; Class < NumberOfClasses; Class++)
+      {
+         AnInteger = Class + 1;
+         itoa (AnInteger,buffer,10);
+         strcpy (MyVariableNameArray[index],VariableNameArray[i]);
+         strcat(MyVariableNameArray[index],buffer);
+         //MessageBox(0, MyVariableNameArray[index], "EcoDynamo alert", MB_OK);
+         index++;
+      }
+   }
+   delete VariableNameArray;
+   VariableNameArray = new VNA[NumberOfVariables * NumberOfClasses];
+   //VariableNameArray = MyVariableNameArray;
+   for (int index = 0; index < NumberOfVariables * NumberOfClasses; index++)
+   {
+      strcpy (VariableNameArray[index],MyVariableNameArray[index]);
+      //MessageBox(0, VariableNameArray[index], "EcoDynamo alert", MB_OK);
+   }
+   delete MyVariableNameArray;
 }
 #endif  // !(_PORT_FORTRAN_)
 
