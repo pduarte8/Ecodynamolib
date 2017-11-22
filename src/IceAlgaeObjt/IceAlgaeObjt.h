@@ -64,7 +64,10 @@ class _export TIceAlgae : public TProdutor
         virtual bool SetVariableValue(char* srcName, double Value,int BoxNumber,char* VariableName);
         void InitializeVariables(char* classeName);
         double aMin;
+#ifndef _PORT_FORTRAN_    
         void ReadVariablesAndParameters(char* classeName);
+        bool SaveVariables();
+#endif  //_PORT_FORTRAN_
         virtual void Production(int LineNumber, int ColumnNumber, int LayerNumber, int ClassNumber);
         virtual void Respiration(int LineNumber, int ColumnNumber, int LayerNumber, int ClassNumber);
         virtual void Exudation(int LineNumber, int ColumnNumber, int LayerNumber, int ClassNumber);
@@ -78,7 +81,7 @@ class _export TIceAlgae : public TProdutor
         virtual void SalinityLimitation(int LineNumber, int ColumnNumber, int LayerNumber, int ClassNumber);
         virtual double TemperatureArrheniusExponentialLimitation(double TemperatureAugmentationRate, double ATemperature, double AReferenceTemperature);
         virtual void WinterLosses(int LineNumber, int ColumnNumber, int LayerNumber, int ClassNumber);
-        bool SaveVariables();
+        
         int MyNumberOfBoxesInSubDomain, ADay, ABoxNumber;
         double *IceAlgaeChl, *IceAlgaeC, *IceAlgaeN, *IceAlgaeP, *IceAlgaeSi,
                *NCellQuota, *PCellQuota, *SiCellQuota,
@@ -112,6 +115,7 @@ static TEcoDynClass *PIceAlgae;
 
 #else  //_PORT_FORTRAN_
 extern "C" {
+   void icealgae_test__(long* PIceAlgae);
    void icealgae_new__(long* PIceAlgae, int* piCurveOption, char* limitationType, 
                        double* pmax, double* slope, double* beta,double* tminPhotosynthesis,double* tempCoefPhotosynthesis, double* carbonToOxygenProd,
                        double* respirationCoefficient,double* maintenanceRespiration, double* ratioLightDarkRespiration,double* tminRespiration, double* tempCoefRespiration,

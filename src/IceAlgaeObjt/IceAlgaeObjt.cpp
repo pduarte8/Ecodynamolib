@@ -18,13 +18,20 @@
 #include "IceAlgaeObjt.h"
 //#include "params.h"
 #include "EcoDynClass.h"
-#include "iodll.h"
+#ifndef _PORT_FORTRAN_
+	#include "iodll.h"
+#endif
 
 
 #ifdef _PORT_FORTRAN_
 /*
  * singleton provider - TPhytoplanktonGeneric class method
  */
+
+void icealgae_test__(long* PIceAlgae)
+{
+
+}
 
 TIceAlgae* TIceAlgae::getIceAlgae()
 {
@@ -168,10 +175,10 @@ void icealgae_production__(long* PIceAlgae, double* lightAtTop, double* lightAtB
    /*****************************************Selection of a P-I function depending on the option "piCurveOption" in the arguments above*****************************/
    switch (*piCurveOption)
    {
-      case 1: /*STEELE*/ // add a list item
+      case 1: /*PLATT*/ // add a list item
          ptr->Productivity = ptr->PlattPIFunction(0);
          break;
-      case 2: /*MICHAELIS_MENTEN*/	// add a list item
+      case 2: /*STEELE*/ // add a list item
          ptr->Productivity = ptr->SteelePIFunction(0);
          break;
    }
@@ -417,9 +424,10 @@ void TIceAlgae::InitializeVariables(char* className)
 #endif  // __BORLANDC__
 
 }
-
+#ifndef _PORT_FORTRAN_
 void TIceAlgae::ReadVariablesAndParameters(char* className)
 {
+  
    char MyVariable[65], MyName[65];
    double Value;
    //Read Variables file
@@ -806,6 +814,7 @@ void TIceAlgae::ReadVariablesAndParameters(char* className)
 #endif  // __BORLANDC__
    }
 }
+#endif //_PORT_FORTRAN_
 
 TIceAlgae::~TIceAlgae()
 {
@@ -892,7 +901,9 @@ VNA* TIceAlgae::InquiryIce(char* srcName,int &IceLayers, int &IceVariables)
     {
         strcpy(MyVarNameArray[i], VariableNameArray[i]);
     }
+#ifndef _PORT_FORTRAN_
     LogMessage("Inquiry", srcName, MyVarNameArray[0], IceLayers, IceVariables);
+#endif
     return MyVarNameArray;
 }
 
@@ -1372,7 +1383,9 @@ void TIceAlgae::Inquiry(char* srcName, double &Value,int BoxNumber,char* Paramet
 #endif
    }
    }
+#ifndef _PORT_FORTRAN_
    LogMessage("Inquiry", srcName, MyParameter, Value, MyBoxNumber);
+#endif
 }
 
 bool TIceAlgae::SetVariableValue(char* srcName, double Value,int BoxNumber,char* VariableName)
@@ -1380,7 +1393,9 @@ bool TIceAlgae::SetVariableValue(char* srcName, double Value,int BoxNumber,char*
     char MyParameter[65], MyName[65]; // 64 characters (max) for parameter name
     strcpy(MyParameter, VariableName);
     bool rc = true;
+#ifndef _PORT_FORTRAN_
     LogMessage("SetVariableValue", srcName, VariableName, Value, BoxNumber);
+#endif
     if (strstr(MyParameter, "Ice algae chl") != NULL)
     {
       if (NumberOfIceClasses == 1)
@@ -1864,7 +1879,9 @@ void TIceAlgae::Update(char* srcName, double Value,int BoxNumber,char* Parameter
     char MyParameter[65], MyName[65]; // 64 characters (max) for parameter name
     int MyBoxNumber = BoxNumber;
     strcpy(MyParameter, ParameterName);
+#ifndef _PORT_FORTRAN_
     LogMessage("Update", srcName, MyParameter, Value, MyBoxNumber);
+#endif
     if (strstr(MyParameter, "Ice algae chl") != NULL)
     {
       if (NumberOfIceClasses == 1)
@@ -1959,16 +1976,18 @@ void TIceAlgae::Update(char* srcName, double Value,int BoxNumber,char* Parameter
     }
 }
 
-#ifdef __BORLANDC__
+
+
 void TIceAlgae::Integrate()
 {
+#ifndef _PORT_FORTRAN_
     Integration(IceAlgaeChl, IceAlgaeChlFlux, IceAlgaeC, IceAlgaeCFlux, IceAlgaeN, IceAlgaeNFlux, IceAlgaeP, IceAlgaePFlux, IceAlgaeSi, IceAlgaeSiFlux, NumberOfBoxesWithIce*NumberOfIceClasses);
-
     TEcoDynClass*  MySeaIcePointer = MyPEcoDynClass->GetSeaIcePointer();
     int index, BottomIndex, Index3D, Index2D; double IceGrowth, LayerThickness;
     double MyMeltingSnowFlux,SnowMeltingRate, MyMeltingSwitch, MyIceGrowth, IceMeltingRate, MyIceRelativeArea;
     char MyName[65];
     //if ((MyPEcoDynClass->GetJulianDay() > 91) && (MyPEcoDynClass->GetCurrTime()>4.13)) Debugger(11);
+
     if (MySeaIcePointer != NULL)
     {
        for (int Class = 0; Class < NumberOfIceClasses; Class++)
@@ -2274,8 +2293,9 @@ void TIceAlgae::Integrate()
       }
       }
    }
+#endif //_PORT_FORTRAN_
 }
-#endif  // __BORLANDC__
+
 
 /*
 //Integrate to use with simulations with fixed biomass
@@ -2951,7 +2971,7 @@ double TIceAlgae::TemperatureArrheniusExponentialLimitation(double TemperatureAu
    //Jin, M., et al., 2006. A coupled ice-ocean ecosystem model for I-D and 3-D applications
    //in the Bering and Chukchi Seas. Chinese Journal of Polar Science, Vol. 19, No.2, 218 - 229.
 }
-
+#ifndef _PORT_FORTRAN_
 bool TIceAlgae::SaveVariables()
 {
     TReadWrite* PReadWrite = (TReadWrite*)SaveVariablesFile("IceAlgae");
@@ -2975,6 +2995,7 @@ bool TIceAlgae::SaveVariables()
     CloseDataFile((void*)PReadWrite);
     return true;
 }
+#endif //_PORT_FORTRAN_
 
 void TIceAlgae::Mortality(int LineNumber, int ColumnNumber, int LayerNumber, int ClassNumber)
 {

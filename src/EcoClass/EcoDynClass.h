@@ -820,7 +820,9 @@ class _export TEcoDynClass
         virtual void Ludcmp(int n, double *, int*);
         virtual void Lubksb(int n, double *, int*, double *);
         virtual void mprovetridag(double *, double *, double *, double *, double *, int n);
+#ifndef _PORT_FORTRAN_
         virtual void BuildClassVariableNames(int NumberOfVariables, int NumberOfClasses);
+#endif  _PORT_FORTRAN_ 
         int GetDaysToMonth(int year, int month);
         int dayOfYear(int year, int month, int day);
 
