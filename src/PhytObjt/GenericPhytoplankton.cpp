@@ -971,10 +971,10 @@ void TPhytoplanktonGeneric::Respiration(int ABoxNumber)
          WaterTemperature = 0.0;
       //...
 #endif
-      if (GPP[MyBoxNumber] <= 0.0)
+      if (GPP[MyBoxNumber] > 0.0)
       {
          OxygenProd = GPP[MyBoxNumber] / CarbonToOxygenProd / (PhytoBiomass[MyBoxNumber] / ChlToCarbon[MyBoxNumber]);
-         Resp = Resp + RatioLightDarkRespiration * RespirationCoefficient * OxygenProd / OxygenMolecularWeight
+         Resp = Resp + RespirationCoefficient * OxygenProd / OxygenMolecularWeight
 	   * TemperatureArrheniusExponentialLimitation(MyBoxNumber);//Resp in //mmol O2 / mg Chl / s  
       }
        /*if (GPP[MyBoxNumber] <= 0.0)
