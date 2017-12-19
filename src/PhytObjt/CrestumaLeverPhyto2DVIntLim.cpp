@@ -346,6 +346,9 @@ void TCrestumaLeverPhytoplankton2DVIntLim::PreBuildCrestumaLeverPhyto2DVIntLim()
     PhytoPLoad = new double[NumberOfBoxes];
     PhytoSiLoad = new double[NumberOfBoxes];
     DailyMeanGPP = new double[NumberOfBoxes];
+    NLimFactor = new double[NumberOfBoxes];
+    PLimFactor = new double[NumberOfBoxes];
+    SiLimFactor = new double[NumberOfBoxes];
     ADay = new int[NumberOfBoxes];
     NumberOfParcels = new double[NumberOfBoxes];
     SettlingLoss = new double[NumberOfBoxes];
@@ -358,6 +361,7 @@ void TCrestumaLeverPhytoplankton2DVIntLim::PreBuildCrestumaLeverPhyto2DVIntLim()
         PhytoNLoad[i] = 0.0; PhytoPLoad[i] = 0.0;PhytoSiLoad[i] = 0.0;
         DailyMeanGPP[i] = 0.0;  ADay[i] = MyPEcoDynClass->GetJulianDay();
         NumberOfParcels[i] = 0.0; SettlingLoss[i] = 0.0;
+        NLimFactor[i] = 1.0; PLimFactor[i] = 1.0; SiLimFactor[i] = 1.0;
     }
 }
 
@@ -433,6 +437,9 @@ void TCrestumaLeverPhytoplankton2DVIntLim::freeMemory()
           delete [] NUptake;
           delete [] PUptake;
           delete [] SiUptake; 
+          delete [] NLimFactor;
+          delete [] PLimFactor;
+          delete [] SiLimFactor;
           delete [] DailyMeanGPP;
           delete [] NumberOfParcels;
           delete [] SettlingLoss;
@@ -1864,7 +1871,8 @@ void TCrestumaLeverPhytoplankton2DVIntLim::SilicaUptake(int ABoxNumber, double S
          SiUptake[i] = 0.0;
       else
       {
-         SiUptake[i] = SiMaxUptake *  Silica / ( Silica + KSi) * SiPhyto[i];
+         SiLimFactor[i] = Silica / ( Silica + KSi);
+         SiUptake[i] = SiMaxUptake *  SiLimFactor[i] * SiPhyto[i];
          //No caso de a classe ser invocada a partir do EcoDynamo...
 #ifndef _PORT_FORTRAN_ 
          MyNutrientPointer->Update(GetEcoDynClassName(), -SiUptake[i] / HOURSTOSECONDS/** DAYSTOHOURS*/ * CUBIC / SILICAATOMICWEIGHT,
@@ -1894,35 +1902,33 @@ void TCrestumaLeverPhytoplankton2DVIntLim::NutrientLimitation(int ABoxNumber)
 	int i = ABoxNumber;  double NLimitation, PLimitation, SiLimitation;
 
    if (PhosphorusLimitation == 1) {
-     if (PCellQuota[i] < MinPCellQuota)
-          PLimitation = 0.0;
-     else
-          PLimitation = PCellQuota[i] / (PCellQuota[i] + KPInternal);
+     if (PCellQuota[i] < MinPCellQuota)PLimitation = 0.0;
+     else PLimitation = PCellQuota[i] / (PCellQuota[i] + KPInternal);
    }
    else
      PLimitation = 1.0;
+   PLimFactor[i] = PLimitation; 
    if (NitrogenLimitation == 1) {
-     if (NCellQuota[i] < MinNCellQuota)
-          NLimitation = 0.0;
-     else
-          NLimitation = NCellQuota[i] / (NCellQuota[i] + KNInternal);
+     if (NCellQuota[i] < MinNCellQuota) NLimitation = 0.0;
+     else  NLimitation = NCellQuota[i] / (NCellQuota[i] + KNInternal);
+      
    }
    else
       NLimitation = 1.0;
-
-   if (SilicaLimitation == 1) {
+   NLimFactor[i] = NLimitation;
+   /*if (SilicaLimitation == 1) {
      if (SiCellQuota[i] < MinSiCellQuota)
           SiLimitation = 0.0;
      else
           SiLimitation = SiCellQuota[i] / (SiCellQuota[i] + KSiInternal);
    }
    else
-      SiLimitation = 1.0;
+      SiLimitation = 1.0;*/
 
-   if ((PLimitation == 0.0) || (NLimitation == 0.0) || (SiLimitation == 0.0))
+   if ((PLimFactor[i] == 0.0) || (NLimFactor[i] == 0.0) || (SiLimFactor[i] == 0.0))
    	Productivity = 0.0;
    else
-   	Productivity = Productivity * MIN(MIN(PLimitation,NLimitation),SiLimitation);
+   	Productivity = Productivity * MIN(MIN(PLimFactor[i],NLimFactor[i]),SiLimFactor[i]);
 
 #ifndef _PORT_FORTRAN_
    }

@@ -673,7 +673,7 @@ class _export TCrestumaLeverPhytoplankton2DVIntLim : public TCrestumaLeverPhytop
         double *NCellQuota, *PCellQuota, *NUptake, *PUptake,
              *PhytoNLoad, *PhytoPLoad, *NPhyto, *PPhyto,
              *NCellFlux, *PCellFlux, *DailyMeanGPP, *NumberOfParcels, *SettlingLoss,
-             *SiCellQuota, *SiUptake, *PhytoSiLoad, *SiPhyto, *SiCellFlux;
+             *SiCellQuota, *SiUptake, *PhytoSiLoad, *SiPhyto, *SiCellFlux, *NLimFactor,*PLimFactor,*SiLimFactor;
        int *ADay;
        double MinNPRatio,MaxNPRatio, MinNSiRatio, MaxNSiRatio, PMaxUptake,NMaxUptake, SiMaxUptake,KP, KNO3,
              KNH4, KSi, MaxPCellQuota, MaxNCellQuota, MaxSiCellQuota, MinPCellQuota, MinNCellQuota, MinSiCellQuota,
