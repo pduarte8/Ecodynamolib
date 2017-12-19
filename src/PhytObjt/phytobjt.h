@@ -914,14 +914,13 @@ extern "C" {
     void phyto_setkvalue__(float* kvalue);
     void phyto_setbiomass__(int* box, float* biomass);
 
-    void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, double* imax, double* slope, double* beta, double* aEiler, double* bEiler, double* cEiler, 
+    void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, double* imax, double* slope,double* beta, double* aEiler, double* bEiler, double* cEiler, 
                             double* maintenanceRespiration, double* respirationCoefficient,double* docStressLoss,
                             double* deathLoss, double* redfieldCFactor, double* redfieldNFactor,double* redfieldPFactor, double* temperatureAugmentationRate,
                             double* ratioLightDarkRespiration, double* minNPRatio,double* maxNPRatio, double* pMaxUptake, double* nMaxUptake, double* kP,double* kNO3, 
-                            double* kNH4, double* minPCellQuota, double* maxPCellQuota,double* minNCellQuota, double* maxNCellQuota, double* kPInternal,double* kNInternal, 
-                            double* maxSiCellQuota, double* minNSiRatio, double* siMaxUptake, double* kSi, double* kSiInternal, double* redfieldSiFactor,
-                            double* settlingSpeed, double* carbonToOxygenProd,double* carbonToOxygenResp, double* tminRespiration,double* tminPhotosynthesis,    
-                            int* nitrogenLimitation, int* phosphorusLimitation, int* silicaLimitation);
+                            double* kNH4, double* minPCellQuota, double* maxPCellQuota,double* minNCellQuota, double* maxNCellQuota, double* kPInternal,double* kNInternal, double* settlingSpeed, double* carbonToOxygenProd,double* carbonToOxygenResp, double* tminRespiration,double* tminPhotosynthesis,
+                            int* nitrogenLimitation, int* phosphorusLimitation, int* silicaLimitation, double* maxSiCellQuota, double* minNSiRatio, double* siMaxUptake,
+                            double* kSi, double* kSiInternal, double* redfieldSi);
 
     void phytoplankton_go__(long* PPhytoplankton, double* layerThickness, double* timeStep);
 

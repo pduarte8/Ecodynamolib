@@ -1,4 +1,5 @@
 // PhytoplanktonGeneric object CPP code file
+
 /**
  * NPI work
  * 	03 October 2013, AP :: inclusion of __GNUC__ or __BORLANDC__ symbols
@@ -171,10 +172,9 @@ void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, doubl
                             double* maintenanceRespiration, double* respirationCoefficient,double* docStressLoss,
                             double* deathLoss, double* redfieldCFactor, double* redfieldNFactor,double* redfieldPFactor, double* temperatureAugmentationRate,
                             double* ratioLightDarkRespiration, double* minNPRatio,double* maxNPRatio, double* pMaxUptake, double* nMaxUptake, double* kP,double* kNO3, 
-                            double* kNH4, double* minPCellQuota, double* maxPCellQuota,double* minNCellQuota, double* maxNCellQuota, double* kPInternal,double* kNInternal, 
-                            double* maxSiCellQuota, double* minNSiRatio, double* siMaxUptake, double* kSi, double* kSiInternal,double* redfieldSiFactor, 
-                            double* settlingSpeed, double* carbonToOxygenProd,double* carbonToOxygenResp, double* tminRespiration,double* tminPhotosynthesis,
-                            int* nitrogenLimitation, int* phosphorusLimitation, int* silicaLimitation)
+                            double* kNH4, double* minPCellQuota, double* maxPCellQuota,double* minNCellQuota, double* maxNCellQuota, double* kPInternal,double* kNInternal, double* settlingSpeed, double* carbonToOxygenProd,double* carbonToOxygenResp, double* tminRespiration,double* tminPhotosynthesis,
+                            int* nitrogenLimitation, int* phosphorusLimitation, int* silicaLimitation, double* maxSiCellQuota, double* minNSiRatio, double* siMaxUptake,
+                            double* kSi, double* kSiInternal, double* redfieldSi)
 {
         TPhytoplanktonGeneric* ptr;
         //***Grid dimensions set to "ones" because this is for usage of EcoDynamo functions from ROMS (or other software) and the functions remain agnostic about grid details***/
@@ -203,7 +203,9 @@ void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, doubl
         ptr->SetParameterValue("RedfieldCFactor",*redfieldCFactor);
         ptr->SetParameterValue("RedfieldNFactor", *redfieldNFactor);
         ptr->SetParameterValue("RedfieldPFactor", *redfieldPFactor);  
-        //cout << "Maintenance respiration= "<< *maintenanceRespiration; cout << "Respiration Coefficient= "<< *respirationCoefficient; 
+        //cout << "Maintenance respiration= "<< *maintenanceRespiration << endl;
+        //cout << "Respiration Coefficient= "<< *respirationCoefficient << endl;
+        //cout << "CARBONATOMICWEIGHT= "<<CARBONATOMICWEIGHT<< endl; 
         ptr->SetParameterValue("TemperatureAugmentationRate",*temperatureAugmentationRate);
         ptr->SetParameterValue("SettlingSpeed",*settlingSpeed);   
         ptr->SetParameterValue("Light/Dark resp", *ratioLightDarkRespiration);
@@ -222,6 +224,8 @@ void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, doubl
         ptr->SetParameterValue("KNInternal",*kNInternal);
         ptr->SetParameterValue("Carbon to Oxygen in photosynthesis",*carbonToOxygenProd);   
         ptr->SetParameterValue("Carbon to Oxygen in respiration",*carbonToOxygenResp);
+        cout << "carbonToOxygenProd= "<< *carbonToOxygenProd << endl;
+        cout << "carbonToOxygenResp= "<< *carbonToOxygenResp << endl;
         ptr->SetParameterValue("TminPhotosynthesis",*tminPhotosynthesis);
         ptr->SetParameterValue("TminRespiration",*tminRespiration);
 
@@ -230,7 +234,7 @@ void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, doubl
         ptr->SetParameterValue("SiMaxUptake",*siMaxUptake);
         ptr->SetParameterValue("KSi",*kSi);
         ptr->SetParameterValue("KSiInternal",*kSiInternal);
-        ptr->SetParameterValue("RedfieldSiFactor",*redfieldSiFactor);
+        ptr->SetParameterValue("RedfieldSiFactor",*redfieldSi);
 
         ptr->SetParameterValue("Nitrogen limitation",*nitrogenLimitation);
         ptr->SetParameterValue("Phosphorus limitation",*phosphorusLimitation);
