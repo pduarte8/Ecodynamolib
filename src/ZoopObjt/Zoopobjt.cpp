@@ -20,9 +20,16 @@
 
 // TZooplankton Class
 //
-// Constructors invoked outside EcoDyn shell...
-//
 
+//
+#ifndef _PORT_FORTRAN_
+//-----------------------------------------------
+// ...Methods invoked from Fortran...
+//
+//        only one box
+//
+//-----------------------------------------------
+// Constructors invoked outside EcoDyn shell...
 TZooplankton::TZooplankton(char* className, float timeStep,
         int nLines, int nColumns, double aDepth[],
         double aLength[], double aWidth[], double aElevation[], int aType[],
@@ -43,17 +50,60 @@ TZooplankton::TZooplankton(char* className, float timeStep,
         BuildZooplankton(className);
     }
 }
-// ...
 
-
-TZooplankton::TZooplankton(TEcoDynClass* APEcoDynClass, char* className)
-									: TEcoDynClass()
+TZooplankton::TZooplankton(TEcoDynClass* APEcoDynClass, char* className): TEcoDynClass()
 
 {
-	// Receive pointer to integrate
-	MyPEcoDynClass = APEcoDynClass;
+    // Receive pointer to integrate
+    MyPEcoDynClass = APEcoDynClass;
     BuildZooplankton(className);
 }
+
+#else
+
+TZooplankton* TZooplankton::getZoop(TZooplankton* pzooplankton)
+{
+   TZooplankton *PZooplankton = new TZooplankton("TZooplankton");
+   return PZooplankton;
+}
+
+TZooplankton* TZooplankton::getZoop()
+{
+   TZooplankton *PZooplankton = new TZooplankton("TZooplankton");
+   return PZooplankton;
+}
+
+TZooplankton::TZooplankton(char* className): TEcoDynClass()
+{
+   MyPEcoDynClass = (TEcoDynClass*)this;
+   NumberOfVariables = 2;
+   VariableNameArray = new VNA[NumberOfVariables];
+   strcpy(VariableNameArray[0], "Zooplankton biomass");
+   strcpy(VariableNameArray[1], "Zooplankton production");
+}
+
+void zooplankton_new__(long* PZooplankton, double* rmax, double* kgraze, double* phytolowerlimit, double* docloss, double* excretionloss,
+                          double* metabolism, double* maximumdeathloss, double* kzoostarvedbyphyto)
+{
+   TZooplankton* ptr;
+   //***Grid dimensions set to "ones" because this is for usage of EcoDynamo functions from ROMS (or other software) and the functions remain agnostic about grid details***/
+   ptr = TZooplankton::getZoop();
+   *PZooplankton = (long)ptr;
+   ptr->SetNumberOfLines(1);
+   ptr->SetNumberOfColumns(1);
+   ptr->SetNumberOfLayers(1);
+   ptr->SetNumberOfBoxes(1);
+}
+
+void zooplankton_go__(long* PZooplankton, double* layerThickness, double* timeStep)
+{
+
+
+}
+
+#endif //_PORT_FORTRAN_
+
+
 
 void TZooplankton::BuildZooplankton(char* className)
 {
@@ -65,27 +115,20 @@ void TZooplankton::BuildZooplankton(char* className)
     BoxArray = MyPEcoDynClass->BoxArray;
     TimeStep = MyPEcoDynClass->GetTimeStep();
 
-	// Initialise pointers
-	if (NumberOfBoxes > 0)                       // Initialise arrays for variable pairs - one
-	{                                            // for boxes and one for loads into boxes
-		ZooBiomass         = new double[NumberOfBoxes];
-		ZooLoad            = new double[NumberOfBoxes];
-		ZooProduction      = new double[NumberOfBoxes];
-		ZooFlux            = new double[NumberOfBoxes];
-		ZooGrossProduction = new double[NumberOfBoxes];
-		ZooNetProduction   = new double[NumberOfBoxes];
-		ZooplanktonInterfaceExchange
-			= new AdvectionDiffusionRecord[NumberOfBoxes*NumberOfBoxes];
-
-		// Create generics
-
-/*		Generic     = new double[NumberOfBoxes];
-		GenericLoad = new double[NumberOfBoxes];
-		GenericFlux = new double[NumberOfBoxes];*/
-	}
-	else
+    // Initialise pointers
+    if (NumberOfBoxes > 0)                       // Initialise arrays for variable pairs - one
+    {                                            // for boxes and one for loads into boxes
+	ZooBiomass         = new double[NumberOfBoxes];
+	ZooLoad            = new double[NumberOfBoxes];
+	ZooProduction      = new double[NumberOfBoxes];
+	ZooFlux            = new double[NumberOfBoxes];
+	ZooGrossProduction = new double[NumberOfBoxes];
+	ZooNetProduction   = new double[NumberOfBoxes];
+	ZooplanktonInterfaceExchange = new AdvectionDiffusionRecord[NumberOfBoxes*NumberOfBoxes];
+     }
+     else
 #ifdef __BORLANDC__
-		MessageBox(0,
+	MessageBox(0,
 					  "Zooplankton object array not dimensioned",
 					  "EcoDynamo alert",
 					  MB_OK | MB_ICONHAND);
@@ -94,7 +137,7 @@ void TZooplankton::BuildZooplankton(char* className)
 #endif  // __BORLANDC__
     for (int i = 0; i < NumberOfBoxes; i++)
     {
-   	    ZooBiomass[i] = 0;
+   	ZooBiomass[i] = 0;
         ZooLoad[i] = 0;
         ZooFlux[i] = 0;
         ZooProduction[i] = 0;
@@ -104,29 +147,27 @@ void TZooplankton::BuildZooplankton(char* className)
 
 	// rates and conversions
 
-	DryWeightToFreshWeight = 5;           // Empirical 20%
-	ChlorophyllToCarbon = 35;             // Ems-Dollard p.83
-	CarbonToDryWeight = 3.333333;         // Empirical carbon is 1/3 DW
-	ExcretionLoss = 0.10;                 // 3-10% of photosynthetic carbon fixed
-	DOCLoss = 0.18;                       // Mean from Valiela p. 278 - data
+    DryWeightToFreshWeight = 5;           // Empirical 20%
+    ChlorophyllToCarbon = 35;             // Ems-Dollard p.83
+    CarbonToDryWeight = 3.333333;         // Empirical carbon is 1/3 DW
+    ExcretionLoss = 0.10;                 // 3-10% of photosynthetic carbon fixed
+    DOCLoss = 0.18;                       // Mean from Valiela p. 278 - data
 													  // of Copping & Lorenzen 1980: 17-19% using labelling
-	DeathLoss = 0.90;                     //  condition - 90% of zooplankton dies
-
-	Rmax = 5;                             // 5mg FW/ mg FW/ day (500% body weight/day)
-	KGraze = 0.01;                        // 0.0005 - see ZOORMAX.XLS
-	Metabolism = 0.75;                    // 75% average from Parsons, Takahashi & Hargrave p. 138
-	PhytoLowerLimit = 40;                 // 40-130 ug C l-1 for zoo: PTH p.133
-
-	KZooStarvedByPhyto = 0;
-	MaximumDeathLoss = 0;
-	Q10Coefficient = 0;
-	Q10WaterTempReference = 0;
-	Q10KPhytoMass = 0;
-	Q10PhytoLowerLimit = 0;
-	Q10Rmax = 0;
-
-	ObjectCode = ZOOPOBJECTCODE;
+    DeathLoss = 0.90;                     //  condition - 90% of zooplankton dies
+    Rmax = 5;                             // 5mg FW/ mg FW/ day (500% body weight/day)
+    KGraze = 0.01;                        // 0.0005 - see ZOORMAX.XLS
+    Metabolism = 0.75;                    // 75% average from Parsons, Takahashi & Hargrave p. 138
+    PhytoLowerLimit = 40;                 // 40-130 ug C l-1 for zoo: PTH p.133
+    KZooStarvedByPhyto = 0;
+    MaximumDeathLoss = 0;
+    Q10Coefficient = 0;
+    Q10WaterTempReference = 0;
+    Q10KPhytoMass = 0;
+    Q10PhytoLowerLimit = 0;
+    Q10Rmax = 0;
+    ObjectCode = ZOOPOBJECTCODE;
 }
+
 
 TZooplankton::~TZooplankton()
 {
@@ -399,8 +440,7 @@ void TZooplankton::Integrate()
 }
 
 
-void TZooplankton::Graze()      // Function no more used for the moment
-										  // NG 6/6/96
+void TZooplankton::Graze()      // Function no more used for the moment										 
 {
 	double PhytoMass, ChlorophyllCarbonRatio;
 	TEcoDynClass* MyPhytoPointer = MyPEcoDynClass->GetPhytoplanktonPointer();
@@ -408,71 +448,32 @@ void TZooplankton::Graze()      // Function no more used for the moment
 	{
 		if (MyPhytoPointer != NULL)
 		{
-			MyPhytoPointer->Inquiry(GetEcoDynClassName(), PhytoMass,
-												 i,
-												 "Phytoplankton biomass",
-												 ObjectCode);
-         MyPhytoPointer->Inquiry(GetEcoDynClassName(), ChlorophyllCarbonRatio,
-												 i,
-												 "Chlorophyll : Carbon",
-												 ObjectCode);
-		//	 Debugger(PhytoMass);
-
+			MyPhytoPointer->Inquiry(GetEcoDynClassName(), PhytoMass,i,"Phytoplankton biomass",ObjectCode);
+                        MyPhytoPointer->Inquiry(GetEcoDynClassName(), ChlorophyllCarbonRatio,i,"Chlorophyll : Carbon",ObjectCode);		
 			// Phytoplankton returns its mass as ug chl a l-1
 			// convert to mg C m-3
-         ChlorophyllToCarbon = 1 /  ChlorophyllCarbonRatio;
-
+                        ChlorophyllToCarbon = 1 /  ChlorophyllCarbonRatio;
 			PhytoMass = PhytoMass * ChlorophyllToCarbon;
 			// only graze if there is more than the lower limit of C
-
-
 			ZooGrossProduction[i] = 0;
 			//NG : GrossProduction stays at 0 if zooplankton doesn't graze 4/6/96
 			// in  mg C m-3
-
-
 			if (PhytoMass > PhytoLowerLimit)
 			{
 				// Adams & Steele, 1966; Parsons et al., 1967; Nassogne, 1970 - Eq. 101 - Parsons PTH}
 				// ration in mg/mg/day}
 				Ration = Rmax * (1-exp(KGraze *(PhytoLowerLimit - PhytoMass)));
-
-		//		Debugger(Ration);
-
-
-
 				// ZooProduction in mg/m3/day  Fresh Weight ?
-
 				ZooProd = ZooBiomass[i] * Ration; // /assimilation
-
 				ZooGrossProduction[i] = ZooProd;
-				// NG 4/6/96
-
-				// phyto removal in ug C m-3
-
-			 /*	PhytoMass = ZooProd
-								* CUBIC
-								/ (DryWeightToFreshWeight
-									* CarbonToDryWeight);
-			  */
-
-			  // phyto removal in mg C m-3
-
-					PhytoMass = ZooProd
-									/ (DryWeightToFreshWeight
-										* CarbonToDryWeight);
-
-
-
-		  //		Debugger(PhytoMass);
-
+			         // phyto removal in mg C m-3
+				PhytoMass = ZooProd/ (DryWeightToFreshWeight* CarbonToDryWeight);
 				if (ZooProd > 0)
 				{
 					// return negative value because this is subtracted
-					MyPhytoPointer->Update(GetEcoDynClassName(), -PhytoMass,
-													i,
-													"Phytoplankton biomass",
-													ObjectCode);
+#ifndef _PORT_FORTRAN_
+					MyPhytoPointer->Update(GetEcoDynClassName(), -PhytoMass,i,"Phytoplankton biomass",ObjectCode);
+#endif
 					ZooProduction[i] = ZooProd;
 				}
 			}
@@ -482,32 +483,22 @@ void TZooplankton::Graze()      // Function no more used for the moment
 
 void TZooplankton::Drool()
 {
-	double NutrientMass,
-			 CarbonDrooled;
-
+	double NutrientMass,CarbonDrooled;
 	TEcoDynClass* MyNutrientPointer = MyPEcoDynClass->GetNutrientPointer();
-
 	for (int i = 0; i < NumberOfBoxes; i++)
 	{
 		if (ZooProduction[i] != 0)
 		{
-			CarbonDrooled = ZooProduction[i]
-								 * DOCLoss;
-			ZooProduction[i] = ZooProduction[i]
-									 - CarbonDrooled;
+			CarbonDrooled = ZooProduction[i]* DOCLoss;
+			ZooProduction[i] = ZooProduction[i]- CarbonDrooled;
 			if (MyNutrientPointer != NULL)
 			{
 				// All values returned in umol m-3 N
-				NutrientMass = CarbonDrooled
-									* CUBIC
-									/ (DryWeightToFreshWeight
-										* CarbonToDryWeight
-										* 45 * 14/7);
+				NutrientMass = CarbonDrooled* CUBIC/ (DryWeightToFreshWeight* CarbonToDryWeight* 45 * 14/7);
 				// return positive value because this is added
-				MyNutrientPointer->Update(GetEcoDynClassName(), NutrientMass,
-													 i,
-													 "Ammonia",
-													 ObjectCode);
+#ifndef _PORT_FORTRAN_  
+				MyNutrientPointer->Update(GetEcoDynClassName(), NutrientMass,i,"Ammonia",ObjectCode);
+#endif
 			}
 		}
 	}
@@ -519,32 +510,22 @@ void TZooplankton::Drool()
 
 void TZooplankton::Excrete()
 {
-	double NutrientMass,
-			 CarbonExcreted;
-
+	double NutrientMass,CarbonExcreted;
 	TEcoDynClass* MyNutrientPointer = MyPEcoDynClass->GetNutrientPointer();
-
 	for (int i = 0; i < NumberOfBoxes; i++)
 	{
 		if (ZooProduction[i] != 0)
 		{
-			CarbonExcreted = ZooProduction[i]
-								  * ExcretionLoss;
-			ZooProduction[i] = ZooProduction[i]
-									 - CarbonExcreted;
+			CarbonExcreted = ZooProduction[i]* ExcretionLoss;
+			ZooProduction[i] = ZooProduction[i]- CarbonExcreted;
 			if (MyNutrientPointer != NULL)
 			{
 				// All values returned in umol m-3 N
-				NutrientMass = CarbonExcreted
-									* CUBIC
-									/ (DryWeightToFreshWeight
-										* CarbonToDryWeight
-										* 45 * 14/7);
+				NutrientMass = CarbonExcreted* CUBIC/ (DryWeightToFreshWeight* CarbonToDryWeight* 45 * 14/7);
 				// return positive value because this is added
-				MyNutrientPointer->Update(GetEcoDynClassName(), NutrientMass,
-													i,
-													"Ammonia",
-													ObjectCode);
+#ifndef _PORT_FORTRAN_       
+				MyNutrientPointer->Update(GetEcoDynClassName(), NutrientMass,i,Ammonia",ObjectCode);
+#endif
 			}
 		}
 	}
@@ -552,32 +533,22 @@ void TZooplankton::Excrete()
 
 void TZooplankton::Respire()
 {
-	double NutrientMass,
-			 CarbonMetabolised;
-
+	double NutrientMass,CarbonMetabolised;
 	TEcoDynClass* MyNutrientPointer = MyPEcoDynClass->GetNutrientPointer();
-
 	for (int i = 0; i < NumberOfBoxes; i++)
 	{
 		if (ZooProduction[i] != 0)
 		{
-			CarbonMetabolised = ZooProduction[i]
-									  * Metabolism;
-			ZooProduction[i] = ZooProduction[i]
-									 - CarbonMetabolised;
+			CarbonMetabolised = ZooProduction[i]* Metabolism;
+			ZooProduction[i] = ZooProduction[i]- CarbonMetabolised;
 			if (MyNutrientPointer != NULL)
 			{
 				// All values returned in umol m-3 N
-				NutrientMass = CarbonMetabolised
-									* CUBIC
-									/ (DryWeightToFreshWeight
-										* CarbonToDryWeight
-										* 45 * 14/7);
+				NutrientMass = CarbonMetabolised* CUBIC/ (DryWeightToFreshWeight* CarbonToDryWeight* 45 * 14/7);
 				// return positive value because this is added
-				MyNutrientPointer->Update(GetEcoDynClassName(), NutrientMass,
-													 i,
-													 "Ammonia",
-													 ObjectCode);
+#ifndef _PORT_FORTRAN_
+				MyNutrientPointer->Update(GetEcoDynClassName(), NutrientMass, i,"Ammonia",ObjectCode);
+#endif
 			}
 		}
 	}
@@ -589,26 +560,16 @@ void TZooplankton::Faeces()
 
 void TZooplankton::Die()
 {
-	double NutrientMass,
-			 CarbonDead;
-
+	double NutrientMass,CarbonDead;
 	TEcoDynClass* MyNutrientPointer = MyPEcoDynClass->GetNutrientPointer();
-
 	double PhytoMass;
-
 	TEcoDynClass* MyPhytoPointer = MyPEcoDynClass->GetPhytoplanktonPointer();
-
 	for (int i = 0; i < NumberOfBoxes; i++)
 	{
-//		if (ZooProduction[i] != 0)  // Changed by JGF/NG 96.06.04 Die all the time
 		{
 			if (MyPhytoPointer != NULL)
 			{
-				MyPhytoPointer->Inquiry(GetEcoDynClassName(), PhytoMass,
-													 i,
-													 "Phytoplankton biomass",
-													 ObjectCode);
-
+				MyPhytoPointer->Inquiry(GetEcoDynClassName(), PhytoMass,i,"Phytoplankton biomass",ObjectCode);
 				// Modified mortality function uses a first order decay rate
 				// dMort/dPhyto = -K * Mort
 				// Death loss is day-1
@@ -618,51 +579,19 @@ void TZooplankton::Die()
 				// NG/JGF 96.06.04
 				double ZooBaseDeath = 0.05;
 
-				DeathLoss = ZooBaseDeath
-								+ MaximumDeathLoss
-								* exp(-KZooStarvedByPhyto
-										* PhytoMass);
-
+				DeathLoss = ZooBaseDeath+ MaximumDeathLoss* exp(-KZooStarvedByPhyto* PhytoMass);
 
 			}
 			else
 				DeathLoss = 0.05; // Day-1
-
-			/*	CarbonDead = ZooProduction[i]
-								 * DeathLoss;
-				ZooProduction[i] = ZooProduction[i]
-									 - CarbonDead;
-			*/
-  //		Debugger(DeathLoss);                 //Changed by NG, June 96
-
-			CarbonDead = ZooBiomass[i]
-							 * DeathLoss;
-			ZooFlux[i] = ZooFlux[i]
-							- CarbonDead;
-
-
-		//	ZooNetProduction[i] = ZooProduction[i]-CarbonDead;
-		// NG 16/6/96 : supprim? pour ne pas tenir compte de Mortality et
-		// remis ds Go().
-
-
-
-
-  //		Debugger(CarbonDead);
-
+			CarbonDead = ZooBiomass[i]* DeathLoss;
+			ZooFlux[i] = ZooFlux[i]- CarbonDead;
 			if (MyNutrientPointer != NULL)
 			{
 				// All values returned in umol m-3 N
-				NutrientMass = CarbonDead
-									* CUBIC
-									/ (DryWeightToFreshWeight
-										* CarbonToDryWeight
-										* 45 * 14/7);
+				NutrientMass = CarbonDead* CUBIC/ (DryWeightToFreshWeight* CarbonToDryWeight* 45 * 14/7);
 				// return positive value because this is added
-				MyNutrientPointer->Update(GetEcoDynClassName(), NutrientMass,
-													 i,
-													 "Ammonia",
-													 ObjectCode);
+				MyNutrientPointer->Update(GetEcoDynClassName(), NutrientMass,i,"Ammonia",ObjectCode);
 			}
 		}
 	}

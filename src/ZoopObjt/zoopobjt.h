@@ -21,95 +21,66 @@ class _export TZooplankton : public TEcoDynClass
 {
 	public :
         // constructors invoked outside EcoDyn
+#ifndef _PORT_FORTRAN_
         TZooplankton(char* className, float timeStep, int nLines, int nColumns, double aDepth[],
             double aLength[], double aWidth[], double aElevation[], int aType[],
             int aNBoundary[], int aEBoundary[], int aSBoundary[], int aWBoundary[]);
         TZooplankton(char* className, float timeStep, char* morphologyFilename);
-
-		TZooplankton(TEcoDynClass* APEcoDynClass, char* className);
-		~TZooplankton();
+	TZooplankton(TEcoDynClass* APEcoDynClass, char* className);
+#else  //_PORT_FORTRAN_
+        static TZooplankton* getZoop();
+        static TZooplankton* getZoop(TZooplankton* pzooplankton);
+        TZooplankton(char* className);     
+        void SetABoxDepth(double layerThickness) {BoxDepth = layerThickness;}    
+        void SetWaterTemperature(double waterTemperature){WaterTemperature=waterTemperature;}
+        void SetTimeStep(double timeStep) {TimeStep = timeStep;} 
+        void SetABoxNumber (int aBoxNumber) {ABoxNumber = aBoxNumber;}         
+        void SetNumberOfLines(int numberOfLines) {NumberOfLines = numberOfLines;}
+        void SetNumberOfColumns(int numberOfColumns) {NumberOfColumns = numberOfColumns;}
+        void SetNumberOfLayers(int numberOfLayers) {NumberOfLayers = numberOfLayers;}
+        void SetNumberOfBoxes(int numberOfBoxes) {NumberOfBoxes = numberOfBoxes;}
+        void SetTmin(double tmin) {Tmin = tmin;} 
+        double GetDocLoss() {return DocLoss;}          
+        double GetBiomass(int box) {return ZooBiomass[box];}
+        char debug;
+#endif  //_PORT_FORTRAN_
+	~TZooplankton();
         virtual void freeMemory();
-		virtual void Go ();
-		virtual void Inquiry(char* srcName, double &Value,
-										 int BoxNumber,
-										 char* ParameterName,
-										 int AnObjectCode);
-        virtual void Inquiry(char* srcName, double &Value,
-										 int BoxX,
-										 int BoxY,
-										 char* ParameterName,
-										 int AnObjectCode);
-        virtual void Update(char* srcName, double Value,
-									int BoxNumber,
-									char* ParameterName,
-									int AnObjectCode);
-		virtual void Integrate();
+	virtual void Go ();
+	virtual void Inquiry(char* srcName, double &Value,int BoxNumber,char* ParameterName,int AnObjectCode);
+        virtual void Inquiry(char* srcName, double &Value,int BoxX,int BoxY,char* ParameterName,int AnObjectCode);
+        virtual void Update(char* srcName, double Value,int BoxNumber,char* ParameterName,int AnObjectCode);
+	virtual void Integrate();
         // AP, 2006.05.26
-        virtual bool SetVariableValue(char* srcName,
-                            double Value,
-                             int BoxNumber,
-                             char* VariableName);
+        virtual bool SetVariableValue(char* srcName,double Value,int BoxNumber,char* VariableName);
 	protected :
         void BuildZooplankton(char* className);
-		double
-						*ZooBiomass,
-						*ZooLoad,
-						*ZooProduction,
-						*ZooFlux,
-						*ZooGrossProduction,
-						*ZooNetProduction;
-
+        double *ZooBiomass,*ZooLoad,*ZooProduction,*ZooFlux,*ZooGrossProduction,*ZooNetProduction;
 		AdvectionDiffusionRecord *ZooplanktonInterfaceExchange;
-
-
-		double RiverZoo,
-				 OceanZoo;
-
-		// Conversion factors
-		double DryWeightToFreshWeight,
-				 ChlorophyllToCarbon,
-				 CarbonToDryWeight,
-				 ExcretionLoss,
-				 DOCLoss,
-				 DeathLoss,
-             RedfieldCFactor,
-             RedfieldNFactor,
-             RedfieldPFactor;
-
-		double ZooProd,
-				 Ration,
-				 Rmax,
-				 KGraze,
-				 Metabolism,
-				 PhytoLowerLimit,
-				 KZooStarvedByPhyto,
-				 MaximumDeathLoss,
-				 Q10Coefficient,
-				 Q10WaterTempReference,
-				 Q10KPhytoMass,
-				 Q10PhytoLowerLimit,
-				 Q10Rmax,
-             AssimilationEfficiency,
-             AmmoniaFractionOfExcretion,
-             DetritalFractionOfMortality;
-
-       double
-      	PhytoCoefficient,
-         DetritalCoefficient,
-         BacterialCoefficient;
-
-	  virtual void Graze();
- //	  virtual void GrazeWithTemperature();
-	  virtual void Drool();
-     virtual void Faeces();
-	  virtual void Excrete();
-	  virtual void Respire();
-	  virtual void Die();
+	double RiverZoo,OceanZoo;
+	// Conversion factors
+	double DryWeightToFreshWeight,ChlorophyllToCarbon,CarbonToDryWeight,ExcretionLoss,DOCLoss,DeathLoss,
+               RedfieldCFactor,RedfieldNFactor,RedfieldPFactor;
+        double ZooProd,Ration,Rmax,KGraze,Metabolism,PhytoLowerLimit,KZooStarvedByPhyto,MaximumDeathLoss,
+	       Q10Coefficient,Q10WaterTempReference,Q10KPhytoMass,Q10PhytoLowerLimit,Q10Rmax,
+               AssimilationEfficiency,AmmoniaFractionOfExcretion,DetritalFractionOfMortality;
+        double  PhytoCoefficient,DetritalCoefficient,BacterialCoefficient;
+        double BoxDepth, MyUpperDepth, WaterTemperature, Tmin, DocLoss;
+        int ABoxNumber;
+        virtual void Graze();
+	virtual void Drool();
+        virtual void Faeces();
+	virtual void Excrete();
+	virtual void Respire();
+	virtual void Die();
 };
+
+
 
 class _export TZooplanktonBasic : public TZooplankton
 {
 	public :
+#ifndef _PORT_FORTRAN_  //_PORT_FORTRAN_
         // constructors invoked outside EcoDyn
         TZooplanktonBasic(char* className, float timeStep,
             int nLines, int nColumns, double aDepth[],
@@ -129,17 +100,21 @@ class _export TZooplanktonBasic : public TZooplankton
                 char* variablesFilename, char* parametersFilename);
 
 		TZooplanktonBasic(TEcoDynClass* APEcoDynClass, char* className);
-      virtual double GetParameterValue(char* parmName);
-      virtual bool SetParameterValue(char* parmName, double value);
+#endif  //_PORT_FORTRAN_
+        virtual double GetParameterValue(char* parmName);
+        virtual bool SetParameterValue(char* parmName, double value);
         // AP, 2007.07.06
+#ifndef _PORT_FORTRAN_  //_PORT_FORTRAN_
         virtual bool SaveVariables();
         virtual bool SaveParameters();
 
     protected:
         void PreBuildZooplanktonBasic();
         void BuildZooplanktonBasic();
+#endif  //_PORT_FORTRAN_
 };
 
+#ifndef _PORT_FORTRAN_
 class _export TCarlZooplankton : public TZooplanktonBasic
 {
 	public :
@@ -304,10 +279,19 @@ class _export TSangoZooplankton : public TZooplankton
           EasternBoundaryNumber, NorthernBoundaryNumber;
 
 };
+#endif  //_PORT_FORTRAN_
 
-
+#ifndef _PORT_FORTRAN_
 static TEcoDynClass *PZooplankton;
+#else  //_PORT_FORTRAN_
 
+/* Functions that can be called from Fortran */
+extern "C" {
+   void zooplankton_new__(long* PZooplankton, double* rmax, double* kgraze, double* phytolowerlimit, double* docloss, double* excretionloss,
+                          double* metabolism, double* maximumdeathloss, double* kzoostarvedbyphyto);
+   void zooplankton_go__(long* PZooplankton, double* layerThickness, double* timeStep);
+}
+#endif  //_PORT_FORTRAN_
 #endif //ZOOPOBJT_H
 
 

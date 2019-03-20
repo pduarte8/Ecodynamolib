@@ -23,7 +23,7 @@
 //
 // Constructors invoked outside EcoDyn shell...
 //
-
+#ifndef _PORT_FORTRAN_  //_PORT_FORTRAN_
 TZooplanktonBasic::TZooplanktonBasic(char* className,
         float timeStep, int nLines, int nColumns, double aDepth[],
         double aLength[], double aWidth[], double aElevation[], int aType[],
@@ -369,7 +369,7 @@ void TZooplanktonBasic::BuildZooplanktonBasic()
     }
 }
 
-
+#endif //_PORT_FORTRAN_
 double TZooplanktonBasic::GetParameterValue(char* MyParameter)
 {
   double value;
@@ -573,6 +573,7 @@ bool TZooplanktonBasic::SetParameterValue(char* MyParameter, double value)
     return rc;
 }
 
+#ifndef _PORT_FORTRAN_  //_PORT_FORTRAN_
 bool TZooplanktonBasic::SaveVariables()
 {
 	TReadWrite* PReadWrite = (TReadWrite*)SaveVariablesFile("Zooplankton");
@@ -737,4 +738,6 @@ bool TZooplanktonBasic::SaveParameters()
 
     return true;
 }
+
+#endif  //_PORT_FORTRAN_
 
