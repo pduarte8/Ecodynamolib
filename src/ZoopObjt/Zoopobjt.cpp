@@ -578,7 +578,6 @@ void TZooplankton::Die()
 				// KZooStarvedByPhyto is in 1 / (ug l-1) chla
 				// NG/JGF 96.06.04
 				double ZooBaseDeath = 0.05;
-
 				DeathLoss = ZooBaseDeath+ MaximumDeathLoss* exp(-KZooStarvedByPhyto* PhytoMass);
 
 			}
