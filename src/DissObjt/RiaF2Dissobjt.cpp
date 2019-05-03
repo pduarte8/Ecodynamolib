@@ -119,6 +119,7 @@ void dissobjt_nitrification__(long* PNutrients, double* lightAtTop, double* ligh
    ptr->Nitrification(0);
    LightLim = 1.0;
    LightLim = ptr->LightInhibitionOfNitrification(0);
+   //if (LightLim < 0.0) cout<<"LightLim < 0"<<endl;
    if (*Ammonia > AMin)
       *NitrificationFlux = -ptr->NH4Flux[0] /*/ *Ammonia*/ / CUBIC * LightLim;   //NH4Flux in mmol N m-3 s-1 
    else
@@ -140,7 +141,7 @@ void dissobjt_denitrification__(long *PNutrients, double * waterTemperature,doub
    TRiaF2DNutrients* ptr = (TRiaF2DNutrients*) *PNutrients;
    MyWaterTemperature = *waterTemperature;
    MyNitrate = *Nitrate;
-   MyOxygen = *Oxygen * (2.0 * OXYGENATOMICWEIGHT) / CUBIC; //Convert to mg O2 L-for compatibility with EcoDynamo
+   MyOxygen = *Oxygen * (2.0 * OXYGENATOMICWEIGHT) / CUBIC; //Convert from mmol/m3 to mg O2 L-for compatibility with EcoDynamo
    ptr->SetWaterTemperature(MyWaterTemperature);
    ptr->SetVariableValue("Fortran", MyNitrate,0,"Nitrate");
    ptr->SetVariableValue("Fortran", MyOxygen,0,"Oxygen");
@@ -2198,7 +2199,7 @@ void TRiaF2DNutrients::DeNitrification(int ABoxNumber)
 double TRiaF2DNutrients::OxygenLimitation(int ABoxNumber, double K)
 {
    int MyBoxNumber; MyBoxNumber = ABoxNumber;
-   return (Oxygen[MyBoxNumber] / (Oxygen[MyBoxNumber] + K));
+   return max(Oxygen[MyBoxNumber] / (Oxygen[MyBoxNumber] + K),0.0);
 }
 
 
@@ -2265,8 +2266,18 @@ double TRiaF2DNutrients::LightInhibitionOfNitrification(int ABoxNumber)
    LightLimitation = 1.0; VerticallyAveragedLight = 0.0;
    if ((BoxDepth > TINNY) && (kValue > TINNY)) 
    {
-      VerticallyAveragedLight = lightAtTop*(exp(-kValue * lightAtTop) - exp(-kValue * lightAtBottom)) / (kValue * BoxDepth); 
-      LightLimitation = 1.0 - MAX(0,(VerticallyAveragedLight - ThresholdForLightInhib) / (HalfSatForLightInhib + VerticallyAveragedLight - ThresholdForLightInhib));  
+      VerticallyAveragedLight = lightAtTop*(1.0 - exp(-kValue * BoxDepth)) / (kValue * BoxDepth); 
+      LightLimitation = 1.0 - MAX(0,(VerticallyAveragedLight - ThresholdForLightInhib) / (HalfSatForLightInhib + VerticallyAveragedLight - ThresholdForLightInhib)); 
+      /*if (LightLimitation < 0.0)
+      {
+         cout<<"VerticallyAveragedLight= "<<VerticallyAveragedLight<<endl;  
+         cout<<"kValue= "<<kValue<<endl; 
+         cout<<"lightAtTop= "<<lightAtTop<<endl; 
+         cout<<"lightAtBottom= "<<lightAtBottom<<endl;
+         cout<<"BoxDepth= "<<BoxDepth<<endl;
+         cout<<"HalfSatForLightInhib= "<<HalfSatForLightInhib<<endl;         
+         cout<<"ThresholdForLightInhib= "<<ThresholdForLightInhib<<endl;
+      } */ 
    }  
    return (LightLimitation); 
 }
