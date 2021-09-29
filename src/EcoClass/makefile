@@ -2,8 +2,8 @@
 
 #define the C compiler to use
 CC = g++
-CFLAGS = -Wall -shared -fPIC -D_PORT_FORTRAN_ -fpermissive 
-
+CFLAGS = -Wall -shared -fPIC -D_PORT_FORTRAN_ -fpermissive  
+CXXFLAGS = -D_GLIBCXX_USE_CXX11_ABI=0
 #define directories/files containing header files
 INCLUDE = -I../include -I../Iodll -I../ECDProtocol -I../Utilities 
 
@@ -15,7 +15,7 @@ SRC = EcoDynClass.cpp EcoDynMisc.cpp
 
 
 EcoClass.o:
-	$(CC) $(CFLAGS) $(INCLUDE) -o ../../ecolib/libecoclass.so $(SRC)	
+	$(CC) $(CFLAGS) $(CXXFLAGS) $(INCLUDE) -o ../../ecolib/libecoclass.so $(SRC)	
 
 
      clean:

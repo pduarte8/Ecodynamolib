@@ -1,4 +1,4 @@
-# Makefile created by Pedro for the LitObjt with _PORT_FORTRAN_
+# Makefile created by Pedro for the PhytObjt with _PORT_FORTRAN_
 
 #define the C compiler to use
 CC = g++
@@ -11,13 +11,13 @@ INCLUDE = -I../include -I../Iodll -I../EcoClass -I../ECDProtocol -I../Utilities
 
 
 #define directories/files containing source files
-SRC = Liteobjt.cpp 
+SRC = Phytobjt.cpp CrestumaLeverPhyto2DV.cpp CrestumaLeverPhyto2DVIntLim.cpp GenericPhytoplankton.cpp   
 
 
-Liteobjt.o:
-	$(CC) $(CFLAGS) $(INCLUDE) -o ../../ecolib/libliteobjt.so Liteobjt.cpp	
+Phytobjt.o:
+	$(CC) $(CFLAGS) $(INCLUDE) -o ../../ecolib/libphytobjt.so $(SRC) 	
 
-#Liteobjt.so:
-#	$(CC) -shared -o Liteobjt.so Liteobjt.o
+#Phytobjt.so:
+#	$(CC) -shared -o Phytobjt.so Phytobjt.o
      clean:
-	rm -f core Liteobjt.o
+	rm -f core Phytobjt.o
