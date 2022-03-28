@@ -174,7 +174,7 @@ void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, doubl
                             double* ratioLightDarkRespiration, double* minNPRatio,double* maxNPRatio, double* pMaxUptake, double* nMaxUptake, double* kP,double* kNO3, 
                             double* kNH4, double* minPCellQuota, double* maxPCellQuota,double* minNCellQuota, double* maxNCellQuota, double* kPInternal,double* kNInternal, double* settlingSpeed, double* carbonToOxygenProd,double* carbonToOxygenResp, double* tminRespiration,double* tminPhotosynthesis,
                             int* nitrogenLimitation, int* phosphorusLimitation, int* silicaLimitation, double* maxSiCellQuota, double* minNSiRatio, double* siMaxUptake,
-                            double* kSi, double* kSiInternal, double* redfieldSi)
+                            double* kSi, double* kSiInternal, double* redfieldSi, int* pifunction, int* nutrientLimitationType)
 {
         TPhytoplanktonGeneric* ptr;
         //***Grid dimensions set to "ones" because this is for usage of EcoDynamo functions from ROMS (or other software) and the functions remain agnostic about grid details***/
@@ -202,7 +202,7 @@ void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, doubl
         ptr->SetParameterValue("Death loss",*deathLoss);
         ptr->SetParameterValue("RedfieldCFactor",*redfieldCFactor);
         ptr->SetParameterValue("RedfieldNFactor", *redfieldNFactor);
-        ptr->SetParameterValue("RedfieldPFactor", *redfieldPFactor);  
+        ptr->SetParameterValue("RedfieldPFactor", *redfieldPFactor);
         //cout << "Maintenance respiration= "<< *maintenanceRespiration << endl;
         //cout << "Respiration Coefficient= "<< *respirationCoefficient << endl;
         //cout << "CARBONATOMICWEIGHT= "<<CARBONATOMICWEIGHT<< endl; 
@@ -224,8 +224,8 @@ void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, doubl
         ptr->SetParameterValue("KNInternal",*kNInternal);
         ptr->SetParameterValue("Carbon to Oxygen in photosynthesis",*carbonToOxygenProd);   
         ptr->SetParameterValue("Carbon to Oxygen in respiration",*carbonToOxygenResp);
-        cout << "carbonToOxygenProd= "<< *carbonToOxygenProd << endl;
-        cout << "carbonToOxygenResp= "<< *carbonToOxygenResp << endl;
+        //cout << "carbonToOxygenProd= "<< *carbonToOxygenProd << endl;
+        //cout << "carbonToOxygenResp= "<< *carbonToOxygenResp << endl;
         ptr->SetParameterValue("TminPhotosynthesis",*tminPhotosynthesis);
         ptr->SetParameterValue("TminRespiration",*tminRespiration);
 
@@ -236,9 +236,12 @@ void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, doubl
         ptr->SetParameterValue("KSiInternal",*kSiInternal);
         ptr->SetParameterValue("RedfieldSiFactor",*redfieldSi);
 
-        ptr->SetParameterValue("Nitrogen limitation",*nitrogenLimitation);
-        ptr->SetParameterValue("Phosphorus limitation",*phosphorusLimitation);
-        ptr->SetParameterValue("Silica limitation",*silicaLimitation);
+        ptr->SetIntParameterValue("Nitrogen limitation",*nitrogenLimitation);
+        ptr->SetIntParameterValue("Phosphorus limitation",*phosphorusLimitation);
+        ptr->SetIntParameterValue("Silica limitation",*silicaLimitation);
+
+        ptr->SetIntParameterValue("PIFunction", *pifunction);
+        ptr->SetIntParameterValue("NutrientLimitationType", *nutrientLimitationType);
         
         ptr->ExudatedFlux = 0.0;
         ptr->MyDay = 0;
@@ -261,7 +264,7 @@ void phytoplankton_go__(long* PPhytoplankton, double* layerThickness, double* ti
 
 
 void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
-                                    int* piCurveOption, double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass, double *TIC, double *ASlope, double* Chl2Carbon, double *OxygenProduction)
+                                double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass, double *TIC, double *ASlope, double* Chl2Carbon, double *OxygenProduction)
 {
    double Productivity, MyBiomass, MyNPhyto, MyPPhyto, MyNCellQuota, MyPCellQuota, MyChl2Carbon, FromChl2Carbon, CarbonOxygenRatio;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
@@ -300,7 +303,9 @@ void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double
    ptr->SetVariableValue("Fortran", MyNPhyto,0,"NPhyto");
    ptr->SetVariableValue("Fortran", MyPPhyto,0,"PPhyto");
    /*****************************************Selection of a P-I function depending on the option "piCurveOption" in the arguments above*****************************/
-   switch (*piCurveOption)
+   //cout<< "PIFunction = "<< ptr->GetIntParameterValue("PIFunction")<< endl;
+   //switch (*piCurveOption)
+   switch (ptr->GetIntParameterValue("PIFunction"))
    {
       case 1: /*STEELE*/ // add a list item
          ptr->Productivity = ptr->SteeleProduction();
@@ -326,6 +331,10 @@ void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double
    ptr->SetParameterValue("Productivity", Productivity);
    //cout<< "Productivity temp limited = "<< Productivity << endl;
    /***************************************Calculation of nutrient limitation**************************************************************************************/
+   //cout<< "Nitrogen limitation ="<< ptr->GetIntParameterValue("Nitrogen limitation") << endl;
+   //cout<< "Phosphorus limitation ="<< ptr->GetIntParameterValue("Phosphorus limitation") << endl;
+   //cout<< "Silica limitation ="<< ptr->GetIntParameterValue("Silica limitation") << endl;
+	
    ptr->NutrientLimitation(0);
    //Productivity = ptr->GetParameterValue("Productivity");
    //cout<< "Productivity nut limited = "<< Productivity << endl;
@@ -403,7 +412,7 @@ void phytoplankton_nitrogen_uptake__(long* PPhytoplankton, double* Ammonia, doub
    ptr->SetVariableValue("Fortran", MyNCellQuota,0,"NCellQuota");
    ptr->SetVariableValue("Fortran", MyNPhyto,0,"NPhyto");
    
-   if (ptr->GetParameterValue("Nitrogen limitation") == 1)
+   if (ptr->GetIntParameterValue("Nitrogen limitation") == 1)
       ptr->NitrogenUptake(0,*Ammonia, *Nitrate, *Nitrite);
    //cout<<"*Ammonia = " << *Ammonia << endl; 
    //cout<<"*Nitrate = " << *Nitrate << endl; 
@@ -434,7 +443,7 @@ void phytoplankton_phosphorus_uptake__(long* PPhytoplankton, double* Phosphate,d
    ptr->SetVariableValue("Fortran", MyPCellQuota,0,"PCellQuota");
    ptr->SetVariableValue("Fortran", MyPPhyto,0,"PPhyto");
 
-   if (ptr->GetParameterValue("Phosphorus limitation") == 1)
+   if (ptr->GetIntParameterValue("Phosphorus limitation") == 1)
       ptr->PhosphorusUptake(0, *Phosphate);
    if (*Phosphate > ptr->aMin)
       *cffPO4 = ptr->PUptake[0] / PHOSPHORUSATOMICWEIGHT / HOURSTOSECONDS /*/ *Phosphate*/;
@@ -458,7 +467,7 @@ void phytoplankton_silica_uptake__(long* PPhytoplankton, double* Silicate,double
    ptr->SetVariableValue("Fortran", MySiCellQuota,0,"SiCellQuota");
    ptr->SetVariableValue("Fortran", MySiPhyto,0,"PPhyto");
 
-   if (ptr->GetParameterValue("Silica limitation") == 1)
+   if (ptr->GetIntParameterValue("Silica limitation") == 1)
       ptr->SilicaUptake(0, *Silicate);
    if (*Silicate > ptr->aMin)
       *cffSiOH4 = ptr->SiUptake[0] / SILICAATOMICWEIGHT / HOURSTOSECONDS /*/ *Silicate*/;
@@ -654,6 +663,7 @@ void TPhytoplanktonGeneric::Go()
 		PhytoFlux[i] = PhytoFlux[i] + PhytoProd[i];
     }
 }
+
 
 void TPhytoplanktonGeneric::Production(int ABoxNumber)
 //Argumentos necess?rios:
@@ -853,7 +863,7 @@ double TPhytoplanktonGeneric::PlattProduction()
    double LightLimitation, PARLight;
    double IntegrationSteps = 30;
    double DeltaZ, Soma;
-   
+   //cout<< "Pmax ="<< Pmax[i]<< endl;  
    Productivity = 0.0;
    if ((PhytoBiomass[i] > aMin) &&
        (BoxDepth > aMin) && (LightAtTop > aMin) && (IntegrationSteps >= 1.0))
@@ -861,7 +871,7 @@ double TPhytoplanktonGeneric::PlattProduction()
          DeltaZ = BoxDepth / IntegrationSteps;
          Soma = 0.0;   
          PARLight = LightAtTop * WATTSTOMICROEINSTEINS; 
-         for (int Step = 1; Step <= IntegrationSteps; Step++)    //Eiler integration as a function of depth
+         for (int Step = 1; Step <= IntegrationSteps; Step++)    //Euler integration as a function of depth
          {      
             Soma = Soma + (1 - exp(-Slope[i] * PARLight / Pmax[i])) * exp(-beta[i] * PARLight/ Pmax[i]) * DeltaZ;
             PARLight = PARLight * exp(-KValue * DeltaZ);

@@ -624,6 +624,8 @@ class _export TCrestumaLeverPhytoplankton2DVIntLim : public TCrestumaLeverPhytop
        virtual void freeMemory();
        virtual double GetParameterValue(char* parmName);
        virtual bool SetParameterValue(char* parmName, double value);
+       virtual int GetIntParameterValue(char* parmName);
+       virtual bool SetIntParameterValue(char* parmName, int value);
        virtual void Go();
        virtual void Integrate();
        virtual void Inquiry(char* srcName, double &Value,int BoxNumber,char* ParameterName,int AnObjectCode);
@@ -679,7 +681,7 @@ class _export TCrestumaLeverPhytoplankton2DVIntLim : public TCrestumaLeverPhytop
              KNH4, KSi, MaxPCellQuota, MaxNCellQuota, MaxSiCellQuota, MinPCellQuota, MinNCellQuota, MinSiCellQuota,
              KPInternal, KNInternal, KSiInternal,SettlingSpeed, CarbonToOxygenProd, CarbonToOxygenResp,
              TminPhotosynthesis, TminRespiration,AmmoniaUpTake, NitrateAndNitriteUptake, ExudatedFlux;
-       int NitrogenLimitation, PhosphorusLimitation, SilicaLimitation;      
+       int NitrogenLimitation, PhosphorusLimitation, SilicaLimitation, PIFunction, NutrientLimitationType;      
 };
 
 #ifndef _PORT_FORTRAN_
@@ -836,7 +838,7 @@ class _export TPhytoplanktonGeneric : public TCrestumaLeverPhytoplankton2DVIntLi
         static TPhytoplanktonGeneric* getPhyto();
         static TPhytoplanktonGeneric* getPhyto(TPhytoplanktonGeneric* pphytoplankton);
         TPhytoplanktonGeneric(char* className);
-        void PreBuildPhytoplanktonGeneric(char* className);       
+        void PreBuildPhytoplanktonGeneric(char* className);
         void SetABoxDepth(double layerThickness) {BoxDepth = layerThickness;}    
         void SetLightAtTop(double lightAtTop){LightAtTop=lightAtTop;}
         void SetLightAtBottom(double lightAtBottom){LightAtBottom=lightAtBottom;}
@@ -920,12 +922,12 @@ extern "C" {
                             double* ratioLightDarkRespiration, double* minNPRatio,double* maxNPRatio, double* pMaxUptake, double* nMaxUptake, double* kP,double* kNO3, 
                             double* kNH4, double* minPCellQuota, double* maxPCellQuota,double* minNCellQuota, double* maxNCellQuota, double* kPInternal,double* kNInternal, double* settlingSpeed, double* carbonToOxygenProd,double* carbonToOxygenResp, double* tminRespiration,double* tminPhotosynthesis,
                             int* nitrogenLimitation, int* phosphorusLimitation, int* silicaLimitation, double* maxSiCellQuota, double* minNSiRatio, double* siMaxUptake,
-                            double* kSi, double* kSiInternal, double* redfieldSi);
+                            double* kSi, double* kSiInternal, double* redfieldSi, int* pifunction, int* nutrientLimitationType);
 
     void phytoplankton_go__(long* PPhytoplankton, double* layerThickness, double* timeStep);
 
     void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
-                                    int* piCurveOption, double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass, double *TIC, double *Slope, double* Chl2Carbon, double *OxygenProduction);
+                                    double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass, double *TIC, double *Slope, double* Chl2Carbon, double *OxygenProduction);
 
     void phytoplankton_respiration__(long* PPhytoplankton, double* waterTemperature, double* cffCRespiration, double *GrossProduction, double* biomass, double *Oxygen, double* Chl2Carbon, double *OxygenConsumption);
 

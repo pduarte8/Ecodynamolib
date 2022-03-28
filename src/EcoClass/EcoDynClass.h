@@ -534,6 +534,7 @@ class _export TEcoDynClass
 
         virtual double GetParameterValue(char* parmName) {return 0.0;}
         virtual bool SetParameterValue(char* parmName, double value) {return true;}
+
         virtual void UpdateLayerProperties(int Line, int Column, int ALayer, double *Concentration){}
         virtual void UpdateLayerPropertiesForPhytoplankton(int Line, int Column, int Class, double *Concentration){}
         virtual void SnowMeltTransport(int Line, int Column, double *Generic, double SnowConcentration){}

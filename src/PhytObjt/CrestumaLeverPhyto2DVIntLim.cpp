@@ -680,21 +680,9 @@ double TCrestumaLeverPhytoplankton2DVIntLim::GetParameterValue(char* MyParameter
     {
         value = TminPhotosynthesis;
     }
-    else if (strcmp(MyParameter, "Nitrogen limitation") == 0)
-    {
-        value = NitrogenLimitation;
-    }
-    else if (strcmp(MyParameter, "Phosphorus limitation") == 0)
-    {
-        value = PhosphorusLimitation;
-    }
     else if (strcmp(MyParameter, "Productivity") == 0)
     {
         value = Productivity;
-    }
-    else if (strcmp(MyParameter, "Silica limitation") == 0)
-    {
-        value = SilicaLimitation;
     }
     else if (strcmp(MyParameter, "MaxSiCellQuota") == 0)
     {
@@ -716,6 +704,7 @@ double TCrestumaLeverPhytoplankton2DVIntLim::GetParameterValue(char* MyParameter
     {
         value = KSiInternal;
     }
+
     else
         value = 0.0;
     return value;
@@ -928,25 +917,9 @@ bool TCrestumaLeverPhytoplankton2DVIntLim::SetParameterValue(char* MyParameter, 
     {
         TminPhotosynthesis = value;
     }
-    else if (strcmp(MyParameter, "Nitrogen limitation") == 0)
-    {
-        NitrogenLimitation = value;
-    }
-    else if (strcmp(MyParameter, "Phosphorus limitation") == 0)
-    {
-        PhosphorusLimitation = value;
-    }
-    else if (strcmp(MyParameter, "Phosphorus limitation") == 0)
-    {
-        SilicaLimitation = value;
-    }
     else if (strcmp(MyParameter, "Productivity") == 0)
     {
         Productivity = value;
-    }
-    else if (strcmp(MyParameter, "Silica limitation") == 0)
-    {
-        SilicaLimitation = value;
     }
     else if (strcmp(MyParameter, "MaxSiCellQuota") == 0)
     {
@@ -977,6 +950,65 @@ bool TCrestumaLeverPhytoplankton2DVIntLim::SetParameterValue(char* MyParameter, 
 
     return rc;
 }
+
+
+int TCrestumaLeverPhytoplankton2DVIntLim::GetIntParameterValue(char* MyParameter)
+{
+  int value;
+  if (strcmp(MyParameter, "PIFunction") == 0)
+  {
+     value = PIFunction;
+  }
+  else if (strcmp(MyParameter, "NutrientLimitationType") == 0)
+  {
+     value = NutrientLimitationType;
+  }
+  else if (strcmp(MyParameter, "Nitrogen limitation") == 0)
+  {
+     value = NitrogenLimitation;
+  }
+  else if (strcmp(MyParameter, "Phosphorus limitation") == 0)
+  {
+     value = PhosphorusLimitation;
+  }
+  else if (strcmp(MyParameter, "Silica limitation") == 0)
+  {
+     value = SilicaLimitation;
+  }
+  else
+     value = 0.0;
+  return value;
+}
+
+
+bool TCrestumaLeverPhytoplankton2DVIntLim::SetIntParameterValue(char* MyParameter, int value)
+{
+  bool rc = true;
+  if (strcmp(MyParameter, "PIFunction") == 0)
+  {
+     PIFunction = value;
+  }
+  else if (strcmp(MyParameter, "NutrientLimitationType") == 0)
+  {
+     NutrientLimitationType = value;
+  }
+  else if (strcmp(MyParameter, "Nitrogen limitation") == 0)
+  {
+     NitrogenLimitation = value;
+  }
+  else if (strcmp(MyParameter, "Phosphorus limitation") == 0)
+  {
+     PhosphorusLimitation = value;
+  }
+  else if (strcmp(MyParameter, "Silica limitation") == 0)
+  {
+     SilicaLimitation = value;
+  }
+  else
+       rc = false;
+  return rc;
+}
+
 
 void TCrestumaLeverPhytoplankton2DVIntLim::Inquiry(char* srcName, double &Value,
 											       int BoxNumber,
