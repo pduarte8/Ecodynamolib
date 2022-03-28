@@ -1948,15 +1948,16 @@ void TCrestumaLeverPhytoplankton2DVIntLim::NutrientLimitation(int ABoxNumber)
    else
       NLimitation = 1.0;
    NLimFactor[i] = NLimitation;
-   /*if (SilicaLimitation == 1) {
+   if (SilicaLimitation == 1) {
      if (SiCellQuota[i] < MinSiCellQuota)
           SiLimitation = 0.0;
      else
           SiLimitation = SiCellQuota[i] / (SiCellQuota[i] + KSiInternal);
    }
    else
-      SiLimitation = 1.0;*/
-
+      SiLimitation = 1.0;
+   SiLimFactor[i] = SiLimitation;
+   //cout<< "SiLimFactor = "<< SiLimFactor[i]<< endl;
    if ((PLimFactor[i] == 0.0) || (NLimFactor[i] == 0.0) || (SiLimFactor[i] == 0.0))
    	Productivity = 0.0;
    else
