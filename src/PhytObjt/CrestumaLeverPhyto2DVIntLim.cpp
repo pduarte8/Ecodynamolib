@@ -1931,28 +1931,26 @@ void TCrestumaLeverPhytoplankton2DVIntLim::NutrientLimitation(int ABoxNumber)
    if (MyNutrientPointer != NULL)
    {
 #endif
-	int i = ABoxNumber;  double NLimitation, PLimitation, SiLimitation;
-
+   int i = ABoxNumber;  double NLimitation, PLimitation, SiLimitation;
    if (PhosphorusLimitation == 1) {
-     if (PCellQuota[i] < MinPCellQuota)PLimitation = 0.0;
-     else PLimitation = PCellQuota[i] / (PCellQuota[i] + KPInternal);
+     if (PCellQuota[i] < MinPCellQuota) PLimitation = 0.0;
+     else PLimitation = (PCellQuota[i] - MinPCellQuota)/ (PCellQuota[i] + KPInternal - MinPCellQuota);
    }
    else
      PLimitation = 1.0;
    PLimFactor[i] = PLimitation; 
    if (NitrogenLimitation == 1) {
      if (NCellQuota[i] < MinNCellQuota) NLimitation = 0.0;
-     else  NLimitation = NCellQuota[i] / (NCellQuota[i] + KNInternal);
-      
+     else  NLimitation = (NCellQuota[i] - MinNCellQuota)/ (NCellQuota[i] + KNInternal - MinNCellQuota);     
    }
    else
       NLimitation = 1.0;
    NLimFactor[i] = NLimitation;
    if (SilicaLimitation == 1) {
      if (SiCellQuota[i] < MinSiCellQuota)
-          SiLimitation = 0.0;
+       SiLimitation = 0.0;
      else
-          SiLimitation = SiCellQuota[i] / (SiCellQuota[i] + KSiInternal);
+       SiLimitation = (SiCellQuota[i] - MinSiCellQuota) / (SiCellQuota[i] + KSiInternal - MinSiCellQuota);
    }
    else
       SiLimitation = 1.0;

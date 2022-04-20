@@ -938,7 +938,8 @@ extern "C" {
     void phytoplankton_phosphorus_uptake__(long* PPhytoplankton, double* Phosphate,double* cffPO4, double* pPhyto, double* biomass); 
  
     void phytoplankton_silica_uptake__(long* PPhytoplankton, double* Silicate,double* cffSiOH4, double *siPhyto, double* biomass);
-
+  
+    void phytoplankton_external_nut_limitation__(long* PPhytoplankton, double* Ammonia, double* Nitrate,double* Nitrite, double* Phosphate, double* Silicate, double* Limitation);
     void phytoplankton_rhochl_(long* PPhytoplankton, double* light, double* kValue, double* GrossProduction, double* slope, double* rhochl);  
 
     void phytoplankton_mortality__(long* PPhytoplankton, double* nCellQuota, double* pCellQuota,

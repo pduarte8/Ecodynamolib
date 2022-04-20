@@ -191,8 +191,8 @@ void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, doubl
         /**********************************************Parameters values imported from Fortran program***************************************************************************/
         ptr->SetParameterValue("Pmax", *pmax); 
         ptr->SetParameterValue("Iopt", *iopt);
-        ptr->SetParameterValue("Slope", *slope);
-        ptr->SetParameterValue("Beta", *beta);
+        ptr->SetParameterValue("Slope", *slope * WATTSTOMICROEINSTEINS);/* Converting from h-1 W m2 s to micro Einsteins m2 s */
+        ptr->SetParameterValue("Beta", *beta * WATTSTOMICROEINSTEINS); /* Converting from h-1 W m2 s to h-1 micro Einsteins m2 s */
         ptr->SetParameterValue("DefaultAEiler", *aEiler);
         ptr->SetParameterValue("BEiler", *bEiler);
         ptr->SetParameterValue("CEiler", *cEiler);
@@ -334,13 +334,13 @@ void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double
    //cout<< "Nitrogen limitation ="<< ptr->GetIntParameterValue("Nitrogen limitation") << endl;
    //cout<< "Phosphorus limitation ="<< ptr->GetIntParameterValue("Phosphorus limitation") << endl;
    //cout<< "Silica limitation ="<< ptr->GetIntParameterValue("Silica limitation") << endl;
-	
-   ptr->NutrientLimitation(0);
+   if (ptr->NutrientLimitationType == 2) 	
+      ptr->NutrientLimitation(0);
    //Productivity = ptr->GetParameterValue("Productivity");
    //cout<< "Productivity nut limited = "<< Productivity << endl;
    /***************************************Productivity recalculated in mmol C/m3/s*******************************************************************************/
-   *GrossProduction = ptr->GetParameterValue("Productivity") / CARBONATOMICWEIGHT; //Return value in mmolC/m3/s for compatibility with ROMS
-   *ASlope = ptr->GetParameterValue("Slope"); //Return value in [s-1/(micro mol photons m-2 s-1)]
+   *GrossProduction = ptr->GetParameterValue("Productivity") / CARBONATOMICWEIGHT; //Return value in mmolC/m3/h for compatibility with ROMS
+   *ASlope = ptr->GetParameterValue("Slope"); //Return value in [h-1/(micro mol photons m-2 s-1)]
    /**************************************This was to calculate average daily production which is not being calculated now****************************************/
     ptr->SetJulianDay(*julianDay);
    //ptr->DailyAverageProduction();
@@ -450,6 +450,35 @@ void phytoplankton_phosphorus_uptake__(long* PPhytoplankton, double* Phosphate,d
    else
       *cffPO4 = 0.0;
    //cout << "Phosphorus uptake end" << endl;
+}
+
+void phytoplankton_external_nut_limitation__(long* PPhytoplankton, double* Ammonia, double* Nitrate,double* Nitrite, double* Phosphate, double* Silicate, double* Limitation)
+{
+    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
+    *Limitation = 1.0;
+    if (ptr->GetIntParameterValue("Nitrogen limitation") == 1){
+       double MyKNH4, MyKNO3,inhNH4, cff1, cff2, L_NH4, L_NO3;
+       MyKNH4 = ptr->GetParameterValue("KNH4");
+       MyKNO3 = ptr->GetParameterValue("KNO3");
+       cff1= *Ammonia * MyKNH4;
+       cff2= (*Nitrate + *Nitrite) * MyKNO3;
+       inhNH4=1.0/(1.0+cff1);
+       L_NH4=cff1/(1.0+cff1);
+       L_NO3=cff2*inhNH4/(1.0+cff2);
+       *Limitation = MIN(L_NO3+L_NH4, *Limitation);  
+    }
+    if (ptr->GetIntParameterValue("Phosphorus limitation") == 1){
+       double MyKP, L_PO4;
+       MyKP = ptr->GetParameterValue("KP");
+       L_PO4 = *Phosphate / (*Phosphate + MyKP);
+       *Limitation = MIN(L_PO4, *Limitation);  
+    }
+    if (ptr->GetIntParameterValue("Silica limitation") == 1){
+       double MyKSi, L_Si;
+       MyKSi = ptr->GetParameterValue("KSi");
+       L_Si = *Silicate / (*Silicate + MyKSi);
+       *Limitation = MIN(L_Si,*Limitation);
+    } 
 }
 
 void phytoplankton_silica_uptake__(long* PPhytoplankton, double* Silicate,double* cffSiOH4, double *siPhyto, double* biomass)
@@ -896,7 +925,7 @@ double TPhytoplanktonGeneric::EilersAndPeetersSlope()
 {
    int MyBoxNumber = ABoxNumber;
    if (CEiler[MyBoxNumber] > aMin)
-      return 1.0 / CEiler[MyBoxNumber]; //[s-1/(micro mol photons m-2 s-1)]
+      return 1.0 / CEiler[MyBoxNumber] * HOURSTOSECONDS; //[h-1/(micro mol photons m-2 s-1)]
    else
       return Slope[MyBoxNumber];
 }
@@ -905,7 +934,7 @@ double TPhytoplanktonGeneric::MichaelisMentenSlope()
 {
    int MyBoxNumber = ABoxNumber;
    if (Imax[MyBoxNumber] > aMin)
-      return Pmax[MyBoxNumber] / Imax[MyBoxNumber]; //[s-1/(micro mol photons m-2 s-1)] Note that Imax is the light intensity corresponding to Pmax/2 
+      return Pmax[MyBoxNumber] / Imax[MyBoxNumber] * HOURSTOSECONDS; //[h-1/(micro mol photons m-2 s-1)] Note that Imax is the light intensity corresponding to Pmax/2 
    else
       return Slope[MyBoxNumber];
 }
