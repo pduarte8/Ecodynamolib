@@ -378,16 +378,18 @@ void phytoplankton_respiration__(long* PPhytoplankton, double* waterTemperature,
 
 void phytoplankton_exudation__(long* PPhytoplankton, double* cffCExudation, double* GrossProduction, double* biomass, double *NCellQuota, double *PCellQuota)
 {
-   double Exudation, MyBiomass;
+   double Exudation, MyBiomass, NMassQuota, PMassQuota;
    //cout << "Exudation start" << endl;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
    MyBiomass = *biomass * CARBONATOMICWEIGHT; //Conversions from mmol/m3 to mg / m3
+   NMassQuota = *NCellQuota * NITROGENATOMICWEIGHT / CARBONATOMICWEIGHT; //mg N / mg C
+   PMassQuota = *PCellQuota * PHOSPHORUSATOMICWEIGHT / CARBONATOMICWEIGHT; //mg P / mg C
    ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
-   ptr->SetVariableValue("Fortran", *NCellQuota,0,"NCellQuota");
-   ptr->SetVariableValue("Fortran", *PCellQuota,0,"PCellQuota");
+   ptr->SetVariableValue("Fortran", NMassQuota,0,"NCellQuota");
+   ptr->SetVariableValue("Fortran", PMassQuota,0,"PCellQuota");
    ptr->GPP[0] = *GrossProduction * CARBONATOMICWEIGHT;
    
-   if ((ptr->PhytoBiomass[0] > ptr->aMin) && (ptr->GPP[0] > ptr->aMin) && ((ptr->NCellQuota[0] < ptr->RedfieldNFactor) || (ptr->PCellQuota[0] < ptr->RedfieldPFactor)))
+   if ((ptr->PhytoBiomass[0] > ptr->aMin) && (ptr->GPP[0] > ptr->aMin) && ((NMassQuota < ptr->RedfieldNFactor/ptr->RedfieldCFactor) || (PMassQuota < ptr->RedfieldPFactor/ptr->RedfieldCFactor)))
    {
       ptr->Exudation(0);   
       *cffCExudation = ptr->ExudatedFlux / CARBONATOMICWEIGHT/*/ ptr->PhytoBiomass[0]*/; //Return value in mmol C m-3 s-1 for compatibility with ROMS nonlinear backward-implicit solution
