@@ -245,7 +245,7 @@ void TCrestumaLeverPhytoplankton2DVIntLim::BuildCrestumaLeverPhyto2DVIntLim()
                 {
                     PReadWrite->ReadNumber(X+3, i, PhosphorusLimitation);
                 }
-                else if (strcmp(MyParameter, "SilicaLimitation limitation") == 0)
+                else if (strcmp(MyParameter, "Silica limitation") == 0)
                 {
                     PReadWrite->ReadNumber(X+3, i, SilicaLimitation);
                 }

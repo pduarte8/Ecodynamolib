@@ -128,7 +128,7 @@ void dissobjt_nitrification__(long* PNutrients, double* lightAtTop, double* ligh
    if (*Oxygen > AMin)
       *OxygenFlux = -ptr->OxygenFlux[0] * CUBIC / (2.0 * OXYGENATOMICWEIGHT) * LightLim/*/ *Oxygen*/; //OxygenFlux in mmol O2 m-3 s-1 
    else
-      *Oxygen = 0.0; 
+      *OxygenFlux = 0.0; 
    //cout<<"Ammonia flux= "<<*AmmoniaFlux<<endl;
    //cout<<"Nitrate flux= "<<*NitrateFlux<<endl;
    //cout<<"Oxygen flux= "<<*OxygenFlux<<endl;
@@ -2245,7 +2245,7 @@ double TRiaF2DNutrients::TemperatureLimitation(int ABoxNumber)
    TEcoDynClass* MyWaterTemperaturePointer = MyPEcoDynClass->GetWaterTemperaturePointer();
    if (MyWaterTemperaturePointer != NULL)
    {
-   	  double WaterTemperature;
+//   	  double WaterTemperature;
    	  MyWaterTemperaturePointer->Inquiry(GetEcoDynClassName(), WaterTemperature,
                                              MyBoxNumber,
                                              "Water temperature",
