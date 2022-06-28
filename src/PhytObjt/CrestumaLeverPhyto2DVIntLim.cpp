@@ -330,6 +330,7 @@ TCrestumaLeverPhytoplankton2DVIntLim
 
 void TCrestumaLeverPhytoplankton2DVIntLim::PreBuildCrestumaLeverPhyto2DVIntLim()
 {
+    //cout<< "Prebuild"<< NumberOfBoxes<< endl;
     NCellQuota = new double[NumberOfBoxes];
     PCellQuota = new double[NumberOfBoxes];
     SiCellQuota = new double[NumberOfBoxes];

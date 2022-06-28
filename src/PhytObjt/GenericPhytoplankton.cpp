@@ -264,9 +264,9 @@ void phytoplankton_go__(long* PPhytoplankton, double* layerThickness, double* ti
 
 
 void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
-                                double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* biomass, double *TIC, double *ASlope, double* Chl2Carbon, double *OxygenProduction)
+                                double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* SiPhyto, double* biomass, double *TIC, double *ASlope, double* Chl2Carbon, double *OxygenProduction)
 {
-   double Productivity, MyBiomass, MyNPhyto, MyPPhyto, MyNCellQuota, MyPCellQuota, MyChl2Carbon, FromChl2Carbon, CarbonOxygenRatio;
+   double Productivity, MyBiomass, MyNPhyto, MyPPhyto, MySiPhyto, MyNCellQuota, MyPCellQuota, MyChl2Carbon, FromChl2Carbon, CarbonOxygenRatio;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
    /**********************PAR light intensity reseting at the the topo and the bottom of a model cell**************************************************************/
    ptr->SetLightAtTop(*lightAtTop);
@@ -281,6 +281,7 @@ void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double
    MyBiomass = *biomass * CARBONATOMICWEIGHT; 
    MyNPhyto =  *nPhyto * NITROGENATOMICWEIGHT;
    MyPPhyto = *pPhyto * PHOSPHORUSATOMICWEIGHT;
+   MySiPhyto = *SiPhyto * SILICAATOMICWEIGHT;
    /*********************************************Reseting of the chlorophyll / carbon ratio************************************************************************/
    MyChl2Carbon = *Chl2Carbon;
    FromChl2Carbon = 1.0 / MyChl2Carbon; 
@@ -496,7 +497,7 @@ void phytoplankton_silica_uptake__(long* PPhytoplankton, double* Silicate,double
    else MySiCellQuota = 0.0;
    ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
    ptr->SetVariableValue("Fortran", MySiCellQuota,0,"SiCellQuota");
-   ptr->SetVariableValue("Fortran", MySiPhyto,0,"PPhyto");
+   ptr->SetVariableValue("Fortran", MySiPhyto,0,"SiPhyto");
 
    if (ptr->GetIntParameterValue("Silica limitation") == 1)
       ptr->SilicaUptake(0, *Silicate);
