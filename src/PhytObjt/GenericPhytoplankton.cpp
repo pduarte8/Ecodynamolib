@@ -266,7 +266,7 @@ void phytoplankton_go__(long* PPhytoplankton, double* layerThickness, double* ti
 void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
                                 double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* SiPhyto, double* biomass, double *TIC, double *ASlope, double* Chl2Carbon, double *OxygenProduction)
 {
-   double Productivity, MyBiomass, MyNPhyto, MyPPhyto, MySiPhyto, MyNCellQuota, MyPCellQuota, MyChl2Carbon, FromChl2Carbon, CarbonOxygenRatio;
+   double Productivity, MyBiomass, MyNPhyto, MyPPhyto, MySiPhyto, MyNCellQuota, MyPCellQuota, MySiCellQuota, MyChl2Carbon, FromChl2Carbon, CarbonOxygenRatio;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
    /**********************PAR light intensity reseting at the the topo and the bottom of a model cell**************************************************************/
    ptr->SetLightAtTop(*lightAtTop);
@@ -289,18 +289,21 @@ void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double
    if (MyBiomass > ptr->aMin)
    {
        MyNCellQuota = MyNPhyto / MyBiomass;
-       MyPCellQuota = MyPPhyto / MyBiomass; 
+       MyPCellQuota = MyPPhyto / MyBiomass;
+       MySiCellQuota = MySiPhyto / MyBiomass; 
    }
    else
    {
        MyNCellQuota = 0.0;
        MyPCellQuota = 0.0;
+       MySiCellQuota = 0.0;
    }
    /******************************************Reseting of variable values in the phytoplankton pointer in the units of EcoDynamo************************************/
    ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
    ptr->SetVariableValue("Fortran", FromChl2Carbon,0,"Chlorophyll to Carbon");
    ptr->SetVariableValue("Fortran", MyNCellQuota,0,"NCellQuota");
    ptr->SetVariableValue("Fortran", MyPCellQuota,0,"PCellQuota");
+   ptr->SetVariableValue("Fortran", MySiCellQuota,0,"SiCellQuota");
    ptr->SetVariableValue("Fortran", MyNPhyto,0,"NPhyto");
    ptr->SetVariableValue("Fortran", MyPPhyto,0,"PPhyto");
    /*****************************************Selection of a P-I function depending on the option "piCurveOption" in the arguments above*****************************/
