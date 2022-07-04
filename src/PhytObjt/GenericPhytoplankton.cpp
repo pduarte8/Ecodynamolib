@@ -173,7 +173,8 @@ void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, doubl
                             double* deathLoss, double* redfieldCFactor, double* redfieldNFactor,double* redfieldPFactor, double* temperatureAugmentationRate,
                             double* ratioLightDarkRespiration, double* minNPRatio,double* maxNPRatio, double* pMaxUptake, double* nMaxUptake, double* kP,double* kNO3, 
                             double* kNH4, double* minPCellQuota, double* maxPCellQuota,double* minNCellQuota, double* maxNCellQuota, double* kPInternal,double* kNInternal, double* settlingSpeed, double* carbonToOxygenProd,double* carbonToOxygenResp, double* tminRespiration,double* tminPhotosynthesis,
-                            int* nitrogenLimitation, int* phosphorusLimitation, int* silicaLimitation, double* maxSiCellQuota, double* minNSiRatio, double* siMaxUptake,
+                            int* nitrogenLimitation, int* phosphorusLimitation, int* silicaLimitation, double* maxSiCellQuota, double* minSiCellQuota,
+                            double* minNSiRatio, double* siMaxUptake,
                             double* kSi, double* kSiInternal, double* redfieldSi, int* pifunction, int* nutrientLimitationType)
 {
         TPhytoplanktonGeneric* ptr;
@@ -230,6 +231,7 @@ void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, doubl
         ptr->SetParameterValue("TminRespiration",*tminRespiration);
 
         ptr->SetParameterValue("MaxSiCellQuota",*maxSiCellQuota);
+        ptr->SetParameterValue("MinSiCellQuota",*minSiCellQuota);
         ptr->SetParameterValue("MinNSiRatio",*minNSiRatio);
         ptr->SetParameterValue("SiMaxUptake",*siMaxUptake);
         ptr->SetParameterValue("KSi",*kSi);
@@ -264,7 +266,7 @@ void phytoplankton_go__(long* PPhytoplankton, double* layerThickness, double* ti
 
 
 void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
-                                double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* SiPhyto, double* biomass, double *TIC, double *ASlope, double* Chl2Carbon, double *OxygenProduction)
+                                double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* SiPhyto, double* biomass, double *TIC, double *ASlope, double* Chl2Carbon, double *OxygenProduction, int *line, int *column, int *layer)
 {
    double Productivity, MyBiomass, MyNPhyto, MyPPhyto, MySiPhyto, MyNCellQuota, MyPCellQuota, MySiCellQuota, MyChl2Carbon, FromChl2Carbon, CarbonOxygenRatio;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
@@ -277,7 +279,11 @@ void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double
    ptr->SetParameterValue("Slope", *ASlope);
    /********************************************Reseting of water temperature to account for corresponding limitation of photosynthesis****************************/
    ptr->SetWaterTemperature(*waterTemperature);
-   /********************************************Conversions from mmol/m3 (ROMS units) to mg / m3 (EcoDynamo units)*************************************************/                            
+   /********************************************Conversions from mmol/m3 (ROMS units) to mg / m3 (EcoDynamo units)*************************************************/
+   ptr->SetIntParameterValue("Line", *line);
+   ptr->SetIntParameterValue("Column", *column);
+   ptr->SetIntParameterValue("Layer", *layer);
+                            
    MyBiomass = *biomass * CARBONATOMICWEIGHT; 
    MyNPhyto =  *nPhyto * NITROGENATOMICWEIGHT;
    MyPPhyto = *pPhyto * PHOSPHORUSATOMICWEIGHT;
@@ -328,20 +334,31 @@ void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double
          break;
    }
    /***************************************Light limited productivity calculated in mg C / m3**********************************************************************/
-   Productivity = ptr->GetParameterValue("Productivity"); 
+   Productivity = ptr->GetParameterValue("Productivity");
+   /*if (Productivity < 0.0) {
+      cout<< "Productivity light limited = "<< Productivity << endl;
+   }*/
    /***************************************Calculation of temperature limitation***********************************************************************************/
    ptr->Tmin = ptr->GetParameterValue("TminPhotosynthesis");
    Productivity = ptr->GetParameterValue("Productivity") * ptr->TemperatureArrheniusExponentialLimitation(0);
+   /*if (Productivity < 0.0) {
+      cout<< "Productivity temp limited = "<< Productivity << endl;
+   }*/
+
    ptr->SetParameterValue("Productivity", Productivity);
    //cout<< "Productivity temp limited = "<< Productivity << endl;
    /***************************************Calculation of nutrient limitation**************************************************************************************/
    //cout<< "Nitrogen limitation ="<< ptr->GetIntParameterValue("Nitrogen limitation") << endl;
    //cout<< "Phosphorus limitation ="<< ptr->GetIntParameterValue("Phosphorus limitation") << endl;
    //cout<< "Silica limitation ="<< ptr->GetIntParameterValue("Silica limitation") << endl;
+   
    if (ptr->NutrientLimitationType == 2) 	
       ptr->NutrientLimitation(0);
-   //Productivity = ptr->GetParameterValue("Productivity");
-   //cout<< "Productivity nut limited = "<< Productivity << endl;
+   
+   Productivity = ptr->GetParameterValue("Productivity");
+   /*if (Productivity < 0.0) {
+      cout<< "Productivity nut limited = "<< Productivity << endl;
+   }*/
    /***************************************Productivity recalculated in mmol C/m3/s*******************************************************************************/
    *GrossProduction = ptr->GetParameterValue("Productivity") / CARBONATOMICWEIGHT; //Return value in mmolC/m3/h for compatibility with ROMS
    *ASlope = ptr->GetParameterValue("Slope"); //Return value in [h-1/(micro mol photons m-2 s-1)]
@@ -898,7 +915,7 @@ double TPhytoplanktonGeneric::PlattProduction()
    double LightLimitation, PARLight;
    double IntegrationSteps = 30;
    double DeltaZ, Soma;
-   //cout<< "Pmax ="<< Pmax[i]<< endl;  
+   //cout<< "Pmax ="<< Pmax[i]<< endl;    
    Productivity = 0.0;
    if ((PhytoBiomass[i] > aMin) &&
        (BoxDepth > aMin) && (LightAtTop > aMin) && (IntegrationSteps >= 1.0))
@@ -915,6 +932,15 @@ double TPhytoplanktonGeneric::PlattProduction()
          Productivity = Pmax[i] * LightLimitation / HOURSTOSECONDS * PhytoBiomass[i]; //mg C m-3 s-1;    
    }
    else Productivity = 0.0;
+   /*if ((Line == 210) && (Column == 416) && (Layer == 35)) {
+      cout<<"PhytoBiomass = "<<PhytoBiomass[i]<< endl;
+      cout<< "Pmax ="<< Pmax[i]<< endl;
+      cout<< "Slope ="<< Slope[i]<< endl;
+      cout<< "Beta ="<< beta[i]<< endl;
+      cout<< "PARLight ="<< PARLight<< endl;
+      cout<< "KValue ="<< KValue<< endl;
+      cout<< "DeltaZ ="<< DeltaZ<< endl;
+  } */
    return Productivity;
 }
 

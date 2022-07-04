@@ -487,6 +487,8 @@ bool TCrestumaLeverPhytoplankton2DVIntLim::SetVariableValue(char* srcName, doubl
         NCellQuota[BoxNumber] = Value;
     else if (strcmp(VariableName, "PCellQuota") == 0)
         PCellQuota[BoxNumber] = Value;
+    else if (strcmp(VariableName, "SiCellQuota") == 0)
+        SiCellQuota[BoxNumber] = Value;
     else if (strcmp(VariableName, "NPhyto") == 0)
         NPhyto[BoxNumber] = Value;
     else if (strcmp(VariableName, "PPhyto") == 0)
@@ -1004,6 +1006,18 @@ bool TCrestumaLeverPhytoplankton2DVIntLim::SetIntParameterValue(char* MyParamete
   else if (strcmp(MyParameter, "Silica limitation") == 0)
   {
      SilicaLimitation = value;
+  }
+  else if (strcmp(MyParameter, "Line") == 0)
+  {
+     Line = value;
+  }
+  else if (strcmp(MyParameter, "Column") == 0)
+  {
+     Column = value;
+  }
+  else if (strcmp(MyParameter, "Layer") == 0)
+  {
+     Layer = value;
   }
   else
        rc = false;
