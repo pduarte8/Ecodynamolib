@@ -493,6 +493,8 @@ bool TCrestumaLeverPhytoplankton2DVIntLim::SetVariableValue(char* srcName, doubl
         NPhyto[BoxNumber] = Value;
     else if (strcmp(VariableName, "PPhyto") == 0)
         PPhyto[BoxNumber] = Value;
+    else if (strcmp(VariableName, "SiPhyto") == 0)
+        SiPhyto[BoxNumber] = Value;
     else
         rc = false;
 
@@ -1911,6 +1913,17 @@ void TCrestumaLeverPhytoplankton2DVIntLim::SilicaUptake(int ABoxNumber, double S
 												 ObjectCode);
       //...
 #endif
+        /*if ((Line == 210) && (Column == 416) && (Layer == 35)){
+           cout<< "SiCellQuota = "<< SiCellQuota[i]<< endl; 
+           cout<< "NiCellQuota = "<< NCellQuota[i]<< endl;          
+           cout<< "MaxSiCellQuota = "<< MaxSiCellQuota<< endl;
+           cout<< "MinNSiRatio = "<< MinNSiRatio<< endl;
+           cout<< "Silica = "<< Silica<< endl;
+           cout<< "KSi = "<< KSi<< endl;
+           cout<< "SiMaxUptake = "<< SiMaxUptake<< endl;
+           cout<< "SiPhyto = "<< SiPhyto[i]<< endl;
+        }*/
+
    	if (
             (SiCellQuota[i] > MaxSiCellQuota) ||
             (NCellQuota[i] / SiCellQuota[i] <= MinNSiRatio)

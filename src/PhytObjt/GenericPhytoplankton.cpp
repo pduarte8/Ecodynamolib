@@ -462,7 +462,6 @@ void phytoplankton_phosphorus_uptake__(long* PPhytoplankton, double* Phosphate,d
    MyPPhyto = *pPhyto * PHOSPHORUSATOMICWEIGHT;
    if (MyBiomass > ptr->aMin)MyPCellQuota = MyPPhyto / MyBiomass; 
    else MyPCellQuota = 0.0;
-   ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
    ptr->SetVariableValue("Fortran", MyPCellQuota,0,"PCellQuota");
    ptr->SetVariableValue("Fortran", MyPPhyto,0,"PPhyto");
 
@@ -515,7 +514,6 @@ void phytoplankton_silica_uptake__(long* PPhytoplankton, double* Silicate,double
    MySiPhyto = *siPhyto * SILICAATOMICWEIGHT;
    if (MyBiomass > ptr->aMin)MySiCellQuota = MySiPhyto / MyBiomass; 
    else MySiCellQuota = 0.0;
-   ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
    ptr->SetVariableValue("Fortran", MySiCellQuota,0,"SiCellQuota");
    ptr->SetVariableValue("Fortran", MySiPhyto,0,"SiPhyto");
 
