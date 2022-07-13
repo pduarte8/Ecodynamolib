@@ -276,7 +276,7 @@ void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double
    /********************************************Reseting of the light extinction coefficient for proper primary production vertical integration********************/
    ptr->SetParameterValue("KValue", *kValue);
    /***********Reseting of the slope of the P-I curve, just in case this is to be recalculated as a function of chlorophyll:carbon or something else...************/
-   ptr->SetParameterValue("Slope", *ASlope);
+   ptr->SetParameterValue("Slope", *ASlope * WATTSTOMICROEINSTEINS);
    /********************************************Reseting of water temperature to account for corresponding limitation of photosynthesis****************************/
    ptr->SetWaterTemperature(*waterTemperature);
    /********************************************Conversions from mmol/m3 (ROMS units) to mg / m3 (EcoDynamo units)*************************************************/
@@ -361,7 +361,7 @@ void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double
    }*/
    /***************************************Productivity recalculated in mmol C/m3/s*******************************************************************************/
    *GrossProduction = ptr->GetParameterValue("Productivity") / CARBONATOMICWEIGHT; //Return value in mmolC/m3/h for compatibility with ROMS
-   *ASlope = ptr->GetParameterValue("Slope"); //Return value in [h-1/(micro mol photons m-2 s-1)]
+   *ASlope = ptr->GetParameterValue("Slope")/WATTSTOMICROEINSTEINS; //Return value in [h-1/(W  m-2 s-1)]
    /**************************************This was to calculate average daily production which is not being calculated now****************************************/
     ptr->SetJulianDay(*julianDay);
    //ptr->DailyAverageProduction();
