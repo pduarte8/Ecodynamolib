@@ -360,8 +360,8 @@ void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double
       cout<< "Productivity nut limited = "<< Productivity << endl;
    }*/
    /***************************************Productivity recalculated in mmol C/m3/s*******************************************************************************/
-   *GrossProduction = ptr->GetParameterValue("Productivity") / CARBONATOMICWEIGHT; //Return value in mmolC/m3/h for compatibility with ROMS
-   *ASlope = ptr->GetParameterValue("Slope")/WATTSTOMICROEINSTEINS; //Return value in [h-1/(W  m-2 s-1)]
+   *GrossProduction = ptr->GetParameterValue("Productivity") / CARBONATOMICWEIGHT; //Return value in mmolC/m3/s for compatibility with ROMS
+   //*ASlope = ptr->GetParameterValue("Slope"); // /WATTSTOMICROEINSTEINS; //Return value in [h-1/(W  m-2 s-1)]
    /**************************************This was to calculate average daily production which is not being calculated now****************************************/
     ptr->SetJulianDay(*julianDay);
    //ptr->DailyAverageProduction();
