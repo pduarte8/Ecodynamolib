@@ -929,7 +929,7 @@ extern "C" {
     void phytoplankton_go__(long* PPhytoplankton, double* layerThickness, double* timeStep);
 
     void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
-                                    double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* SiPhyto, double* biomass, double *TIC, double *Slope, double* Chl2Carbon, double *OxygenProduction, int *line, int *column, int *layer);
+                                    double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* SiPhyto, double* biomass, double *Slope, double* Chl2Carbon, double *OxygenProduction, int *line, int *column, int *layer);
 
     void phytoplankton_respiration__(long* PPhytoplankton, double* waterTemperature, double* cffCRespiration, double *GrossProduction, double* biomass, double *Oxygen, double* Chl2Carbon, double *OxygenConsumption);
 

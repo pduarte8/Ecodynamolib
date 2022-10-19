@@ -266,7 +266,7 @@ void phytoplankton_go__(long* PPhytoplankton, double* layerThickness, double* ti
 
 
 void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
-                                double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* SiPhyto, double* biomass, double *TIC, double *ASlope, double* Chl2Carbon, double *OxygenProduction, int *line, int *column, int *layer)
+                                double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* SiPhyto, double* biomass, double *ASlope, double* Chl2Carbon, double *OxygenProduction, int *line, int *column, int *layer)
 {
    double Productivity, MyBiomass, MyNPhyto, MyPPhyto, MySiPhyto, MyNCellQuota, MyPCellQuota, MySiCellQuota, MyChl2Carbon, FromChl2Carbon, CarbonOxygenRatio;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
