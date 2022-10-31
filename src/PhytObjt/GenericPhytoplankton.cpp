@@ -810,7 +810,7 @@ void TPhytoplanktonGeneric::GetLightIntensity()
 double TPhytoplanktonGeneric::SteeleProduction()
 {
    int MyBoxNumber = ABoxNumber;
-   if ((PhytoBiomass[MyBoxNumber] > aMin) &&
+   if (/*(PhytoBiomass[MyBoxNumber] > aMin) &&*/
        (BoxDepth > aMin) && (LightAtTop > aMin))
    {
          /*cout << "Light at top = "<< LightAtTop << endl;
@@ -843,7 +843,7 @@ double TPhytoplanktonGeneric::Michaelis_MentenProduction()
 {
    int MyBoxNumber = ABoxNumber;
    TEcoDynClass * MyWaterTemperaturePointer = MyPEcoDynClass->GetWaterTemperaturePointer();
-   if ((PhytoBiomass[MyBoxNumber] > aMin) &&
+   if (/*(PhytoBiomass[MyBoxNumber] > aMin) &&*/
        (BoxDepth > aMin) && (LightAtTop > aMin))
    {
   
@@ -864,7 +864,7 @@ double TPhytoplanktonGeneric::EilerProduction()
 {
    int i = ABoxNumber;
    double D, B1, B2;
-   if ((PhytoBiomass[i] > aMin) &&
+   if (/*(PhytoBiomass[i] > aMin) &&*/
        (BoxDepth > aMin) && (LightAtTop > aMin))
    {
          if (AEiler[i] != 0.0)
@@ -915,7 +915,7 @@ double TPhytoplanktonGeneric::PlattProduction()
    double DeltaZ, Soma;
    //cout<< "Pmax ="<< Pmax[i]<< endl;    
    Productivity = 0.0;
-   if ((PhytoBiomass[i] > aMin) &&
+   if (/*(PhytoBiomass[i] > aMin) &&*/
        (BoxDepth > aMin) && (LightAtTop > aMin) && (IntegrationSteps >= 1.0))
    {  
          DeltaZ = BoxDepth / IntegrationSteps;
