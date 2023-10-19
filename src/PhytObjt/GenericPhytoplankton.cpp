@@ -192,8 +192,8 @@ void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, doubl
         /**********************************************Parameters values imported from Fortran program***************************************************************************/
         ptr->SetParameterValue("Pmax", *pmax); 
         ptr->SetParameterValue("Iopt", *iopt);
-        ptr->SetParameterValue("Slope", *slope * WATTSTOMICROEINSTEINS);/* Converting from h-1 W m2 s to micro Einsteins m2 s */
-        ptr->SetParameterValue("Beta", *beta * WATTSTOMICROEINSTEINS); /* Converting from h-1 W m2 s to h-1 micro Einsteins m2 s */
+        ptr->SetParameterValue("Slope", *slope / WATTSTOMICROEINSTEINS);/* Converting from h-1 W-1 m2 s to micro Einsteins-1 m2 s */
+        ptr->SetParameterValue("Beta", *beta / WATTSTOMICROEINSTEINS); /* Converting from h-1 W-1 m2 s to h-1 micro Einsteins-1 m2 s */
         ptr->SetParameterValue("DefaultAEiler", *aEiler);
         ptr->SetParameterValue("BEiler", *bEiler);
         ptr->SetParameterValue("CEiler", *cEiler);
@@ -276,7 +276,7 @@ void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double
    /********************************************Reseting of the light extinction coefficient for proper primary production vertical integration********************/
    ptr->SetParameterValue("KValue", *kValue);
    /***********Reseting of the slope of the P-I curve, just in case this is to be recalculated as a function of chlorophyll:carbon or something else...************/
-   ptr->SetParameterValue("Slope", *ASlope * WATTSTOMICROEINSTEINS);
+   ptr->SetParameterValue("Slope", *ASlope / WATTSTOMICROEINSTEINS);
    /********************************************Reseting of water temperature to account for corresponding limitation of photosynthesis****************************/
    ptr->SetWaterTemperature(*waterTemperature);
    /********************************************Conversions from mmol/m3 (ROMS units) to mg / m3 (EcoDynamo units)*************************************************/
@@ -482,11 +482,12 @@ void phytoplankton_external_nut_limitation__(long* PPhytoplankton, double* Ammon
        double MyKNH4, MyKNO3,inhNH4, cff1, cff2, L_NH4, L_NO3;
        MyKNH4 = ptr->GetParameterValue("KNH4");
        MyKNO3 = ptr->GetParameterValue("KNO3");
-       cff1= *Ammonia * MyKNH4;
-       cff2= (*Nitrate + *Nitrite) * MyKNO3;
+       cff1= *Ammonia / MyKNH4;
+       cff2= (*Nitrate + *Nitrite) / MyKNO3;
        inhNH4=1.0/(1.0+cff1);
        L_NH4=cff1/(1.0+cff1);
-       L_NO3=cff2*inhNH4/(1.0+cff2);
+       //L_NO3=cff2*inhNH4/(1.0+cff2); Laura and Pedro decided to comment this for compatibility with CICE and for the sake of simplicity
+       L_NO3=cff2/(1.0+cff2); 
        *Limitation = MIN(L_NO3+L_NH4, *Limitation);  
     }
     if (ptr->GetIntParameterValue("Phosphorus limitation") == 1){
