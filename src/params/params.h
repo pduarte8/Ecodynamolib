@@ -140,6 +140,70 @@ class _export TAstronomy
 
 static TAstronomy* PAstronomy;
 
+class _export TDEB
+{
+    public :
+        TDEB();
+        ~TDEB();
+        double Feed(double JXm, double F, double StructuralVolume);
+        double Absorption(double PAm, double F, double StructuralVolume);
+        double StructuralVolumeChange(double PAm, double K, double Em, double Eg, double PT, double Respiration, double Reserves, double StructuralVolume);
+        double GrowthAndMetabolicCosts(double PAm, double PM, double Em, double Eg, double PT, double Reserves, double StructuralVolume);
+        double ReserveConsumption(double GrowthAndMetabolism, double MaturityCosts, double ReprodCosts);
+        double Respire(double PM, double K, double Eg, double Reserves, double StructuralVolume);
+        double BodyLength(double StructuralVolume, double AShapeCoefficient);
+        double TemperatureLimitation(double ATA, double AT1, double AWaterTemperature);
+        double Excrete();
+        double Reproduce();
+        void Debugger(double i);
+        double TINNY;
+    private :
+
+};
+
+class _export TPLightCurves
+{
+    public :
+	TPLightCurves();
+        ~TPLightCurves();
+        double Platt(double PARtop, double KValue, double Depth, double Pmax, double beta, double slope);
+        double Steele(double PARtop, double PARbottom, double KValue, double Depth, double Pmax, double PARopt);
+        double EilersAndPeeters(double PARtop, double PARbottom, double KValue, double Depth, double a, double b, double c);
+        double TINNY, Productivity;
+        double Steps; 	
+};
+
+class _export TNutrientLimitation
+{
+    public :
+        TNutrientLimitation();
+        ~TNutrientLimitation();
+	double ExternalLimitation();
+	double InternalLimitation();
+	double RedfieldMolarRatio[3];
+        double TINNY;
+};
+
+class _export TNutrientUptake
+{
+    public :
+        TNutrientUptake();
+        ~TNutrientUptake();
+        double NitrateUptake();
+	double AmmoniaUptake();
+	double PhosphateUptake();
+	double SilicaUptake();
+	double TINNY;
+
+};
+
+
+
+static TDEB* PDEB;
+static TPLightCurves* PPLightCurves;
+static TNutrientLimitation* PNutrientLimitation;
+static TNutrientUptake* PNutrientUptake;
+
 #endif //_PARAMS_H_
 
 
