@@ -519,6 +519,10 @@ double TCrestumaLeverPhytoplankton2DVIntLim::GetParameterValue(char* MyParameter
     {
         value = Slope[0];
     }
+    else if (strcmp(MyParameter, "Beta") == 0)
+    {
+        value = beta[0];
+    }
     else if (strcmp(MyParameter, "DefaultAEiler") == 0)
     {
         value = AEiler[0];

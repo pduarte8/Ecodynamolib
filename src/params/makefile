@@ -11,7 +11,7 @@ CFLAGS = -Wall -shared -fPIC -D_PORT_FORTRAN_ -fpermissive -D_GLIBCXX_USE_CXX11_
 
 
 #define directories/files containing source files
-SRC = Params.cpp 
+SRC = Params.cpp PLightCurves.cpp 
 
 
 Params.o:
