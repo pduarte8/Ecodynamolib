@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include "BGCHeader.h"
 
-double TemperatureExponentialLimitation__(double* WaterTemperature, double* TemperatureAugmentationRate, double* Tmin)
+double TemperatureExponentialLimitation(double WaterTemperature, double TemperatureAugmentationRate, double Tmin)
 {
-   return exp(*TemperatureAugmentationRate * (*WaterTemperature - *Tmin));
+   return exp(TemperatureAugmentationRate * (WaterTemperature - Tmin));
 }
 
