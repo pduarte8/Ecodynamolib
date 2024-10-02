@@ -8,6 +8,8 @@
 //#include <exception>
 using namespace std;
 
+//Based on: Jørgensen, S.E., Bendoricchio, G., 2001. Fundamentals of ecological modelling. Developments
+//in Ecological Modelling 21. Elsevier, Amsterdam.
 double InternalNutrientLimitation(double CellQuota, double MinCellQuota, double HalfSaturation)
 {
    double LiebigLimitation = 1.0;
@@ -17,7 +19,8 @@ double InternalNutrientLimitation(double CellQuota, double MinCellQuota, double 
    return LiebigLimitation;
 }
 
-
+//Based a simples hyperbolic function and assuming that nitrogen limitation is alleviated equaly by NO3+NO2
+//and ammonium. The final result is limitied to a maximum of 1.0.
 double NitrateAndAmmoniumLimitation(double NH4, double KNH4, double NO3, double KNO3, double NO2) 
 { 
    double cff1, cff2, L_NH4, L_NO3;

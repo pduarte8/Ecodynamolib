@@ -5,9 +5,13 @@
 using namespace std;
 
 
-double Platt(double PARtop, double KValue, double Depth, double Pmax, double beta, double slope, int EulerSteps)
+//Platt, T., Gallegos, C. L., and Harrison, W. G.: Photoinhibition of Photosynthesis in Natural Assemblages of Marine-Phytoplankton, J Mar Res, 38, 687-701, 1980.
+//Platt1 returns vertically averaged light inhibition. This is achieved with a numerical integration of the Platt function, which is shown in Platt2, using the Euler method.
+//Platt2, returns light inhibition at a specified PAR level.
+
+double Platt1(double PARtop, double KValue, double Depth, double Pmax, double beta, double slope, int EulerSteps)
 {
-   double DeltaZ, Soma = 0.0, LightLimitation = 0.0, TINNY = 0.0000000001;
+   double DeltaZ, Soma = 0.0, LightLimitation = 0.0, TINNY = 0.0000000001, PAR;
 /*   cout << "PARtop= " << PARtop << endl;
    cout << "KValue= " << KValue << endl;
    cout << "Depth= "<<  Depth << endl;
@@ -15,20 +19,21 @@ double Platt(double PARtop, double KValue, double Depth, double Pmax, double bet
    cout << "beta= " << beta << endl;
    cout << "slope= " << slope << endl;
    cout << "EulerSteps= " << EulerSteps << endl;*/
+   PAR = PARtop;
    if ((Depth > TINNY) && (PARtop > TINNY) && (Pmax > TINNY) && (EulerSteps >= 1.0))
    {
          DeltaZ = Depth / EulerSteps;
          for (int Step = 1; Step <= EulerSteps; Step++)    //Euler integration as a function of depth
          {
-            Soma = Soma + (1 - exp(-slope * PARtop / Pmax)) * exp(-beta * PARtop/ Pmax) * DeltaZ;
-            PARtop = PARtop * exp(-KValue * DeltaZ);
+            Soma = Soma + (1 - exp(-slope * PAR / Pmax)) * exp(-beta * PAR/ Pmax) * DeltaZ;
+            PAR = PAR * exp(-KValue * DeltaZ);
          }
          LightLimitation = Soma / Depth;
   }
   return LightLimitation;
 }
 
-double PlattX(double PAR, double Pmax, double beta, double slope)
+double Platt2(double PAR, double Pmax, double beta, double slope)
 {
    double LightLimitation = 0.0, TINNY = 0.0000000001, MyPAR;
 /*   cout << "PAR= " << *PAR << endl;
@@ -39,16 +44,18 @@ double PlattX(double PAR, double Pmax, double beta, double slope)
    MyPAR = std::max(0.0,PAR);
 //   cout << "MyPAR= " << MyPAR << endl;
    if ((MyPAR > TINNY) && (Pmax > TINNY)) 
-      LightLimitation = (1.0-exp(-slope * MyPAR / Pmax))*exp(-beta * MyPAR / Pmax);
+      LightLimitation = (1.0-exp(-slope * MyPAR / Pmax)) * exp(-beta * MyPAR / Pmax);
    return LightLimitation;
 }
 
 //******************************************************************************************************************************************************
-////Steele P-I function
-////Steele, J. H.: Environmental control of photosynthesis in the sea. Limnology and Oceanography, 7, 137-150, 1962
-////
+//Steele P-I function
+//Steele, J. H.: Environmental control of photosynthesis in the sea. Limnology and Oceanography, 7, 137-150, 1962
+//Steele1 returns vertically averaged light inhibition. This is achieved with the analytical integration of the Steele function, which is shown in Steele2.
+//Steele2 returns light inhibition at a specified PAR level.
 //
-double Steele(double PARtop, double KValue, double Depth, double PARopt)
+//
+double Steele1(double PARtop, double KValue, double Depth, double PARopt)
 {
    double LightLimitation = 0.0, TINNY = 0.0000000001;
    double PARbottom, MyDepth;
@@ -59,7 +66,7 @@ double Steele(double PARtop, double KValue, double Depth, double PARopt)
    return LightLimitation;
 }
 
-double SteeleX(double PAR, double PARopt)
+double Steele2(double PAR, double PARopt)
 {
    double LightLimitation = 0.0, TINNY = 0.0000000001, MyPAR;
    MyPAR = std::max(0.0,PAR);
@@ -68,13 +75,15 @@ double SteeleX(double PAR, double PARopt)
    return LightLimitation;
 }
 //******************************************************************************************************************************************************
-////Eilers and Peeters P-I function
-////Eilers, P. H. C., Peeters, J. C. H.: A model for the relationship between light intensity and the rate of photosynthesis in phytoplankton,
-////Ecological Modelling, 42, 199-215, 1988
-////
-double EilersAndPeeters(double PARtop, double KValue, double Depth, double a, double b, double c)
+//Eilers and Peeters P-I function
+//Eilers, P. H. C., Peeters, J. C. H.: A model for the relationship between light intensity and the rate of photosynthesis in phytoplankton,
+//Ecological Modelling, 42, 199-215, 1988
+//EilersAndPeeters1 returns vertically averaged light inhibition. This is achieved with the analytical integration of the EilersAndPeeters function, which is shown in EilersAndPeeters2.
+//EilersAndPeeters2 returns light inhibition at a specified PAR level.
+//
+double EilersAndPeeters1(double PARtop, double KValue, double Depth, double a, double b, double c)
 {
-   double D, B1, B2, Productivity = 0.0, TINNY = 0.0000000001;
+   double D, B1, B2, LightLimitation = 0.0, TINNY = 0.0000000001;
    double PARbottom, MyDepth;
    cout << "PARtop= " << PARtop << endl;
    MyDepth = std::max(0.0,Depth);
@@ -87,25 +96,25 @@ double EilersAndPeeters(double PARtop, double KValue, double Depth, double a, do
          B1 = 2.0 * a * PARtop + b;
          B2 = 2.0 * a * PARbottom + b;
          if (D < 0.0)
-            Productivity = 2.0 / (KValue*sqrt(-D)) *(atan(B1/sqrt(-D))- atan(B2/sqrt(-D))) / MyDepth;
+            LightLimitation = 2.0 / (KValue*sqrt(-D)) *(atan(B1/sqrt(-D))- atan(B2/sqrt(-D))) / MyDepth;
          else if (D == 0.0)
-            Productivity = 2.0 / KValue * (1.0 / B2 - 1.0 / B1) / MyDepth;
+            LightLimitation = 2.0 / KValue * (1.0 / B2 - 1.0 / B1) / MyDepth;
          else if (D > 0.0)
-            Productivity = 1.0 / (KValue*sqrt(D)) * log (((B1 - sqrt(D))*(B2 + sqrt(D)))/
+            LightLimitation = 1.0 / (KValue*sqrt(D)) * log (((B1 - sqrt(D))*(B2 + sqrt(D)))/
                            ((B1 + sqrt(D)) * (B2 - sqrt(D)))) / MyDepth;
        }
        else
-          Productivity = 1.0 / (KValue * b) * log (fabs(b * PARtop + c)/
+          LightLimitation = 1.0 / (KValue * b) * log (fabs(b * PARtop + c)/
                          fabs(b * PARbottom + c)) / MyDepth;
    }
-   return Productivity;
+   return LightLimitation;
 }
 
-double EilersAndPeetersX(double PAR, double a, double b, double c)
+double EilersAndPeeters2(double PAR, double a, double b, double c)
 {
    double LightLimitation = 0.0, TINNY = 0.0000000001, MyPAR, x;
    MyPAR = std::max(0.0,PAR);
-   x = a * MyPAR*MyPAR + b * MyPAR + c;
+   x = a * MyPAR * MyPAR + b * MyPAR + c;
    if (x > TINNY)
       LightLimitation = MyPAR / x;
    return LightLimitation; 
