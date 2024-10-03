@@ -302,7 +302,7 @@ void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double
       case 1: /*STEELE*/ // add a list item
          ptr->LightAtBottom = ptr->LightAtBottom * WATTSTOMICROEINSTEINS;
          ptr->Productivity = ptr->Pmax[0]*ptr->PhytoBiomass[0]*
-                             Steele__(&ptr->LightAtTop, &ptr->LightAtBottom, &ptr->KValue, &ptr->BoxDepth, &ptr->Iopt[0])/
+                             Steele1(ptr->LightAtTop, ptr->KValue, ptr->BoxDepth, ptr->Iopt[0])/
                              HOURSTOSECONDS;
          ptr->Slope[0] = ptr->SteeleSlope();
          break;
@@ -318,7 +318,7 @@ void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double
          //Pmax = ptr->GetParameterValue("Pmax"); 
 	 //beta = ptr->GetParameterValue("Beta");
          ptr->Productivity = ptr->Pmax[0]*ptr->PhytoBiomass[0]*
-                        Platt__(&ptr->LightAtTop, &ptr->KValue, &ptr->BoxDepth, &ptr->Pmax[0], &ptr->beta[0], &ptr->Slope[0], 30)/
+                        Platt1(ptr->LightAtTop, ptr->KValue, ptr->BoxDepth, ptr->Pmax[0], ptr->beta[0], ptr->Slope[0], 30)/
                         HOURSTOSECONDS;
          break;
    }
@@ -329,7 +329,7 @@ void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double
    }*/
    /***************************************Calculation of temperature limitation***********************************************************************************/
    ptr->Tmin = ptr->GetParameterValue("TminPhotosynthesis");
-   Productivity = ptr->GetParameterValue("Productivity") * TemperatureExponentialLimitation__(&ptr->WaterTemperature, &ptr->Tmin, &ptr->TemperatureAugmentationRate);
+   Productivity = ptr->GetParameterValue("Productivity") * TemperatureExponentialLimitation(ptr->WaterTemperature, ptr->Tmin, ptr->TemperatureAugmentationRate);
    /*if (Productivity < 0.0) {
       cout<< "Productivity temp limited = "<< Productivity << endl;
    }*/
