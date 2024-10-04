@@ -11,7 +11,7 @@ INCLUDE = -I../include -I../Iodll -I../Utilities -I../params
 
 
 #define directories/files containing source files
-SRC = PIFunctions.cpp TemperatureLimitation.cpp NutrientLimitation.cpp Grazing.cpp BGCCycles.cpp
+SRC = LightLimitation.cpp TemperatureLimitation.cpp NutrientLimitation.cpp Grazing.cpp BGCCycles.cpp
 
 BGC.o:
 	$(CC) $(CFLAGS) $(INCLUDE) -o ../../ecolib/libBGCFunctions.so $(SRC)	
