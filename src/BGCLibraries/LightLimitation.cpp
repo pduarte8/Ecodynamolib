@@ -11,7 +11,7 @@ using namespace std;
 
 double Platt1(double PARtop, double KValue, double Depth, double Pmax, double beta, double slope, int EulerSteps)
 {
-   double DeltaZ, Soma = 0.0, LightLimitation = 0.0, TINNY = 0.0000000001, PAR;
+   double DeltaZ, Soma = 0.0, LightLimitation = 0.0, TINNY = 0.00000000001, PAR;
    double MyKValue, MyDepth, MyPmax, Mybeta, Myslope;
    int MySteps;
    //cout << "PARtop= " << PARtop << endl;
@@ -37,7 +37,7 @@ double Platt1(double PARtop, double KValue, double Depth, double Pmax, double be
 
 double Platt2(double PAR, double Pmax, double beta, double slope)
 {
-   double LightLimitation = 0.0, TINNY = 0.0000000001, MyPAR;
+   double LightLimitation = 0.0, TINNY = 0.00000000001, MyPAR;
    double MyPmax, Mybeta, Myslope;
    MyPAR = std::max(0.0,PAR);
    MyPmax = std::max(0.0,Pmax);
@@ -57,7 +57,7 @@ double Platt2(double PAR, double Pmax, double beta, double slope)
 //
 double Steele1(double PARtop, double KValue, double Depth, double PARopt)
 {
-   double LightLimitation = 0.0, TINNY = 0.0000000001;
+   double LightLimitation = 0.0, TINNY = 0.00000000001;
    double MyPARtop, MyPARbottom, MyKValue, MyDepth, MyPARopt;
    MyPARtop = std::max(0.0,PARtop);
    MyKValue = std::max(0.0,KValue);
@@ -71,7 +71,7 @@ double Steele1(double PARtop, double KValue, double Depth, double PARopt)
 
 double Steele2(double PAR, double PARopt)
 {
-   double LightLimitation = 0.0, TINNY = 0.0000000001, MyPAR, MyPARopt;
+   double LightLimitation = 0.0, TINNY = 0.00000000001, MyPAR, MyPARopt;
    MyPAR = std::max(0.0,PAR);
    MyPARopt = std::max(0.0,PARopt);
    if ((MyPAR > TINNY) && (MyPARopt > TINNY))
@@ -87,7 +87,7 @@ double Steele2(double PAR, double PARopt)
 //
 double EilersAndPeeters1(double PARtop, double KValue, double Depth, double a, double b, double c, double Pmax)
 {
-   double D, B1, B2, LightLimitation = 0.0, TINNY = 0.0000000001, P;
+   double D, B1, B2, LightLimitation = 0.0, TINNY = 0.00000000001, P;
    double MyPARtop, MyKValue, MyDepth, MyPARbottom, Mya, Myc, MyPmax;
    //cout << "PARtop= " << PARtop << endl;
    MyPARtop = std::max(0.0,PARtop);
@@ -127,7 +127,7 @@ double EilersAndPeeters1(double PARtop, double KValue, double Depth, double a, d
 
 double EilersAndPeeters2(double PAR, double a, double b, double c, double Pmax)
 {
-   double LightLimitation = 0.0, TINNY = 0.0000000001, MyPAR, x, P;
+   double LightLimitation = 0.0, TINNY = 0.00000000001, MyPAR, x, P;
    double Mya, Myc, MyPmax;
    MyPAR = std::max(0.0,PAR);
    Mya = std::max(0.0,a);
@@ -156,7 +156,7 @@ double LightLimNitr(double KI, double I0, double Light)
 
 double VertLightAvg(double LightAtTop, double KValue, double Depth)
 {
-   double TINNY = 0.0000000001, MyLight, MyKValue, MyDepth;
+   double TINNY = 0.00000000001, MyLight, MyKValue, MyDepth;
    MyLight = std::max(0.0,LightAtTop);
    MyKValue = std::max(0.0,KValue);
    MyDepth = std::max(0.0,Depth);

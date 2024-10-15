@@ -11,7 +11,7 @@ INCLUDE = -I../include -I../Iodll -I../EcoClass -I../ECDProtocol -I../Utilities 
 
 
 #define directories/files containing source files
-SRC = Phytobjt.cpp CrestumaLeverPhyto2DV.cpp CrestumaLeverPhyto2DVIntLim.cpp GenericPhytoplankton.cpp 
+SRC = Phytobjt.cpp CrestumaLeverPhyto2DV.cpp CrestumaLeverPhyto2DVIntLim.cpp GenericPhytoplankton.cpp PhytoplanktonFortran.cpp 
 
 
 Phytobjt.o:

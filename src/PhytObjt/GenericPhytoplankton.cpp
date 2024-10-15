@@ -36,7 +36,7 @@
 //        only one box
 //
 //-----------------------------------------------
-        #include "PhytoplanktonFortran.h"
+//        #include "PhytoplanktonFortran.h"
 
 #else
 
@@ -330,9 +330,18 @@ double TPhytoplanktonGeneric::PlattProduction()
    double LightLimitation, PARLight;
    double IntegrationSteps = 30;
    double DeltaZ, Soma;
-   //cout<< "Pmax ="<< Pmax[i]<< endl;    
+
+   /*cout<<"i = "<<i<<endl;
+   cout<<"PhytoBiomass = "<<PhytoBiomass[i]<< endl;
+   cout<< "Pmax ="<< Pmax[i]<< endl;
+   cout<< "Slope ="<< Slope[i]<< endl;
+   cout<< "Beta ="<< beta[i]<< endl;
+   cout<< "LightAtTop ="<< LightAtTop* WATTSTOMICROEINSTEINS<< endl;
+   cout<< "KValue ="<< KValue<< endl;
+   cout<< "BoxDepth ="<< BoxDepth<< endl;*/
+   
    Productivity = 0.0;
-   if (/*(PhytoBiomass[i] > aMin) &&*/
+   if (
        (BoxDepth > aMin) && (LightAtTop > aMin) && (IntegrationSteps >= 1.0))
    {  
          DeltaZ = BoxDepth / IntegrationSteps;
@@ -347,15 +356,6 @@ double TPhytoplanktonGeneric::PlattProduction()
          Productivity = Pmax[i] * LightLimitation / HOURSTOSECONDS * PhytoBiomass[i]; //mg C m-3 s-1;    
    }
    else Productivity = 0.0;
-   /*if ((Line == 210) && (Column == 416) && (Layer == 35)) {
-      cout<<"PhytoBiomass = "<<PhytoBiomass[i]<< endl;
-      cout<< "Pmax ="<< Pmax[i]<< endl;
-      cout<< "Slope ="<< Slope[i]<< endl;
-      cout<< "Beta ="<< beta[i]<< endl;
-      cout<< "PARLight ="<< PARLight<< endl;
-      cout<< "KValue ="<< KValue<< endl;
-      cout<< "DeltaZ ="<< DeltaZ<< endl;
-  } */
    return Productivity;
 }
 
@@ -581,6 +581,39 @@ void TPhytoplanktonGeneric::Settling(int ABoxNumber)
 
 
  
+double TPhytoplanktonGeneric::Platt1()
+{
+   int i = ABoxNumber;
+   double LightLimitation, PARLight;
+   double IntegrationSteps = 30;
+   double DeltaZ, Soma;
+
+   /*cout<<"i = "<<i<<endl;
+   cout<<"PhytoBiomass = "<<PhytoBiomass[i]<< endl;
+   cout<< "Pmax ="<< Pmax[i]<< endl;
+   cout<< "Slope ="<< Slope[i]<< endl;
+   cout<< "Beta ="<< beta[i]<< endl;
+   cout<< "LightAtTop ="<< LightAtTop* WATTSTOMICROEINSTEINS<< endl;
+   cout<< "KValue ="<< KValue<< endl;
+   cout<< "BoxDepth ="<< BoxDepth<< endl;*/
+
+   Productivity = 0.0;
+   if (
+       (BoxDepth > aMin) && (LightAtTop > aMin) && (IntegrationSteps >= 1.0))
+   {  
+         DeltaZ = BoxDepth / IntegrationSteps;
+         Soma = 0.0;
+         PARLight = LightAtTop * WATTSTOMICROEINSTEINS; 
+         for (int Step = 1; Step <= IntegrationSteps; Step++)    //Euler integration as a function of depth^M
+         {      
+            Soma = Soma + (1 - exp(-Slope[i] * PARLight / Pmax[i])) * exp(-beta[i] * PARLight/ Pmax[i]) * DeltaZ;
+            PARLight = PARLight * exp(-KValue * DeltaZ);
+         }
+         LightLimitation = Soma / BoxDepth;
+	 Productivity = /*Pmax[i] **/ LightLimitation / HOURSTOSECONDS; //* PhytoBiomass[i]; //mg C m-3 s-1;    
+   }
+   return Productivity;
+}
 
 
 

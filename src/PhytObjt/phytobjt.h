@@ -330,6 +330,7 @@ class _export TPhytoplanktonGeneric : public TCrestumaLeverPhytoplankton2DVIntLi
         double Michaelis_MentenProduction();
         double EilerProduction();
         double PlattProduction();
+	double TPhytoplanktonGeneric::Platt1();
         double JassyAndPlattProduction();
         double SteeleSlope();
         double EilersAndPeetersSlope();
