@@ -10,6 +10,7 @@ extern "C" {
    double DenitrificationToN2(double DenitrificationToNH4, double alfa);
    double EilersAndPeeters1(double PARtop, double KValue, double Depth, double a, double b, double c, double Pmax);
    double EilersAndPeeters2(double PAR, double a, double b, double c, double Pmax);
+   double EilersAndPeetersSlope(double C);
    double Hollings(double K, double Prey, int HollingsType);
    double InternalNutrientLimitation(double CellQuota, double MinCellQuota, double HalfSaturation);
    double Ivlev(double Lambda, double Prey);
@@ -23,8 +24,10 @@ extern "C" {
    double PhosphorusDesorption(double Pads, double Kd, double Pmax);
    double Platt1(double PARtop, double KValue, double Depth, double Pmax, double beta, double slope, int EulerSteps);
    double Platt2(double PAR, double Pmax, double beta, double slope);
+   double Respiration1(double Maintenance, double GrossProduction, double RespirationCoeff, double WaterTemperature, double TemperatureAugmentationRate, double Tmin); 
    double Steele1(double PARtop, double KValue, double Depth, double PARopt);
    double Steele2(double PAR, double PARopt);
+   double SteeleSlope(double Pmax, double Iopt);
    double TemperatureExponentialLimitation(double WaterTemperature, double TemperatureAugmentationRate, double Tmin);
    double VertLightAvg(double LightAtTop, double KValue, double Depth);
 }

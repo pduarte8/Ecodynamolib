@@ -152,7 +152,7 @@ void phytoplankton_(long* PPhytoplankton,int* box, float* depth, float* biomass,
 void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, double* imax, double* slope,double* beta, double* aEiler, double* bEiler, double* cEiler, 
                             double* maintenanceRespiration, double* respirationCoefficient,double* docStressLoss,
                             double* deathLoss, double* redfieldCFactor, double* redfieldNFactor,double* redfieldPFactor, double* temperatureAugmentationRate,
-                            double* ratioLightDarkRespiration, double* minNPRatio,double* maxNPRatio, double* pMaxUptake, double* nMaxUptake, double* kP,double* kN:0O3, 
+                            double* ratioLightDarkRespiration, double* minNPRatio,double* maxNPRatio, double* pMaxUptake, double* nMaxUptake, double* kP,double* kNO3, 
                             double* kNH4, double* minPCellQuota, double* maxPCellQuota,double* minNCellQuota, double* maxNCellQuota, double* kPInternal,double* kNInternal, double* settlingSpeed, double* carbonToOxygenProd,double* carbonToOxygenResp, double* tminRespiration,double* tminPhotosynthesis,
                             int* nitrogenLimitation, int* phosphorusLimitation, int* silicaLimitation, double* maxSiCellQuota, double* minSiCellQuota,
                             double* minNSiRatio, double* siMaxUptake,
@@ -235,45 +235,38 @@ void phytoplankton_new__(long* PPhytoplankton, double* pmax, double* iopt, doubl
 void phytoplankton_go__(long* PPhytoplankton, double* layerThickness, double* timeStep)
 {
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
-   /********Time step is reseted every "go". This is not necessary for ROMS but it may become necessary for othervariable time step application******************/
-   ptr->SetTimeStep(*timeStep);
-   /*********************SetABoxDepth resets layer thickness. This is mostly necessary for surface layers*8******************************************************/
-   ptr->SetABoxDepth(*layerThickness);
    /********************************************Resetes box number to zero....just in case....*******************************************************************/
    ptr->SetABoxNumber(0);
-   //cout<< "Pmax= "<< ptr->Pmax[0] << endl;
 }
 
 
 
 void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double* lightAtBottom, double* kValue,double* waterTemperature,
-                                double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* SiPhyto, double* biomass, double *ASlope, double* Chl2Carbon, double *OxygenProduction, int *line, int *column, int *layer)
+                                double* julianDay, double* GrossProduction, double* nPhyto, double* pPhyto, double* SiPhyto, double* biomass, 
+				double *ASlope, double* Chl2Carbon, double *OxygenProduction, int *line, int *column, int *layer, double* layerThickness)
 {
-   double Productivity, MyBiomass, MyNPhyto, MyPPhyto, MySiPhyto, MyNCellQuota, MyPCellQuota, MySiCellQuota, MyChl2Carbon, FromChl2Carbon, CarbonOxygenRatio;
-   double MyPmax;
-   TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
-   /**********************PAR light intensity reseting at the the topo and the bottom of a model cell**************************************************************/
-   ptr->SetLightAtTop(*lightAtTop);
-   ptr->SetLightAtBottom(*lightAtBottom);
-   /********************************************Reseting of the light extinction coefficient for proper primary production vertical integration********************/
-   ptr->SetParameterValue("KValue", *kValue);
-   /***********Reseting of the slope of the P-I curve, just in case this is to be recalculated as a function of chlorophyll:carbon or something else...************/
-   ptr->SetParameterValue("Slope", *ASlope / WATTSTOMICROEINSTEINS);
-   /********************************************Reseting of water temperature to account for corresponding limitation of photosynthesis****************************/
-   ptr->SetWaterTemperature(*waterTemperature);
-   /********************************************Conversions from mmol/m3 (ROMS units) to mg / m3 (EcoDynamo units)*************************************************/
-   ptr->SetIntParameterValue("Line", *line);
-   ptr->SetIntParameterValue("Column", *column);
-   ptr->SetIntParameterValue("Layer", *layer);
-                            
-   MyBiomass = *biomass * CARBONATOMICWEIGHT; 
+   TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;	
+   
+   double MyProductivity, MyBiomass, MyLightAtTop, MyLightAtBottom, MyKValue, MyWaterTemperature, 
+	  MyNPhyto, MyPPhyto, MySiPhyto, MyNCellQuota, MyPCellQuota, MySiCellQuota, MyChl2Carbon,
+	  MySlope,MyLayerThickness;
+
+   double CarbonOxygenRatio;
+   
+   MyLightAtTop = *lightAtTop * WATTSTOMICROEINSTEINS;
+   MyLightAtBottom = *lightAtBottom * WATTSTOMICROEINSTEINS;
+   MyKValue = *kValue;   
+   MyWaterTemperature = *waterTemperature;
+   //Concentration values from molar to mass
    MyNPhyto =  *nPhyto * NITROGENATOMICWEIGHT;
    MyPPhyto = *pPhyto * PHOSPHORUSATOMICWEIGHT;
    MySiPhyto = *SiPhyto * SILICAATOMICWEIGHT;
-   /*********************************************Reseting of the chlorophyll / carbon ratio************************************************************************/
+   MyBiomass = *biomass * CARBONATOMICWEIGHT;
+   //
+   MySlope = *ASlope / WATTSTOMICROEINSTEINS;
    MyChl2Carbon = *Chl2Carbon;
-   FromChl2Carbon = 1.0 / MyChl2Carbon; 
-   /*******************************************Calculation of cell quotas for usage in the calculation of internal nutrient limitation*****************************/ 
+   MyLayerThickness = *layerThickness;
+   /*******************************************Calculation of mass-based ell quotas for usage in the calculation of internal nutrient limitation*****************************/ 
    if (MyBiomass > ptr->aMin)
    {
        MyNCellQuota = MyNPhyto / MyBiomass;
@@ -286,115 +279,65 @@ void phytoplankton_production__(long* PPhytoplankton, double* lightAtTop, double
        MyPCellQuota = 0.0;
        MySiCellQuota = 0.0;
    }
-   /******************************************Reseting of variable values in the phytoplankton pointer in the units of EcoDynamo************************************/
-   ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
-   ptr->SetVariableValue("Fortran", FromChl2Carbon,0,"Chlorophyll to Carbon");
-   ptr->SetVariableValue("Fortran", MyNCellQuota,0,"NCellQuota");
-   ptr->SetVariableValue("Fortran", MyPCellQuota,0,"PCellQuota");
-   ptr->SetVariableValue("Fortran", MySiCellQuota,0,"SiCellQuota");
-   ptr->SetVariableValue("Fortran", MyNPhyto,0,"NPhyto");
-   ptr->SetVariableValue("Fortran", MyPPhyto,0,"PPhyto");
-   /*****************************************Selection of a P-I function depending on the option "pifunction" in the constructor arguments above*****************************/
-   //cout<< "PIFunction = "<< ptr->GetIntParameterValue("PIFunction")<< endl;
-   
-   MyPmax = ptr->GetParameterValue("Pmax");
-   
-   
+   /***************************************Light limited productivity calculated in mg C / m3**********************************************************************/
    switch (ptr->GetIntParameterValue("PIFunction"))
    {
       case 1: /*STEELE*/ // add a list item
-         ptr->LightAtBottom = ptr->LightAtBottom * WATTSTOMICROEINSTEINS;
-         ptr->Productivity = ptr->Pmax[0]*ptr->PhytoBiomass[0]*
-                             Steele1(ptr->LightAtTop, ptr->KValue, ptr->BoxDepth, ptr->Iopt[0])/
+         MyProductivity = ptr->Pmax[0] * MyBiomass *
+                             Steele1(MyLightAtTop, MyKValue, MyLayerThickness, ptr->Iopt[0])/
                              HOURSTOSECONDS;
-         ptr->Slope[0] = ptr->SteeleSlope();
          break;
       case 2: /*MICHAELIS_MENTEN*/	// add a list item
-         ptr->Productivity = ptr->Michaelis_MentenProduction();
-         ptr->Slope[0] = ptr->MichaelisMentenSlope();
+         MyProductivity = ptr->Michaelis_MentenProduction();
          break;
       case 3: /*EILER*/	// add a list item
-         ptr->Productivity = ptr->EilerProduction();
-         ptr->Slope[0] = ptr->EilersAndPeetersSlope();
+         MyProductivity = ptr->EilerProduction();
          break;
       case 4: /*Platt*/	// add a list item
-         
-	 
-	 //ptr->Productivity = ptr->Pmax[0]*ptr->PhytoBiomass[0]*
-         //               ptr->Platt1()/
-         //               HOURSTOSECONDS;
-         ptr->Productivity = ptr->PlattProduction();
-	 //ptr->Productivity = ptr->Platt1() * MyPmax * ptr->PhytoBiomass[0];
-	 /*cout<< "Productivity 1="<<ptr->Productivity<<endl;
-	 cout<< "PhytoBiomass = "<<ptr->PhytoBiomass[0]<< endl;
-         cout<< "Pmax ="<< ptr->Pmax[0]<< endl;
-         cout<< "Slope ="<< ptr->Slope[0]<< endl;
-         cout<< "Beta ="<< ptr->beta[0]<< endl;
-         cout<< "LightAtTop ="<< ptr->LightAtTop* WATTSTOMICROEINSTEINS<< endl;
-         cout<< "KValue ="<< ptr->KValue<< endl;
-         cout<< "BoxDepth ="<< ptr->BoxDepth<< endl;
-         cout<< "Productivity 2="<<ptr->PlattProduction()<<endl;*/
+	 MyProductivity = ptr->Pmax[0] * MyBiomass *
+                        Platt1(MyLightAtTop, MyKValue, MyLayerThickness, ptr->Pmax[0], ptr->beta[0], MySlope, 30)/
+                        HOURSTOSECONDS;
          break;
    }
-   /***************************************Light limited productivity calculated in mg C / m3**********************************************************************/
-   Productivity = ptr->GetParameterValue("Productivity");
-   //cout<<"Productivity= "<<ptr->Productivity<<endl;
    /***************************************Calculation of temperature limitation***********************************************************************************/
-   ptr->Tmin = ptr->GetParameterValue("TminPhotosynthesis");
 
-   /*cout<< "Temperature = " << ptr->WaterTemperature<< endl;
-   cout<< "TemperatureAugmentationRate = " << ptr->TemperatureAugmentationRate << endl;
-   cout<< "Tmin ="<<ptr->Tmin<<endl;
-   cout<<"TempLim = "<<TemperatureExponentialLimitation(ptr->WaterTemperature, ptr->TemperatureAugmentationRate,ptr->Tmin)<<endl;*/
-   
-   //Productivity = ptr->GetParameterValue("Productivity") * TemperatureExponentialLimitation(ptr->WaterTemperature, ptr->TemperatureAugmentationRate,ptr->Tmin);
+   MyProductivity = MyProductivity * TemperatureExponentialLimitation(MyWaterTemperature, ptr->TemperatureAugmentationRate,ptr->Tmin);
 
-   Productivity = ptr->GetParameterValue("Productivity") * ptr->TemperatureArrheniusExponentialLimitation(0);
-   
-   ptr->SetParameterValue("Productivity", Productivity);
-   //cout<< "Productivity temp limited = "<< Productivity << endl;
-   /***************************************Calculation of nutrient limitation**************************************************************************************/
-   //cout<< "Nitrogen limitation ="<< ptr->GetIntParameterValue("Nitrogen limitation") << endl;
-   //cout<< "Phosphorus limitation ="<< ptr->GetIntParameterValue("Phosphorus limitation") << endl;
-   //cout<< "Silica limitation ="<< ptr->GetIntParameterValue("Silica limitation") << endl;
-   
-   if (ptr->NutrientLimitationType == 2) 	
-      ptr->NutrientLimitation(0);
-   
-   Productivity = ptr->GetParameterValue("Productivity");
-   /*if (Productivity < 0.0) {
-      cout<< "Productivity nut limited = "<< Productivity << endl;
-   }*/
+   if (ptr->NutrientLimitationType == 2)
+   {
+      double LiebigLimitation = 1.0;	   
+      if (ptr->GetIntParameterValue("Nitrogen limitation") == 1)
+	LiebigLimitation = MIN(LiebigLimitation,InternalNutrientLimitation(MyNCellQuota, ptr->MinNCellQuota, ptr->KNInternal));
+      if (ptr->GetIntParameterValue("Phosphorus limitation") == 1)
+	LiebigLimitation = MIN(LiebigLimitation,InternalNutrientLimitation(MyPCellQuota, ptr->MinPCellQuota, ptr->KPInternal));      
+      if (ptr->GetIntParameterValue("Silica limitation") == 1)
+        LiebigLimitation = MIN(LiebigLimitation,InternalNutrientLimitation(MySiCellQuota, ptr->MinSiCellQuota, ptr->KSiInternal));
+   }
+
    /***************************************Productivity recalculated in mmol C/m3/s*******************************************************************************/
-   *GrossProduction = ptr->GetParameterValue("Productivity") / CARBONATOMICWEIGHT; //Return value in mmolC/m3/s for compatibility with ROMS
-   //*ASlope = ptr->GetParameterValue("Slope"); // /WATTSTOMICROEINSTEINS; //Return value in [h-1/(W  m-2 s-1)]
-   /**************************************This was to calculate average daily production which is not being calculated now****************************************/
-    ptr->SetJulianDay(*julianDay);
-   //ptr->DailyAverageProduction();
+   *GrossProduction = MyProductivity / CARBONATOMICWEIGHT; //Return value in mmolC/m3/s for compatibility with ROMS
    /*************************************Productivity expressed in oxygen units to feedback oxygen biogeochemical cycling****************************************/ 
    CarbonOxygenRatio = ptr->GetParameterValue("Carbon to Oxygen in photosynthesis");
-   *OxygenProduction = ptr->GetParameterValue("Productivity") / CarbonOxygenRatio / (2.0 * OXYGENATOMICWEIGHT); //OxygenProduction in mmol O2 m-3 s-1 
+   *OxygenProduction = MyProductivity / CarbonOxygenRatio / (2.0 * OXYGENATOMICWEIGHT); //OxygenProduction in mmol O2 m-3 s-1 
 }
 
 void phytoplankton_respiration__(long* PPhytoplankton, double* waterTemperature, double* cffCRespiration, double* GrossProduction, double *biomass, double *Oxygen, double* Chl2Carbon, double *OxygenConsumption)
 {
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
-   double MyBiomass, MyChl2Carbon, FromChl2Carbon, CarbonOxygenRatio;
-   ptr->SetWaterTemperature(*waterTemperature);
-   MyBiomass = *biomass * CARBONATOMICWEIGHT; //Conversions from mmol/m3 to mg / m3
+   double MyWaterTemperature, MyBiomass, MyChl2Carbon, CarbonOxygenRatio, MyGrossProduction, MyMaintenanceRespiration, Resp = 0.0;
+   MyBiomass = *biomass * CARBONATOMICWEIGHT; //Conversions from mmolC/m3 to mgC / m3
    MyChl2Carbon = *Chl2Carbon;
-   FromChl2Carbon = 1.0 / MyChl2Carbon;
-   ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
-   ptr->SetVariableValue("Fortran", FromChl2Carbon,0,"Chlorophyll to Carbon");
-   ptr->GPP[0] = *GrossProduction * CARBONATOMICWEIGHT;
-   if (ptr->PhytoBiomass[0] > ptr->aMin)
+   MyGrossProduction = *GrossProduction * CARBONATOMICWEIGHT; //mgC/m3/s
+   MyGrossProduction = MyGrossProduction / ptr->CarbonToOxygenProd / (MyBiomass * MyChl2Carbon);//mg O2 mg Chl-1 s-1
+   MyGrossProduction = MyGrossProduction / (2.0 * OXYGENATOMICWEIGHT); //mmol O2 mg Chl-1 s-1 - same units as maintenance respiration
+   MyMaintenanceRespiration = ptr->MaintenanceRespiration[0]/HOURSTOSECONDS;//mmol O2 mg Chl-1 s-1 
+   if (MyBiomass > ptr->aMin)
    {
-      ptr->Tmin = ptr->GetParameterValue("TminRespiration");
-      //ptr->SetParameterValue("Tmin", tmin);
-      ptr->Respiration(0);
-      *cffCRespiration = ptr->RespiredFlux[0] / CARBONATOMICWEIGHT/*/ ptr->PhytoBiomass[0]*/;  //Return value in mmol C m-3 s-1 for compatibility with ROMS nonlinear backward-implicit solution
-      CarbonOxygenRatio = ptr->GetParameterValue("Carbon to Oxygen in respiration");
-      *OxygenConsumption = ptr->RespiredFlux[0] / CarbonOxygenRatio / (2.0 * OXYGENATOMICWEIGHT) /*/ *Oxygen*/; //Return value in mmol O2 m-3 s-1 for compatibility with ROMS nonlinear backward-implicit solution
+      Resp = Respiration1(MyMaintenanceRespiration, MyGrossProduction, ptr->RespirationCoefficient, *waterTemperature, ptr->TemperatureAugmentationRate, ptr->Tmin);
+      CarbonOxygenRatio = ptr->GetParameterValue("Carbon to Oxygen in respiration");//mg C/ mg O2
+      Resp = Resp * OXYGENATOMICWEIGHT * CarbonOxygenRatio * (MyBiomass * MyChl2Carbon) / CARBONATOMICWEIGHT; //mgC/m3/s for compatibility with ROMS
+      *OxygenConsumption = Resp / CarbonOxygenRatio / (2.0 * OXYGENATOMICWEIGHT) /*/ *Oxygen*/; //Return value in mmol O2 m-3 s-1 for compatibility with ROMS nonlinear backward-implicit solution
+      *cffCRespiration = Resp / CARBONATOMICWEIGHT; //Return value in mmolC/m3/s for compatibility with ROMS
    }
    else
    {

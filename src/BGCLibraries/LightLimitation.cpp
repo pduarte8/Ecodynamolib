@@ -78,7 +78,15 @@ double Steele2(double PAR, double PARopt)
       LightLimitation = MyPAR / MyPARopt * exp(1.0 - MyPAR / MyPARopt);
    return LightLimitation;
 }
-//******************************************************************************************************************************************************
+
+double SteeleSlope(double Pmax, double Iopt)
+{
+   double Slope = 0.0,  TINNY = 0.00000000001, MyPmax, MyIopt;
+   MyPmax = std::max(0.0,Pmax);
+   MyIopt = std::max(0.0,Iopt);   
+   if (MyIopt > TINNY) Slope= MyPmax * exp(1.0) / MyIopt;
+   return Slope;
+}
 //Eilers and Peeters P-I function
 //Eilers, P. H. C., Peeters, J. C. H.: A model for the relationship between light intensity and the rate of photosynthesis in phytoplankton,
 //Ecological Modelling, 42, 199-215, 1988
@@ -141,6 +149,15 @@ double EilersAndPeeters2(double PAR, double a, double b, double c, double Pmax)
    }   
    return LightLimitation; 
 }
+
+double EilersAndPeetersSlope(double C)
+{
+   double Slope = 0.0, TINNY = 0.00000000001, MyC;
+   MyC = std::max(0.0,C);   
+   if (MyC > TINNY) Slope = 1.0 / MyC;
+   return Slope;
+}
+
 
 //From: Fennel et al. (2006) - Global Biogeochem. Cycles, 20,GB3007, doi:10.1029/2005GB002456
 double LightLimNitr(double KI, double I0, double Light)
