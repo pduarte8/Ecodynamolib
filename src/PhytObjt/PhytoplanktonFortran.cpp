@@ -348,56 +348,61 @@ void phytoplankton_respiration__(long* PPhytoplankton, double* waterTemperature,
 
 void phytoplankton_exudation__(long* PPhytoplankton, double* cffCExudation, double* GrossProduction, double* biomass, double *NCellQuota, double *PCellQuota)
 {
-   double Exudation, MyBiomass, NMassQuota, PMassQuota;
+   double Exudation, MyBiomass, NMassQuota, PMassQuota, GPP;
    //cout << "Exudation start" << endl;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
    MyBiomass = *biomass * CARBONATOMICWEIGHT; //Conversions from mmol/m3 to mg / m3
    NMassQuota = *NCellQuota * NITROGENATOMICWEIGHT / CARBONATOMICWEIGHT; //mg N / mg C
    PMassQuota = *PCellQuota * PHOSPHORUSATOMICWEIGHT / CARBONATOMICWEIGHT; //mg P / mg C
-   ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
-   ptr->SetVariableValue("Fortran", NMassQuota,0,"NCellQuota");
-   ptr->SetVariableValue("Fortran", PMassQuota,0,"PCellQuota");
-   ptr->GPP[0] = *GrossProduction * CARBONATOMICWEIGHT;
+   GPP = MAX(0.0,*GrossProduction);
    
-   if ((ptr->PhytoBiomass[0] > ptr->aMin) && (ptr->GPP[0] > ptr->aMin) && ((NMassQuota < ptr->RedfieldNFactor/ptr->RedfieldCFactor) || (PMassQuota < ptr->RedfieldPFactor/ptr->RedfieldCFactor)))
+   if ((MyBiomass > ptr->aMin) && (GPP > ptr->aMin) && ((NMassQuota < ptr->RedfieldNFactor/ptr->RedfieldCFactor) || (PMassQuota < ptr->RedfieldPFactor/ptr->RedfieldCFactor)))
    {
-      ptr->Exudation(0);   
-      *cffCExudation = ptr->ExudatedFlux / CARBONATOMICWEIGHT/*/ ptr->PhytoBiomass[0]*/; //Return value in mmol C m-3 s-1 for compatibility with ROMS nonlinear backward-implicit solution
+      *cffCExudation = ptr->DocStressLoss * GPP; //Return value in mmol C m-3 s-1 for compatibility with ROMS nonlinear backward-implicit solution
    }
    else
       *cffCExudation = 0.0;
 }
 
-void phytoplankton_nitrogen_uptake__(long* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNH4, double *cffNO3NO2, double* nPhyto, double* biomass)
+void phytoplankton_nitrogen_uptake__(long* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNH4, double *cffNO3NO2, double* nPhyto, double* pPhyto, double* biomass)
 {
-   double MyBiomass, MyNPhyto, MyNCellQuota;
-   //cout << "Nitrogen uptake start" << endl;
+   double MyNH4, MyNO3, MyNO2, MyBiomass, MyNPhyto, MyPPhyto, MyNCellQuota, MyPCellQuota, AmmoniaUpTake, NitrateAndNitriteUptake, NMaxUptakeOfNitrate, X;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
-   ptr->AmmoniaUpTake = 0.0; 
-   ptr->NitrateAndNitriteUptake = 0.0;
-   MyBiomass = *biomass * CARBONATOMICWEIGHT; //Conversions from mmol/m3 to mg / m3
-   ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
-   MyNPhyto =  *nPhyto * NITROGENATOMICWEIGHT;
-   if (MyBiomass > ptr->aMin) MyNCellQuota = MyNPhyto / MyBiomass;
-   else MyNCellQuota = 0.0;
-   ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
-   ptr->SetVariableValue("Fortran", MyNCellQuota,0,"NCellQuota");
-   ptr->SetVariableValue("Fortran", MyNPhyto,0,"NPhyto");
-   
-   if (ptr->GetIntParameterValue("Nitrogen limitation") == 1)
-      ptr->NitrogenUptake(0,*Ammonia, *Nitrate, *Nitrite);
-   //cout<<"*Ammonia = " << *Ammonia << endl; 
-   //cout<<"*Nitrate = " << *Nitrate << endl; 
-   //cout<<"*AmmoniaUpTake = " << ptr->AmmoniaUpTake/NITROGENATOMICWEIGHT/ HOURSTOSECONDS / *Ammonia << endl;
-   //cout<<"*NitrateAndNitriteUptake = " << ptr->NitrateAndNitriteUptake/NITROGENATOMICWEIGHT/ HOURSTOSECONDS / (*Nitrate + *Nitrite) << endl;
-   if (*Ammonia > ptr->aMin)
-      *cffNH4 = ptr->AmmoniaUpTake/NITROGENATOMICWEIGHT/ HOURSTOSECONDS /*/ *Ammonia*/; 
+   MyNH4 = MAX(0.0,*Ammonia);
+   MyNO3 = MAX(0.0,*Nitrate);
+   MyNO2 = MAX(0.0,*Nitrite);
+   MyBiomass = MAX(0.0,*biomass * CARBONATOMICWEIGHT); //Conversions from mmol/m3 to mg / m3
+   MyNPhyto =  MAX(0.0,*nPhyto * NITROGENATOMICWEIGHT);
+   MyPPhyto =  MAX(0.0,*pPhyto * PHOSPHORUSATOMICWEIGHT);
+   if (MyBiomass > ptr->aMin) 
+   {  
+      MyNCellQuota = MyNPhyto / MyBiomass;
+      MyPCellQuota = MAX(ptr->aMin, MyPPhyto / MyBiomass);
+   }   
+   else 
+   {   
+      MyNCellQuota = 0.0;
+      MyPCellQuota = ptr->aMin;
+   }   
+   if ((ptr->GetIntParameterValue("Nitrogen limitation") == 1) &&
+       (
+            (MyNCellQuota < ptr->MaxNCellQuota) ||
+            (MyNCellQuota / MyPCellQuota <= ptr->MaxNPRatio)
+       ))
+
+   {	   
+      X = MichaelisMentenLimitation(MyNH4, ptr->KNH4);	   
+      AmmoniaUpTake = ptr->NMaxUptake * X * MyNPhyto;
+      NMaxUptakeOfNitrate = MAX(0.0,ptr->NMaxUptake - ptr->NMaxUptake * X);
+      NitrateAndNitriteUptake = NMaxUptakeOfNitrate * MichaelisMentenLimitation(MyNO3+MyNO2, ptr->KNO3) * MyNPhyto;
+      *cffNH4 = AmmoniaUpTake/NITROGENATOMICWEIGHT/ HOURSTOSECONDS /*/ *Ammonia*/; 
+      *cffNO3NO2 = NitrateAndNitriteUptake /NITROGENATOMICWEIGHT/ HOURSTOSECONDS /*/ (*Nitrate + *Nitrite)*/;
+   }
    else
+   {	   
       *cffNH4 = 0.0;
-   if (*Nitrate + *Nitrite > ptr->aMin) 
-      *cffNO3NO2 = ptr->NitrateAndNitriteUptake /NITROGENATOMICWEIGHT/ HOURSTOSECONDS /*/ (*Nitrate + *Nitrite)*/; 
-   else
       *cffNO3NO2 = 0.0;
+   }
 } 
 
 void phytoplankton_phosphorus_uptake__(long* PPhytoplankton, double* Phosphate,double* cffPO4, double *pPhyto, double* biomass)

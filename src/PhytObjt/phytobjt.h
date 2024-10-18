@@ -399,7 +399,7 @@ extern "C" {
 
     void phytoplankton_exudation__(long* PPhytoplankton, double* cffCExudation, double *GrossProduction, double* biomass, double *NCellQuota, double *PCellQuota);
 
-    void phytoplankton_nitrogen_uptake__(long* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNH4, double *cffNO3NO2, double* nPhyto, double* biomass);  
+    void phytoplankton_nitrogen_uptake__(long* PPhytoplankton, double* Ammonia, double* Nitrate, double* Nitrite,double* cffNH4, double *cffNO3NO2, double* nPhyto, double* pPhyto, double* biomass);  
 
     void phytoplankton_phosphorus_uptake__(long* PPhytoplankton, double* Phosphate,double* cffPO4, double* pPhyto, double* biomass); 
  
