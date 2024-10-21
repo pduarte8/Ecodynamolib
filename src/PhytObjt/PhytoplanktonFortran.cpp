@@ -386,17 +386,17 @@ void phytoplankton_nitrogen_uptake__(long* PPhytoplankton, double* Ammonia, doub
    }   
    if ((ptr->GetIntParameterValue("Nitrogen limitation") == 1) &&
        (
-            (MyNCellQuota < ptr->MaxNCellQuota) ||
+            (MyNCellQuota < ptr->MaxNCellQuota) &&
             (MyNCellQuota / MyPCellQuota <= ptr->MaxNPRatio)
        ))
 
    {	   
-      X = MichaelisMentenLimitation(MyNH4, ptr->KNH4);	   
+      X = MAX(0.0,MichaelisMentenLimitation(MyNH4, ptr->KNH4));	   
       AmmoniaUpTake = ptr->NMaxUptake * X * MyNPhyto;
       NMaxUptakeOfNitrate = MAX(0.0,ptr->NMaxUptake - ptr->NMaxUptake * X);
-      NitrateAndNitriteUptake = NMaxUptakeOfNitrate * MichaelisMentenLimitation(MyNO3+MyNO2, ptr->KNO3) * MyNPhyto;
-      *cffNH4 = AmmoniaUpTake/NITROGENATOMICWEIGHT/ HOURSTOSECONDS /*/ *Ammonia*/; 
-      *cffNO3NO2 = NitrateAndNitriteUptake /NITROGENATOMICWEIGHT/ HOURSTOSECONDS /*/ (*Nitrate + *Nitrite)*/;
+      NitrateAndNitriteUptake = NMaxUptakeOfNitrate * MAX(0.0,MichaelisMentenLimitation(MyNO3+MyNO2, ptr->KNO3)) * MyNPhyto;
+      *cffNH4 = AmmoniaUpTake/NITROGENATOMICWEIGHT/ HOURSTOSECONDS; 
+      *cffNO3NO2 = NitrateAndNitriteUptake /NITROGENATOMICWEIGHT/ HOURSTOSECONDS;
    }
    else
    {	   
@@ -405,28 +405,73 @@ void phytoplankton_nitrogen_uptake__(long* PPhytoplankton, double* Ammonia, doub
    }
 } 
 
-void phytoplankton_phosphorus_uptake__(long* PPhytoplankton, double* Phosphate,double* cffPO4, double *pPhyto, double* biomass)
+void phytoplankton_phosphorus_uptake__(long* PPhytoplankton, double* Phosphate,double* cffPO4, double * nPhyto, double* pPhyto, double* biomass)
 {
-   double MyBiomass, MyPPhyto, MyPCellQuota;
+   double MyPO4, MyBiomass, MyNPhyto, MyPPhyto, MyNCellQuota, MyPCellQuota, PhosphorusUptake;
    //cout << "Phosphorus uptake start" << endl;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
-
-   MyBiomass = *biomass * CARBONATOMICWEIGHT; //Conversions from mmol/m3 to mg / m3
-   ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
-   MyPPhyto = *pPhyto * PHOSPHORUSATOMICWEIGHT;
-   if (MyBiomass > ptr->aMin)MyPCellQuota = MyPPhyto / MyBiomass; 
-   else MyPCellQuota = 0.0;
-   ptr->SetVariableValue("Fortran", MyPCellQuota,0,"PCellQuota");
-   ptr->SetVariableValue("Fortran", MyPPhyto,0,"PPhyto");
-
-   if (ptr->GetIntParameterValue("Phosphorus limitation") == 1)
-      ptr->PhosphorusUptake(0, *Phosphate);
-   if (*Phosphate > ptr->aMin)
-      *cffPO4 = ptr->PUptake[0] / PHOSPHORUSATOMICWEIGHT / HOURSTOSECONDS /*/ *Phosphate*/;
+   MyPO4 = MAX(0.0,*Phosphate);
+   MyBiomass = MAX(0.0,*biomass * CARBONATOMICWEIGHT); //Conversions from mmol/m3 to mg / m3
+   MyNPhyto =  MAX(0.0,*nPhyto * NITROGENATOMICWEIGHT);
+   MyPPhyto = MAX(0.0,*pPhyto * PHOSPHORUSATOMICWEIGHT);
+   if (MyBiomass > ptr->aMin) 
+   {
+      MyNCellQuota = MyNPhyto / MyBiomass;
+      MyPCellQuota = MAX(ptr->aMin, MyPPhyto / MyBiomass);
+   } 
+   else
+   {
+      MyNCellQuota = 0.0;
+      MyPCellQuota = ptr->aMin;
+   }
+   if ((ptr->GetIntParameterValue("Phosphorus limitation") == 1) &&
+       (
+            (MyPCellQuota <= ptr->MaxPCellQuota) && 
+            (MyNCellQuota / MyPCellQuota >  ptr->MinNPRatio)
+       ))
+   {	   
+      PhosphorusUptake = ptr->PMaxUptake * MAX(0.0,MichaelisMentenLimitation(MyPO4, ptr->KP)) * MyPPhyto;
+      *cffPO4 = PhosphorusUptake / PHOSPHORUSATOMICWEIGHT / HOURSTOSECONDS;
+   }
    else
       *cffPO4 = 0.0;
    //cout << "Phosphorus uptake end" << endl;
 }
+
+
+void phytoplankton_silica_uptake__(long* PPhytoplankton, double* Silicate,double* cffSiOH4, double * nPhyto, double *siPhyto, double* biomass)
+{
+   double MySiOH4, MyBiomass, MyNPhyto, MySiPhyto, MyNCellQuota, MySiCellQuota, SilicaUptake;
+   //cout << "Phosphorus uptake start" << endl;
+   TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
+   MySiOH4 = MAX(0.0, *Silicate);
+   MyBiomass = MAX(0.0,*biomass * CARBONATOMICWEIGHT); //Conversions from mmol/m3 to mg / m3
+   MyNPhyto =  MAX(0.0,*nPhyto * NITROGENATOMICWEIGHT);
+   MySiPhyto = MAX(0.0,*siPhyto * SILICAATOMICWEIGHT);
+   if (MyBiomass > ptr->aMin)
+   {
+      MyNCellQuota = MyNPhyto / MyBiomass;
+      MySiCellQuota = MAX(ptr->aMin, MySiPhyto / MyBiomass);
+   }
+   else
+   {
+      MyNCellQuota = 0.0;
+      MySiCellQuota = ptr->aMin;
+   }
+   if ((ptr->GetIntParameterValue("Silica limitation") == 1) &&
+       (
+            (MySiCellQuota <= ptr->MaxSiCellQuota) &&
+            (MyNCellQuota / MySiCellQuota > ptr->MinNSiRatio)
+       ))
+   {
+      SilicaUptake = ptr->SiMaxUptake * MAX(0.0,MichaelisMentenLimitation(MySiOH4, ptr->KSi)) * MySiPhyto;	   
+      *cffSiOH4 = SilicaUptake / SILICAATOMICWEIGHT / HOURSTOSECONDS;
+   }	   
+   else
+      *cffSiOH4 = 0.0;
+   //cout << "Silicate uptake end" << endl;
+}
+
 
 void phytoplankton_external_nut_limitation__(long* PPhytoplankton, double* Ammonia, double* Nitrate,double* Nitrite, double* Phosphate, double* Silicate, double* Limitation)
 {
@@ -458,35 +503,13 @@ void phytoplankton_external_nut_limitation__(long* PPhytoplankton, double* Ammon
     } 
 }
 
-void phytoplankton_silica_uptake__(long* PPhytoplankton, double* Silicate,double* cffSiOH4, double *siPhyto, double* biomass)
-{
-   double MyBiomass, MySiPhyto, MySiCellQuota;
-   //cout << "Phosphorus uptake start" << endl;
-   TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
-
-   MyBiomass = *biomass * CARBONATOMICWEIGHT; //Conversions from mmol/m3 to mg / m3
-   ptr->SetVariableValue("Fortran", MyBiomass,0,"Phytoplankton biomass");
-   MySiPhyto = *siPhyto * SILICAATOMICWEIGHT;
-   if (MyBiomass > ptr->aMin)MySiCellQuota = MySiPhyto / MyBiomass; 
-   else MySiCellQuota = 0.0;
-   ptr->SetVariableValue("Fortran", MySiCellQuota,0,"SiCellQuota");
-   ptr->SetVariableValue("Fortran", MySiPhyto,0,"SiPhyto");
-
-   if (ptr->GetIntParameterValue("Silica limitation") == 1)
-      ptr->SilicaUptake(0, *Silicate);
-   if (*Silicate > ptr->aMin)
-      *cffSiOH4 = ptr->SiUptake[0] / SILICAATOMICWEIGHT / HOURSTOSECONDS /*/ *Silicate*/;
-   else
-      *cffSiOH4 = 0.0;
-   //cout << "Silicate uptake end" << endl;
-}
 
 void phytoplankton_mortality__(long* PPhytoplankton, double* nCellQuota, double* pCellQuota,
                                double* waterTemperature, double* biomass, double* timeStep, double* cff)
 {
    double Mortality;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
-   ptr->Mortality(0);
+   *cff =  MAX(0.0,* biomass) * DeathLoss / DAYSTOSECONDS;
 }
 
 

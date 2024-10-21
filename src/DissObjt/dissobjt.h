@@ -730,7 +730,7 @@ extern "C" {
 
               void dissobjt_go__(long *PNutrients, double *layerThickness, double *timeStep);
 
-              void dissobjt_nitrification__(long *PNutrients, double *lightAtTop, double *lightAtBottom, double *kValue, double * waterTemperature,
+              void dissobjt_nitrification__(long *PNutrients, double *lightAtTop, double *lightAtBottom, double *kValue, double *layerThickness, double * waterTemperature,
                                             double *Ammonia, double *Oxygen, double *NitrificationFlux, double *OxygenFlux);
               void dissobjt_denitrification__(long *PNutrients, double * waterTemperature,
                                             double *Nitrate, double *Oxygen, double *AmmoniaFlux, double *NitrateFlux);

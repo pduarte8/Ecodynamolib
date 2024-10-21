@@ -18,7 +18,7 @@ extern "C" {
    double MichaelisMentenLimitation(double N, double KN);
    double Mineralization(double minR,double TemperatureLimitation, double OxygenLimitation, double Xorganic);
    double NitrateAndAmmoniumLimitation(double NH4, double KNH4, double NO3, double KNO3, double NO2);
-   double Nitrification(double NH4, double Knit, double TemperatureLimitation, double OxygenLimitation);
+   double Nitrification(double NH4, double Knit, double TemperatureLimitation, double OxygenLimitation, double LightLimitation);
    double OrganicDissolution(double dissR,  double TemperatureLimitation, double Xorganic);
    double PhosphorusAdsorption(double PO4InPoreWater,double Pads,double Pmax, double OxygenInPoreWater, double OxygenThershold, double Ka1, double Ka2);
    double PhosphorusDesorption(double Pads, double Kd, double Pmax);

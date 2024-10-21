@@ -53,15 +53,17 @@ double Mineralization(double minR/*T^(-1)*/,double TemperatureLimitation, double
    //concentration and time units are defined by the user
 }
 
-double Nitrification(double NH4, double Knit/*T^(-1)*/, double TemperatureLimitation, double OxygenLimitation)
+double Nitrification(double NH4, double Knit/*T^(-1)*/, double TemperatureLimitation, double OxygenLimitation, double LightLimitation)
 {
-   double MyNH4, MyKnit, MyTempLim, MyOxyLim;
+   double MyNH4, MyKnit, MyTempLim, MyOxyLim, MyLightLim;
    MyNH4 = std::max(0.0,NH4);
    MyKnit = std::max(0.0,Knit);
    MyTempLim = std::max(0.0,TemperatureLimitation);
    MyOxyLim = std::max(0.0,OxygenLimitation);
    MyOxyLim = std::min(1.0,MyOxyLim);
-   return MyKnit * MyNH4 * MyTempLim * MyOxyLim; 
+   MyLightLim = std::max(0.0,MyLightLim);
+   MyLightLim = std::min(1.0,MyLightLim); 
+   return MyKnit * MyNH4 * MyTempLim * MyOxyLim * MyLightLim; 
    //returns units of N-NH4/N-NO3 concentration decrease/increase in the water per unit of time
    //concentration and time units are defined by the user
 }

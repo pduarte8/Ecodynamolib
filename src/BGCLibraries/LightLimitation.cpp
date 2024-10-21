@@ -168,7 +168,10 @@ double LightLimNitr(double KI, double I0, double Light)
                            //inhibition of nitrification is half-saturated
    MyI0 = std::max(0.0,I0);//W m-2 Light intensity threshold for
                            //light-inhibition of nitrification
-   return (1.0 - std::max(0.0,(MyLight - MyI0) / (MyKI + MyLight - MyI0)));
+   if (MyLight > MyI0)
+      return (1.0 - std::max(0.0,(MyLight - MyI0) / (MyKI + MyLight - MyI0)));
+   else 
+      return 1.0;
 }	
 
 double VertLightAvg(double LightAtTop, double KValue, double Depth)
