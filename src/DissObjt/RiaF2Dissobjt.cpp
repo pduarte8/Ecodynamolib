@@ -125,7 +125,7 @@ void dissobjt_nitrification__(long* PNutrients, double* lightAtTop, double* ligh
    MyOxygenLimitation = MichaelisMentenLimitation(MyOxygen, ptr->knitO2); 
    *NitrificationFlux = -Nitrification(MyAmmonia, ptr->knit, MyTemperatureLimitation, MyOxygenLimitation, MyLightLimitation) /
 	                DAYSTOSECONDS; //mmol N m-3 s-1
-   OxyF = -*NitrificationFlux * OxygenNitrogenRatioInNitrification * CUBIC; //mg O2 L-1
+   OxyF = -*NitrificationFlux * OxygenNitrogenRatioInNitrification; //mg O2 L-1
    *OxygenFlux = OxyF / (2.0 * OXYGENATOMICWEIGHT) * CUBIC; //mmol m-3 s-1
 }
 
@@ -147,81 +147,49 @@ void dissobjt_denitrification__(long *PNutrients, double * waterTemperature,doub
 void dissobjt_CarbonMineralization__(long *PNutrients, double * waterTemperature,
                                      double *OrganicCarbon, double *Oxygen, double *OrganicCarbonFlux, double *minRateC)
 {
-   double MyWaterTemperature, MyOrganicCarbon, MyOxygen, AMin;
-   AMin = 0.0000000001;
+   double MyWaterTemperature, MyOrganicCarbon, MyOxygen, MyminRateC;
+   double MyTemperatureLimitation = 1.0, MyOxygenLimitation = 1.0;
    TRiaF2DNutrients* ptr = (TRiaF2DNutrients*) *PNutrients;
    MyWaterTemperature = *waterTemperature;
-   MyOrganicCarbon = *OrganicCarbon;
-   MyOxygen = *Oxygen * (2.0 * OXYGENATOMICWEIGHT) / CUBIC; //Convert to mg O2 L-for compatibility with EcoDynamo
-   ptr->SetWaterTemperature(MyWaterTemperature);
-   ptr->SetVariableValue("Fortran", MyOrganicCarbon,0,"DOC"); //DOC is dissolved organic carbon but I am using it also for POC mineralization from Fortran 
-   ptr->SetVariableValue("Fortran", MyOxygen,0,"Oxygen");
-   ptr->SetParameterValue("minRate", *minRateC);
-   ptr->DOCFlux[0] = 0.0;
-   ptr->CarbonMineralization(0);
-   if (*OrganicCarbon > AMin)
-   {
-      *OrganicCarbonFlux = -ptr->DOCFlux[0] / CUBIC;   //Flux in mmol C m-3 s-1 
-   }
-   else
-   {
-      *OrganicCarbonFlux = 0.0;
-   }
+   MyOrganicCarbon = std::max(1.0,*OrganicCarbon);
+   MyOxygen = std::max(1.0,*Oxygen) * (2.0 * OXYGENATOMICWEIGHT) / CUBIC; //Convert to mg O2 L-for compatibility with EcoDynamo
+   MyTemperatureLimitation = TemperatureExponentialLimitation(MyWaterTemperature, ptr->Kt, 0.0);
+   MyOxygenLimitation = MichaelisMentenLimitation(MyOxygen, ptr->kminO2);
+   MyminRateC = std::max(1.0, *minRateC);
+   *OrganicCarbonFlux = -Mineralization(MyminRateC,MyTemperatureLimitation, MyOxygenLimitation, MyOrganicCarbon) / DAYSTOSECONDS;
 }
 
 void dissobjt_NitrogenMineralization__(long *PNutrients, double * waterTemperature,
                                      double *OrganicNitrogen, double *Oxygen, double *OrganicNitrogenFlux, double *OxygenFlux, double *minRateN)
 {
-   double MyWaterTemperature, MyOrganicNitrogen, MyOxygen, AMin;
-   AMin = 0.0000000001;
+   double MyWaterTemperature, MyOrganicNitrogen, MyOxygen, MyminRateN;
+   double OxygenNitrogenRatio = 0.212; //g O2 consumed for 1 mmol N mineralized or mg O2 per micromol N (Chapelle et al. (2000) - Ecolog. Modell 127: 161-181)^M
+   double MyTemperatureLimitation = 1.0, MyOxygenLimitation = 1.0;
    TRiaF2DNutrients* ptr = (TRiaF2DNutrients*) *PNutrients;
    MyWaterTemperature = *waterTemperature;
-   MyOrganicNitrogen = *OrganicNitrogen;
-   MyOxygen = *Oxygen * (2.0 * OXYGENATOMICWEIGHT) / CUBIC; //Convert to mg O2 L-for compatibility with EcoDynamo
-   ptr->SetWaterTemperature(MyWaterTemperature);
-   ptr->SetVariableValue("Fortran", MyOrganicNitrogen,0,"DON"); //DON is dissolved organic carbon but I am using it also for PON mineralization from Fortran 
-   ptr->SetVariableValue("Fortran", MyOxygen,0,"Oxygen");
-   ptr->SetParameterValue("minRate", *minRateN);
-   ptr->DONFlux[0] = 0.0;
-   ptr->NH4Flux[0] = 0.0;
-   ptr->OxygenFlux[0] = 0.0;
-   ptr->NitrogenMineralization(0);
-   if (*OrganicNitrogen > AMin)
-   {
-      *OrganicNitrogenFlux = -ptr->DONFlux[0] / CUBIC;   //Flux in mmol N m-3 s-1    
-      *OxygenFlux = -ptr->OxygenFlux[0] * CUBIC / (2.0 * OXYGENATOMICWEIGHT); //OxygenFlux in mmol O2 m-3 s-1 
-   }
-   else
-   {
-      *OrganicNitrogenFlux = 0.0;
-      *OxygenFlux = 0.0;
-   }
+   MyOrganicNitrogen = std::max(1.0,*OrganicNitrogen);
+   MyOxygen = std::max(1.0,*Oxygen) * (2.0 * OXYGENATOMICWEIGHT) / CUBIC; //Convert to mg O2 L-for compatibility with EcoDynamo
+   MyTemperatureLimitation = TemperatureExponentialLimitation(MyWaterTemperature, ptr->Kt, 0.0);
+   MyOxygenLimitation = MichaelisMentenLimitation(MyOxygen, ptr->kminO2);
+   MyminRateN = std::max(1.0, *minRateN);
+   *OrganicNitrogenFlux =  -Mineralization(MyminRateN,MyTemperatureLimitation,MyOxygenLimitation, MyOrganicNitrogen) / DAYSTOSECONDS;   
+   *OxygenFlux = *OrganicNitrogenFlux * OxygenNitrogenRatio; //mg l-1 s-1^M
+   *OxygenFlux = *OxygenFlux / (2.0 * OXYGENATOMICWEIGHT) * CUBIC; //OxygenFlux in mmol O2 m-3 s-1 
 }
 
 void dissobjt_PhosphorusMineralization__(long *PNutrients, double * waterTemperature,
                                       double *OrganicPhosphorus, double *Oxygen, double *OrganicPhosphorusFlux, double *minRateP)
 {
-   double MyWaterTemperature, MyOrganicPhosphorus, MyOxygen, AMin;
-   AMin = 0.0000000001;
+   double MyWaterTemperature, MyOrganicPhosphorus, MyOxygen, MyminRateP;
+   double MyTemperatureLimitation = 1.0, MyOxygenLimitation = 1.0;
    TRiaF2DNutrients* ptr = (TRiaF2DNutrients*) *PNutrients;
    MyWaterTemperature = *waterTemperature;
-   MyOrganicPhosphorus = *OrganicPhosphorus;
-   MyOxygen = *Oxygen * (2.0 * OXYGENATOMICWEIGHT) / CUBIC; //Convert to mg O2 L-for compatibility with EcoDynamo
-   ptr->SetWaterTemperature(MyWaterTemperature);
-   ptr->SetVariableValue("Fortran", MyOrganicPhosphorus,0,"DOP"); //DOP is dissolved organic phosphorus but I am using it also for POP mineralization from Fortran 
-   ptr->SetVariableValue("Fortran", MyOxygen,0,"Oxygen");
-   ptr->SetParameterValue("minRate", *minRateP);
-   ptr->DOPFlux[0] = 0.0;
-   ptr->PO4Flux[0] = 0.0;
-   ptr->PhosphorusMineralization(0);
-   if (*OrganicPhosphorus > AMin)
-   {
-      *OrganicPhosphorusFlux = -ptr->DOPFlux[0] / CUBIC;   //Flux in mmol P m-3 s-1    
-   }
-   else
-   {
-      *OrganicPhosphorusFlux = 0.0;
-   }
+   MyOrganicPhosphorus = std::max(1.0,*OrganicPhosphorus);
+   MyOxygen = std::max(1.0,*Oxygen) * (2.0 * OXYGENATOMICWEIGHT) / CUBIC; //Convert to mg O2 L-for compatibility with EcoDynamo
+   MyTemperatureLimitation = TemperatureExponentialLimitation(MyWaterTemperature, ptr->Kt, 0.0);
+   MyOxygenLimitation = MichaelisMentenLimitation(MyOxygen, ptr->kminO2);
+   MyminRateP = std::max(1.0, *minRateP);
+   *OrganicPhosphorusFlux = -Mineralization(MyminRateP,MyTemperatureLimitation,MyOxygenLimitation, MyOrganicPhosphorus) / DAYSTOSECONDS;   //Flux in mmol P m-3 s-1    
 }  
 
 #endif

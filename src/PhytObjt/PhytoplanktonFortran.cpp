@@ -509,7 +509,7 @@ void phytoplankton_mortality__(long* PPhytoplankton, double* nCellQuota, double*
 {
    double Mortality;
    TPhytoplanktonGeneric* ptr = (TPhytoplanktonGeneric*) *PPhytoplankton;
-   *cff =  MAX(0.0,* biomass) * DeathLoss / DAYSTOSECONDS;
+   *cff =  MAX(0.0,* biomass) * ptr->DeathLoss / DAYSTOSECONDS;
 }
 
 
