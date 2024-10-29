@@ -123,9 +123,9 @@ void dissobjt_nitrification__(long* PNutrients, double* lightAtTop, double* ligh
    MyLightLimitation = LightLimNitr(ptr->HalfSatForLightInhib, ptr->ThresholdForLightInhib, AverLight);
    MyTemperatureLimitation = TemperatureExponentialLimitation(MyWaterTemperature, ptr->Kt, 0.0);
    MyOxygenLimitation = MichaelisMentenLimitation(MyOxygen, ptr->knitO2); 
-   *NitrificationFlux = -Nitrification(MyAmmonia, ptr->knit, MyTemperatureLimitation, MyOxygenLimitation, MyLightLimitation) /
+   *NitrificationFlux = Nitrification(MyAmmonia, ptr->knit, MyTemperatureLimitation, MyOxygenLimitation, MyLightLimitation) /
 	                DAYSTOSECONDS; //mmol N m-3 s-1
-   OxyF = -*NitrificationFlux * OxygenNitrogenRatioInNitrification; //mg O2 L-1
+   OxyF = *NitrificationFlux * OxygenNitrogenRatioInNitrification; //mg O2 L-1
    *OxygenFlux = OxyF / (2.0 * OXYGENATOMICWEIGHT) * CUBIC; //mmol m-3 s-1
 }
 
@@ -135,12 +135,12 @@ void dissobjt_denitrification__(long *PNutrients, double * waterTemperature,doub
    double MyTemperatureLimitation = 1.0, MyOxygenLimitation = 1.0;
    TRiaF2DNutrients* ptr = (TRiaF2DNutrients*) *PNutrients;
    MyWaterTemperature = *waterTemperature;
-   MyNitrate = std::max(1.0,*Nitrate);
-   MyOxygen = std::max(1.0,*Oxygen) * (2.0 * OXYGENATOMICWEIGHT) / CUBIC; //Convert from mmol/m3 to mg O2 L-for compatibility with EcoDynamo
+   MyNitrate = std::max(0.0,*Nitrate);
+   MyOxygen = std::max(0.0,*Oxygen) * (2.0 * OXYGENATOMICWEIGHT) / CUBIC; //Convert from mmol/m3 to mg O2 L-for compatibility with EcoDynamo
    MyTemperatureLimitation = TemperatureExponentialLimitation(MyWaterTemperature, ptr->Kt, 0.0);
    MyOxygenLimitation = MichaelisMentenLimitation(MyOxygen, ptr->kdenitO2);
-   *NitrateFlux = -DenitrificationToNH4(MyNitrate,ptr->kdenit,MyTemperatureLimitation,MyOxygenLimitation) / DAYSTOSECONDS;
-   *AmmoniaFlux = -*NitrateFlux * ptr->ProportionOfNH4FromDenitrification;   //mmol N m-3 s-1
+   *NitrateFlux = DenitrificationToNH4(MyNitrate,ptr->kdenit,MyTemperatureLimitation,MyOxygenLimitation) / DAYSTOSECONDS;
+   *AmmoniaFlux = *NitrateFlux * ptr->ProportionOfNH4FromDenitrification;   //mmol N m-3 s-1
 }
 
 
@@ -151,12 +151,12 @@ void dissobjt_CarbonMineralization__(long *PNutrients, double * waterTemperature
    double MyTemperatureLimitation = 1.0, MyOxygenLimitation = 1.0;
    TRiaF2DNutrients* ptr = (TRiaF2DNutrients*) *PNutrients;
    MyWaterTemperature = *waterTemperature;
-   MyOrganicCarbon = std::max(1.0,*OrganicCarbon);
-   MyOxygen = std::max(1.0,*Oxygen) * (2.0 * OXYGENATOMICWEIGHT) / CUBIC; //Convert to mg O2 L-for compatibility with EcoDynamo
+   MyOrganicCarbon = std::max(0.0,*OrganicCarbon);
+   MyOxygen = std::max(0.0,*Oxygen) * (2.0 * OXYGENATOMICWEIGHT) / CUBIC; //Convert to mg O2 L-for compatibility with EcoDynamo
    MyTemperatureLimitation = TemperatureExponentialLimitation(MyWaterTemperature, ptr->Kt, 0.0);
    MyOxygenLimitation = MichaelisMentenLimitation(MyOxygen, ptr->kminO2);
-   MyminRateC = std::max(1.0, *minRateC);
-   *OrganicCarbonFlux = -Mineralization(MyminRateC,MyTemperatureLimitation, MyOxygenLimitation, MyOrganicCarbon) / DAYSTOSECONDS;
+   MyminRateC = std::max(0.0, *minRateC);
+   *OrganicCarbonFlux = Mineralization(MyminRateC,MyTemperatureLimitation, MyOxygenLimitation, MyOrganicCarbon) / DAYSTOSECONDS;
 }
 
 void dissobjt_NitrogenMineralization__(long *PNutrients, double * waterTemperature,
@@ -167,12 +167,12 @@ void dissobjt_NitrogenMineralization__(long *PNutrients, double * waterTemperatu
    double MyTemperatureLimitation = 1.0, MyOxygenLimitation = 1.0;
    TRiaF2DNutrients* ptr = (TRiaF2DNutrients*) *PNutrients;
    MyWaterTemperature = *waterTemperature;
-   MyOrganicNitrogen = std::max(1.0,*OrganicNitrogen);
-   MyOxygen = std::max(1.0,*Oxygen) * (2.0 * OXYGENATOMICWEIGHT) / CUBIC; //Convert to mg O2 L-for compatibility with EcoDynamo
+   MyOrganicNitrogen = std::max(0.0,*OrganicNitrogen);
+   MyOxygen = std::max(0.0,*Oxygen) * (2.0 * OXYGENATOMICWEIGHT) / CUBIC; //Convert to mg O2 L-for compatibility with EcoDynamo
    MyTemperatureLimitation = TemperatureExponentialLimitation(MyWaterTemperature, ptr->Kt, 0.0);
    MyOxygenLimitation = MichaelisMentenLimitation(MyOxygen, ptr->kminO2);
-   MyminRateN = std::max(1.0, *minRateN);
-   *OrganicNitrogenFlux =  -Mineralization(MyminRateN,MyTemperatureLimitation,MyOxygenLimitation, MyOrganicNitrogen) / DAYSTOSECONDS;   
+   MyminRateN = std::max(0.0, *minRateN);
+   *OrganicNitrogenFlux =  Mineralization(MyminRateN,MyTemperatureLimitation,MyOxygenLimitation, MyOrganicNitrogen) / DAYSTOSECONDS;   
    *OxygenFlux = *OrganicNitrogenFlux * OxygenNitrogenRatio; //mg l-1 s-1^M
    *OxygenFlux = *OxygenFlux / (2.0 * OXYGENATOMICWEIGHT) * CUBIC; //OxygenFlux in mmol O2 m-3 s-1 
 }
@@ -184,12 +184,12 @@ void dissobjt_PhosphorusMineralization__(long *PNutrients, double * waterTempera
    double MyTemperatureLimitation = 1.0, MyOxygenLimitation = 1.0;
    TRiaF2DNutrients* ptr = (TRiaF2DNutrients*) *PNutrients;
    MyWaterTemperature = *waterTemperature;
-   MyOrganicPhosphorus = std::max(1.0,*OrganicPhosphorus);
-   MyOxygen = std::max(1.0,*Oxygen) * (2.0 * OXYGENATOMICWEIGHT) / CUBIC; //Convert to mg O2 L-for compatibility with EcoDynamo
+   MyOrganicPhosphorus = std::max(0.0,*OrganicPhosphorus);
+   MyOxygen = std::max(0.0,*Oxygen) * (2.0 * OXYGENATOMICWEIGHT) / CUBIC; //Convert to mg O2 L-for compatibility with EcoDynamo
    MyTemperatureLimitation = TemperatureExponentialLimitation(MyWaterTemperature, ptr->Kt, 0.0);
    MyOxygenLimitation = MichaelisMentenLimitation(MyOxygen, ptr->kminO2);
-   MyminRateP = std::max(1.0, *minRateP);
-   *OrganicPhosphorusFlux = -Mineralization(MyminRateP,MyTemperatureLimitation,MyOxygenLimitation, MyOrganicPhosphorus) / DAYSTOSECONDS;   //Flux in mmol P m-3 s-1    
+   MyminRateP = std::max(0.0, *minRateP);
+   *OrganicPhosphorusFlux = Mineralization(MyminRateP,MyTemperatureLimitation,MyOxygenLimitation, MyOrganicPhosphorus) / DAYSTOSECONDS;   //Flux in mmol P m-3 s-1    
 }  
 
 #endif
