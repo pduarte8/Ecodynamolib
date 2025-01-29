@@ -13,7 +13,7 @@
 //
 //-----------------------------------------------
 
-#include "ecodyn.rh"
+#include "../include/ecodyn.rh"
 #include "phytobjt.h"
 #include "../BGCLibraries/LightLimitation.cpp"
 #include "../BGCLibraries/TemperatureLimitation.cpp"

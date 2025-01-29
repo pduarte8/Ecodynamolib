@@ -11,7 +11,7 @@ INCLUDE = -I../include -I../Iodll -I../EcoClass -I../ECDProtocol -I../Utilities 
 
 
 #define directories/files containing source files
-SRC = Dissobjt.cpp SangoDissobjt.cpp RiaF2Dissobjt.cpp
+SRC = Dissobjt.cpp SangoDissobjt.cpp RiaF2Dissobjt.cpp DissobjtFortran.cpp
 
 
 Dissobjt.o:

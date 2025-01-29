@@ -41,7 +41,7 @@ double Hollings(double K, double Prey, int HollingsType)
 //Rohr, T., Richardson, A. J., Lenton, A., and Shadwick, E.: Recommendations for the formulation of grazing in marine biogeochemical and ecosystem models, Prog Oceanogr, 208, Artn 102878
 //10.1016/J.Pocean.2022.102878, 2022.
 //
-double Ivlev(double Lambda, double Prey)
+double IvlevFunction(double Lambda, double Prey)
 {
    double GrazingLimitation, MyLambda, MyPrey;
    MyLambda = std::max(0.0,Lambda);

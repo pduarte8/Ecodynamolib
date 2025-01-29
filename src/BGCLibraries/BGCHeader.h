@@ -13,7 +13,7 @@ extern "C" {
    double EilersAndPeetersSlope(double C);
    double Hollings(double K, double Prey, int HollingsType);
    double InternalNutrientLimitation(double CellQuota, double MinCellQuota, double HalfSaturation);
-   double Ivlev(double Lambda, double Prey);
+   double IvlevFunction(double Lambda, double Prey);
    double LightLimNitr(double KI, double I0, double Light);
    double MichaelisMentenLimitation(double N, double KN);
    double Mineralization(double minR,double TemperatureLimitation, double OxygenLimitation, double Xorganic);
